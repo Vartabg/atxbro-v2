@@ -1,0 +1,32 @@
+{
+    "Financial":  [
+                      "Military retirement pay exclusion from state income tax",
+                      "Veterans preference in state employment",
+                      "Alabama Department of Veterans Affairs emergency funds",
+                      "Small business assistance for veteran entrepreneurs"
+                  ],
+    "Education":  [
+                      "G.I. Dependents Scholarship - free tuition for children of disabled veterans",
+                      "Alabama National Guard Educational Assistance Program",
+                      "In-state tuition for veterans using GI Bill benefits",
+                      "Military Family Education Loan Program"
+                  ],
+    "Recreation":  [
+                       "Free hunting and fishing licenses for 100% disabled veterans",
+                       "Lifetime licenses available for disabled veterans",
+                       "State park discounts for veterans",
+                       "Special veteran vehicle tags"
+                   ],
+    "Housing":  [
+                    "Disabled Veterans Property Tax Exemption - full exemption for 100% disabled",
+                    "Property tax exemption continues for unremarried surviving spouse",
+                    "Alabama Housing Finance Authority veteran programs",
+                    "Accessible housing modification assistance"
+                ],
+    "Other":  [
+                  "Three Alabama Veterans Homes",
+                  "State veterans cemeteries",
+                  "Women Veterans Program services",
+                  "Stand Down events for homeless veterans"
+              ]
+}

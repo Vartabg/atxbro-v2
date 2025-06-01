@@ -1,0 +1,32 @@
+{
+    "Financial":  [
+                      "Military retirement pay exclusion from state income tax",
+                      "Veterans preference in state employment",
+                      "Wyoming Veterans Commission emergency assistance",
+                      "Small business loans and grants for veterans"
+                  ],
+    "Education":  [
+                      "Wyoming Free Tuition for Veterans - full tuition waiver at University of Wyoming",
+                      "Scholarships for children of disabled veterans",
+                      "In-state tuition for veterans using GI Bill",
+                      "Wyoming National Guard educational assistance"
+                  ],
+    "Recreation":  [
+                       "Free hunting and fishing licenses for 100% disabled veterans",
+                       "Reduced-fee licenses for disabled veterans",
+                       "State park discounts for veterans",
+                       "Special veteran license plates"
+                   ],
+    "Housing":  [
+                    "Disabled Veterans Property Tax Exemption - varies by county",
+                    "Wyoming Community Development Authority veteran programs",
+                    "Property tax exemption for surviving spouses",
+                    "Accessible housing modification assistance"
+                ],
+    "Other":  [
+                  "Wyoming State Veterans Home",
+                  "Oregon Trail State Veterans Cemetery",
+                  "Women Veterans Program services",
+                  "Rural veterans assistance programs"
+              ]
+}

@@ -1,0 +1,32 @@
+{
+    "Financial":  [
+                      "Military retirement pay subtraction from state income tax",
+                      "Veterans preference in state employment",
+                      "Maine Bureau of Veterans Services emergency assistance",
+                      "Small business loans and grants for veterans"
+                  ],
+    "Education":  [
+                      "Maine Veterans Dependents Educational Benefits - tuition waiver for children of disabled veterans",
+                      "University of Maine System tuition benefits",
+                      "In-state tuition for veterans using GI Bill",
+                      "Maine National Guard State Educational Assistance"
+                  ],
+    "Recreation":  [
+                       "Free hunting and fishing licenses for 100% disabled veterans",
+                       "Reduced-fee licenses for disabled veterans",
+                       "State park passes for disabled veterans",
+                       "Special veteran license plates"
+                   ],
+    "Housing":  [
+                    "Veterans Property Tax Exemption - up to ,000 for disabled veterans",
+                    "Maine State Housing Authority veteran programs",
+                    "Property tax exemption for surviving spouses",
+                    "Accessible housing modification assistance"
+                ],
+    "Other":  [
+                  "Maine Veterans\u0027 Homes (6 locations)",
+                  "Maine Veterans Memorial Cemetery",
+                  "Women Veterans Program services",
+                  "Stand Down events for homeless veterans"
+              ]
+}

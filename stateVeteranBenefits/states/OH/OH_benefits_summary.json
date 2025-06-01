@@ -1,0 +1,28 @@
+{
+    "Financial":  [
+                      "Military retirement pay not subject to state income tax",
+                      "Disabled Veterans Tax Credit on property taxes",
+                      "Veterans with Disabilities Exemption for tangible personal property",
+                      "Employment preference for state jobs (veterans get 5-10 additional points)"
+                  ],
+    "Education":  [
+                      "War Orphans and Severely Disabled Veterans Children Scholarship - full tuition at state schools",
+                      "Ohio National Guard Scholarship Program - 100% tuition/fees at state institutions",
+                      "Resident tuition rates for veterans using GI Bill benefits"
+                  ],
+    "Recreation":  [
+                       "Free hunting and fishing licenses for 100% disabled veterans",
+                       "Reduced-price licenses for other disabled veterans",
+                       "Free park permits for disabled veterans"
+                   ],
+    "Housing":  [
+                    "Disabled Veterans Property Tax Exemption - up to ,000 assessed value for 100% disabled",
+                    "Homestead Exemption enhancement for qualifying disabled veterans",
+                    "Property tax reduction for veterans with service-connected disabilities"
+                ],
+    "Other":  [
+                  "Three state veterans homes",
+                  "Burial benefits and cemetery services",
+                  "Veterans bonus for Gulf War and post-9/11 service"
+              ]
+}

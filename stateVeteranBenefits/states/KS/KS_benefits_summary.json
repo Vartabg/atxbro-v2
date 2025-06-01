@@ -1,0 +1,32 @@
+{
+    "Financial":  [
+                      "Military retirement pay exclusion from state income tax",
+                      "Veterans preference in state employment",
+                      "Kansas Commission on Veterans Affairs emergency assistance",
+                      "Small business loans and grants for veterans"
+                  ],
+    "Education":  [
+                      "Kansas Military Service Scholarship - full tuition for children of disabled/deceased veterans",
+                      "Kansas National Guard Educational Assistance Award",
+                      "In-state tuition for veterans using GI Bill benefits",
+                      "Military Family Life Counselor education programs"
+                  ],
+    "Recreation":  [
+                       "Free hunting and fishing licenses for 100% disabled veterans",
+                       "Reduced-fee licenses for disabled veterans",
+                       "State park vehicle permits for disabled veterans",
+                       "Special veteran license plates"
+                   ],
+    "Housing":  [
+                    "Disabled Veterans Property Tax Exemption - full exemption for 100% disabled",
+                    "Kansas Housing Resources Corporation veteran programs",
+                    "Property tax exemption for surviving spouses",
+                    "Adaptive housing grants for disabled veterans"
+                ],
+    "Other":  [
+                  "Kansas Soldiers\u0027 Home",
+                  "Kansas Veterans Cemetery",
+                  "Women Veterans Program services",
+                  "Homeless veterans assistance programs"
+              ]
+}

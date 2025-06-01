@@ -1,0 +1,32 @@
+{
+    "Financial":  [
+                      "Military retirement pay exclusion from state income tax",
+                      "Veterans preference in state employment (5-10 points)",
+                      "Small business development assistance for veterans",
+                      "Tennessee Dept of Veterans Services emergency financial assistance"
+                  ],
+    "Education":  [
+                      "HOPE Scholarship for veterans - covers tuition at Tennessee colleges",
+                      "Veterans Education Success Grant - up to ,000 for career training",
+                      "In-state tuition for veterans using GI Bill benefits",
+                      "Children of fallen military scholarship program"
+                  ],
+    "Recreation":  [
+                       "Free hunting and fishing licenses for 100% disabled veterans",
+                       "Reduced-fee licenses for other disabled veterans",
+                       "State park discounts for veterans",
+                       "Special veteran vehicle registration plates"
+                   ],
+    "Housing":  [
+                    "Disabled Veterans Property Tax Relief - full exemption for 100% disabled",
+                    "Veterans Housing Grant Program",
+                    "Property tax freeze for elderly disabled veterans",
+                    "Surviving spouse property tax exemption continuation"
+                ],
+    "Other":  [
+                  "Four Tennessee Veterans Homes",
+                  "State veterans cemeteries",
+                  "Women Veterans Program",
+                  "Stand Down events for homeless veterans"
+              ]
+}

@@ -1,0 +1,32 @@
+{
+    "Financial":  [
+                      "Military retirement pay subtraction from state income tax",
+                      "Veterans preference in state employment (5 additional points)",
+                      "Nebraska Department of Veterans Affairs emergency assistance",
+                      "Small business development programs for veterans"
+                  ],
+    "Education":  [
+                      "Nebraska Waiver of Tuition for Veterans - partial tuition waiver at state schools",
+                      "Military Family Relief Fund educational assistance",
+                      "In-state tuition for veterans using GI Bill",
+                      "Nebraska National Guard tuition assistance"
+                  ],
+    "Recreation":  [
+                       "Free hunting and fishing permits for 100% disabled veterans",
+                       "Reduced-fee permits for disabled veterans",
+                       "State park vehicle permits for disabled veterans",
+                       "Special veteran license plates"
+                   ],
+    "Housing":  [
+                    "Disabled Veterans Property Tax Exemption - up to ,900 for 100% disabled",
+                    "Nebraska Investment Finance Authority veteran programs",
+                    "Property tax exemption for surviving spouses",
+                    "Accessible housing modification grants"
+                ],
+    "Other":  [
+                  "Four Nebraska Veterans Homes",
+                  "Fort McPherson National Cemetery coordination",
+                  "Women Veterans Program services",
+                  "Homeless veterans assistance programs"
+              ]
+}

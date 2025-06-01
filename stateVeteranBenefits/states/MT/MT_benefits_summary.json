@@ -1,0 +1,32 @@
+{
+    "Financial":  [
+                      "Military retirement pay exclusion from state income tax",
+                      "Veterans preference in state employment (10 additional points)",
+                      "Montana Veterans Affairs Division emergency assistance",
+                      "Small business development programs for veterans"
+                  ],
+    "Education":  [
+                      "Montana University System Honor Scholarship for veterans",
+                      "Montana National Guard State Educational Assistance",
+                      "In-state tuition for veterans using GI Bill",
+                      "Scholarships for children of disabled/deceased veterans"
+                  ],
+    "Recreation":  [
+                       "Free hunting and fishing licenses for 100% disabled veterans",
+                       "Reduced-fee licenses for disabled veterans",
+                       "State park vehicle permits for disabled veterans",
+                       "Special veteran license plates"
+                   ],
+    "Housing":  [
+                    "Disabled Veterans Property Tax Exemption - up to ,000 for 100% disabled",
+                    "Montana Board of Housing veteran programs",
+                    "Property tax exemption for surviving spouses",
+                    "Accessible housing modification grants"
+                ],
+    "Other":  [
+                  "Montana Veterans Home",
+                  "Montana State Veterans Cemetery",
+                  "Women Veterans Program services",
+                  "Stand Down events for homeless veterans"
+              ]
+}

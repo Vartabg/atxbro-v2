@@ -1,0 +1,27 @@
+{
+    "Financial":  [
+                      "Veterans Temporary Assistance - up to ,600/year for necessities",
+                      "Amputee/Paralyzed Veterans Pension - /month",
+                      "Blind Veterans Pension - /month",
+                      "Military retirement pay not taxed",
+                      "State employment preference (10 additional points)"
+                  ],
+    "Education":  [
+                      "Educational Gratuity Program - up to /semester for children of 100% disabled veterans",
+                      "National Guard Education Assistance Program - 10 semesters free at state schools",
+                      "In-state tuition for veterans using VA benefits and families"
+                  ],
+    "Recreation":  [
+                       "Free hunting/fishing/trapping licenses for 100% disabled veterans",
+                       "Reduced-fee licenses for 60-99% disabled veterans",
+                       "Resident rates for nonresident military stationed in PA"
+                   ],
+    "Housing":  [
+                    "100% property tax exemption for 100% disabled veterans (income limits apply)",
+                    "Property tax exemption passes to unremarried surviving spouse"
+                ],
+    "Other":  [
+                  "Seven veterans homes throughout state",
+                  "Military retirement credit purchase for state employees"
+              ]
+}

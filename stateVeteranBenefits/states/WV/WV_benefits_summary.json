@@ -1,0 +1,32 @@
+{
+    "Financial":  [
+                      "Military retirement pay exclusion from state income tax",
+                      "Veterans preference in state employment",
+                      "West Virginia Department of Veterans Assistance emergency funds",
+                      "Small business loans for veterans"
+                  ],
+    "Education":  [
+                      "West Virginia Veterans Re-Education Scholarship",
+                      "War Orphans Education Program - free tuition for children of disabled veterans",
+                      "In-state tuition for veterans using GI Bill",
+                      "National Guard educational assistance"
+                  ],
+    "Recreation":  [
+                       "Free hunting and fishing licenses for 100% disabled veterans",
+                       "Reduced-fee licenses for disabled veterans",
+                       "State park discounts for veterans",
+                       "Special veteran license plates"
+                   ],
+    "Housing":  [
+                    "Disabled Veterans Property Tax Exemption - full exemption for 100% disabled",
+                    "West Virginia Housing Development Fund veteran programs",
+                    "Property tax exemption for surviving spouses",
+                    "Accessible housing modification assistance"
+                ],
+    "Other":  [
+                  "West Virginia Veterans Nursing Facility",
+                  "Donel C. Kinnard Memorial State Veterans Cemetery",
+                  "Women Veterans Program",
+                  "Stand Down events for homeless veterans"
+              ]
+}

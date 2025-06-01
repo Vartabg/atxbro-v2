@@ -1,0 +1,39 @@
+﻿  const handleTap = (e) => {
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    setTapCount(prev => prev + 1);
+    
+    setTimeout(() => {
+      if (tapCount === 0) {
+        // Navigate to next section on tap
+        setCurrentSection(prev => (prev + 1) % sections.length);
+        createRipple(x, y);
+      }
+      setTapCount(0);
+    }, 300);
+  };
+
+  // Add swipe navigation
+  const handleSwipe = () => {
+    if (Math.abs(velocity.x) > Math.abs(velocity.y)) {
+      // Horizontal swipe
+      if (velocity.x > 5) {
+        // Swipe right - previous section
+        setCurrentSection(prev => Math.max(0, prev - 1));
+      } else if (velocity.x < -5) {
+        // Swipe left - next section
+        setCurrentSection(prev => Math.min(sections.length - 1, prev + 1));
+      }
+    } else {
+      // Vertical swipe
+      if (velocity.y < -5) {
+        // Swipe up - next section
+        setCurrentSection(prev => Math.min(sections.length - 1, prev + 1));
+      } else if (velocity.y > 5) {
+        // Swipe down - previous section
+        setCurrentSection(prev => Math.max(0, prev - 1));
+      }
+    }
+  };

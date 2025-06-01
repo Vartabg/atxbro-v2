@@ -1,0 +1,32 @@
+{
+    "Financial":  [
+                      "Military retirement pay deduction from state taxes",
+                      "Veterans preference in state employment",
+                      "Small business procurement opportunities",
+                      "Arizona Coalition for Military Families financial assistance"
+                  ],
+    "Education":  [
+                      "Arizona Veterans Heritage Grant - reduced tuition for veterans at state universities",
+                      "Military Family Relief Fund educational assistance",
+                      "In-state tuition for veterans and military families",
+                      "Scholarships for dependents of disabled veterans"
+                  ],
+    "Recreation":  [
+                       "Pioneer License - lifetime hunting/fishing for disabled veterans over 65",
+                       "Complimentary fishing licenses for disabled veterans",
+                       "State park passes for disabled veterans",
+                       "Special veteran license plates"
+                   ],
+    "Housing":  [
+                    "Disabled Veterans Property Tax Exemption - full exemption for 100% disabled",
+                    "Veterans Land Program for rural property purchases",
+                    "Property tax widow/widower exemption continuation",
+                    "Accessible housing modification grants"
+                ],
+    "Other":  [
+                  "Arizona State Veterans Home",
+                  "Veterans cemetery with burial benefits",
+                  "Women Veterans Program services",
+                  "Homeless veterans assistance"
+              ]
+}

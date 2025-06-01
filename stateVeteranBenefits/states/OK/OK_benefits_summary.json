@@ -1,0 +1,32 @@
+{
+    "Financial":  [
+                      "Military retirement pay exclusion from state income tax",
+                      "Veterans preference in state employment",
+                      "Oklahoma Department of Veterans Affairs emergency assistance",
+                      "Small business loans and grants for veterans"
+                  ],
+    "Education":  [
+                      "Oklahoma Tuition Waiver for Veterans - free tuition for veterans at state schools",
+                      "Scholarships for dependents of disabled/deceased veterans",
+                      "In-state tuition for veterans using GI Bill",
+                      "Oklahoma National Guard educational benefits"
+                  ],
+    "Recreation":  [
+                       "Free hunting and fishing licenses for 100% disabled veterans",
+                       "Reduced-fee licenses for other disabled veterans",
+                       "State park discounts for veterans",
+                       "Veteran license plate programs"
+                   ],
+    "Housing":  [
+                    "Disabled Veterans Property Tax Exemption - full exemption for 100% disabled",
+                    "Property tax exemption continues for surviving spouse",
+                    "Oklahoma Housing Finance Agency veteran programs",
+                    "Adaptive housing grants for disabled veterans"
+                ],
+    "Other":  [
+                  "Seven Oklahoma Veterans Centers",
+                  "Fort Sill National Cemetery coordination",
+                  "Women Veterans Program",
+                  "Stand Down events for homeless veterans"
+              ]
+}

@@ -1,0 +1,33 @@
+{
+    "Financial":  [
+                      "Military retirement pay subtraction - up to ,000 annually from state taxes",
+                      "Virginia Values Veterans (V3) employer incentive program",
+                      "Employment preference for state positions",
+                      "Veterans and Family Members Employment Partnership",
+                      "Income tax subtraction for military survivor benefits"
+                  ],
+    "Education":  [
+                      "Virginia Military Survivors and Dependents Education Program - full tuition waiver at state schools",
+                      "Veterans Education Success Program - up to ,500/year for vocational training",
+                      "In-state tuition for veterans and dependents using VA education benefits",
+                      "Military Family Life Counselor education benefits"
+                  ],
+    "Recreation":  [
+                       "Free hunting and fishing licenses for 100% disabled veterans",
+                       "Reduced-fee licenses for other disabled veterans",
+                       "State park discounts for veterans",
+                       "Special veteran license plates with benefits"
+                   ],
+    "Housing":  [
+                    "Real Estate Tax Exemption for 100% disabled veterans - full exemption on primary residence",
+                    "Surviving spouse continues exemption if unremarried",
+                    "Veterans Housing Grant Program - down payment assistance",
+                    "Adaptive housing grants for severely disabled veterans"
+                ],
+    "Other":  [
+                  "Two state veterans care centers",
+                  "Veterans Services Foundation grants",
+                  "Burial benefits in state veterans cemeteries",
+                  "Women Veterans Program services"
+              ]
+}

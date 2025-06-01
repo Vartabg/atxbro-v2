@@ -1,0 +1,32 @@
+{
+    "Financial":  [
+                      "Military retirement pay exclusion from state income tax",
+                      "Veterans preference in state employment",
+                      "Nevada Department of Veterans Services emergency assistance",
+                      "Small business development programs for veterans"
+                  ],
+    "Education":  [
+                      "Nevada Silver State Opportunity Grant for veterans",
+                      "Fee waiver for children of prisoners of war",
+                      "In-state tuition for veterans using GI Bill benefits",
+                      "Nevada National Guard State Educational Assistance"
+                  ],
+    "Recreation":  [
+                       "Free hunting and fishing licenses for 100% disabled veterans",
+                       "Reduced-fee licenses for disabled veterans",
+                       "State park discounts for veterans",
+                       "Special veteran license plates"
+                   ],
+    "Housing":  [
+                    "Disabled Veterans Property Tax Exemption - up to ,000 assessed value",
+                    "Nevada Housing Division veteran programs",
+                    "Property tax exemption for surviving spouses",
+                    "Accessible housing modification assistance"
+                ],
+    "Other":  [
+                  "Nevada State Veterans Home",
+                  "Nevada Veterans Cemetery",
+                  "Women Veterans Program services",
+                  "Homeless veterans assistance programs"
+              ]
+}

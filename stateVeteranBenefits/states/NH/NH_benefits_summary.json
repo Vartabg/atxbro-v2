@@ -1,0 +1,32 @@
+{
+    "Financial":  [
+                      "Military retirement pay exemption from state income tax",
+                      "Veterans preference in state employment",
+                      "New Hampshire Office of Veterans Services emergency assistance",
+                      "Small business development programs for veterans"
+                  ],
+    "Education":  [
+                      "New Hampshire Free Tuition for Combat Veterans",
+                      "Scholarships for children of prisoners of war/missing in action",
+                      "In-state tuition for veterans using GI Bill",
+                      "New Hampshire National Guard tuition assistance"
+                  ],
+    "Recreation":  [
+                       "Free hunting and fishing licenses for 100% disabled veterans",
+                       "Reduced-fee licenses for disabled veterans",
+                       "State park discounts for veterans",
+                       "Special veteran license plates"
+                   ],
+    "Housing":  [
+                    "Disabled Veterans Property Tax Credit - up to ,000 for 100% disabled",
+                    "New Hampshire Housing Finance Authority veteran programs",
+                    "Property tax exemption for surviving spouses",
+                    "Accessible housing modification grants"
+                ],
+    "Other":  [
+                  "New Hampshire Veterans Home",
+                  "State veterans cemetery coordination",
+                  "Women Veterans Program services",
+                  "Homeless veterans assistance programs"
+              ]
+}

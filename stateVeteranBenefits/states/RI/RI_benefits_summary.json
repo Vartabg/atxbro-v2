@@ -1,0 +1,32 @@
+{
+    "Financial":  [
+                      "Military retirement pay deduction from state income tax",
+                      "Veterans preference in state employment",
+                      "Rhode Island Division of Veterans Affairs emergency assistance",
+                      "Small business loans and grants for veterans"
+                  ],
+    "Education":  [
+                      "Rhode Island Free Tuition for Veterans - full tuition at state schools",
+                      "Scholarships for children of disabled veterans",
+                      "In-state tuition for veterans using GI Bill",
+                      "Rhode Island National Guard educational benefits"
+                  ],
+    "Recreation":  [
+                       "Free hunting and fishing licenses for 100% disabled veterans",
+                       "Reduced-fee licenses for disabled veterans",
+                       "State park discounts for veterans",
+                       "Special veteran license plates"
+                   ],
+    "Housing":  [
+                    "Disabled Veterans Property Tax Exemption - up to ,300 for 100% disabled",
+                    "Rhode Island Housing veteran programs",
+                    "Property tax exemption for surviving spouses",
+                    "Accessible housing modification assistance"
+                ],
+    "Other":  [
+                  "Rhode Island Veterans Home",
+                  "Rhode Island Veterans Cemetery",
+                  "Women Veterans Program services",
+                  "Homeless veterans assistance programs"
+              ]
+}

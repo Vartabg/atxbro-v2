@@ -1,0 +1,5 @@
+﻿"use client";
+import VetNav from '../components/VetNav';
+import JetsStats from '../components/JetsStats';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { useGestureProfiler } from '../hooks/useGestureProfiler';

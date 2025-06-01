@@ -1,0 +1,32 @@
+{
+    "Financial":  [
+                      "Military retirement pay exclusion from state income tax",
+                      "Veterans preference in state employment",
+                      "Kentucky Department of Veterans Affairs emergency assistance",
+                      "Small business development programs for veterans"
+                  ],
+    "Education":  [
+                      "Kentucky Veterans Tuition Waiver - free tuition for children/spouses of 100% disabled veterans",
+                      "Kentucky National Guard State Tuition Assistance",
+                      "In-state tuition for veterans using GI Bill",
+                      "Military Family Scholarship programs"
+                  ],
+    "Recreation":  [
+                       "Free hunting and fishing licenses for 100% disabled veterans",
+                       "Reduced-fee licenses for disabled veterans",
+                       "State park discounts for veterans",
+                       "Veteran license plate programs"
+                   ],
+    "Housing":  [
+                    "Disabled Veterans Property Tax Exemption - full exemption for 100% disabled",
+                    "Kentucky Housing Corporation veteran home loan programs",
+                    "Property tax exemption for surviving spouses",
+                    "Accessible housing modification assistance"
+                ],
+    "Other":  [
+                  "Three Kentucky Veterans Centers",
+                  "Kentucky Veterans Cemetery system",
+                  "Women Veterans Program services",
+                  "Stand Down events and homeless services"
+              ]
+}

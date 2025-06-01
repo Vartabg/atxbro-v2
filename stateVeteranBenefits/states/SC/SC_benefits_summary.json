@@ -1,0 +1,32 @@
+{
+    "Financial":  [
+                      "Military retirement pay deduction - up to ,500 from state taxes",
+                      "Veterans preference in state employment (5 additional points)",
+                      "Small business loans and grants for veterans",
+                      "Emergency financial assistance through SC Department of Veterans Affairs"
+                  ],
+    "Education":  [
+                      "Free Tuition for Children of Certain War Veterans - full tuition at state schools",
+                      "LIFE Scholarship enhancement for veterans",
+                      "In-state tuition for veterans and military families",
+                      "National Guard College Assistance Program"
+                  ],
+    "Recreation":  [
+                       "Free hunting and fishing licenses for 100% disabled veterans",
+                       "Reduced-fee licenses for other disabled veterans",
+                       "State park discounts for veterans",
+                       "Special veteran license plates with benefits"
+                   ],
+    "Housing":  [
+                    "Disabled Veterans Property Tax Exemption - full exemption for 100% disabled",
+                    "Property tax exemption transfers to surviving spouse",
+                    "SC State Housing Finance and Development Authority veteran programs",
+                    "Adaptive housing grants coordination"
+                ],
+    "Other":  [
+                  "Richard M. Campbell Veterans Nursing Home",
+                  "South Carolina Veterans Cemetery",
+                  "Women Veterans Program",
+                  "Homeless veterans assistance programs"
+              ]
+}

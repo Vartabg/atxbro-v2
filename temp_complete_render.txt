@@ -1,0 +1,250 @@
+﻿  const renderSection = () => {
+    const section = sections[currentSection];
+    
+    // Handle program sections first
+    if (currentSection === 8) {
+      return (
+        <div className="flex flex-col items-center justify-center h-full text-center px-8 relative">
+          <div className="space-y-8 w-full max-w-4xl">
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8">
+              <h1 className="text-4xl font-bold mb-4">{section.title}</h1>
+              <p className="text-xl text-blue-200 mb-8">{section.subtitle}</p>
+              
+              {profile && profile.confidence > 0.5 && (
+                <div className="mb-6 p-4 bg-yellow-500/20 rounded-lg">
+                  <p className="text-sm text-yellow-200">
+                    Based on your interaction style, we recommend a {profile.personality} approach
+                  </p>
+                </div>
+              )}
+
+              <div className="grid gap-4 mb-8">
+                <div className="bg-red-500/20 p-4 rounded-lg text-left">
+                  <div className="font-semibold text-red-200 mb-2">
+                    Myth: I make too much money to be eligible
+                  </div>
+                  <div className="text-green-200">
+                    Fact: Income only affects certain benefits like VA Pension
+                  </div>
+                </div>
+                <div className="bg-red-500/20 p-4 rounded-lg text-left">
+                  <div className="font-semibold text-red-200 mb-2">
+                    Myth: I have been out too long to apply
+                  </div>
+                  <div className="text-green-200">
+                    Fact: Most VA benefits have no time limit
+                  </div>
+                </div>
+              </div>
+
+              <button
+                onClick={() => window.open('/vetnav', '_blank')}
+                className={`w-full p-6 rounded-xl text-white font-bold text-xl transition-all duration-300 transform hover:scale-105 ${getPersonalizedCTA().style}`}
+              >
+                {getPersonalizedCTA().text}
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (currentSection === 9) {
+      return <JetsStats />;
+    }
+
+    if (currentSection === 10) {
+      return (
+        <div className="flex flex-col items-center justify-center h-full text-center px-8 relative">
+          <div className="space-y-8 w-full max-w-4xl">
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8">
+              <h1 className="text-4xl font-bold mb-4">{section.title}</h1>
+              <p className="text-xl text-yellow-200 mb-8">{section.subtitle}</p>
+              <div className="space-y-4">
+                <input 
+                  type="text" 
+                  placeholder="Enter ZIP code"
+                  className="w-full p-4 rounded-lg bg-white/20 text-white placeholder-white/70"
+                />
+                <button className="w-full p-4 bg-yellow-600 hover:bg-yellow-700 rounded-lg text-white font-bold">
+                  Search Available Pets
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (currentSection === 11) {
+      return (
+        <div className="flex flex-col items-center justify-center h-full text-center px-8 relative">
+          <div className="space-y-8 w-full max-w-4xl">
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8">
+              <h1 className="text-4xl font-bold mb-4">{section.title}</h1>
+              <p className="text-xl text-purple-200 mb-8">{section.subtitle}</p>
+              <div className="grid gap-6">
+                <div className="bg-purple-500/20 p-4 rounded-lg">
+                  <h3 className="text-lg font-bold mb-2">Historical Tariff Rates</h3>
+                  <p className="text-purple-200">Analyze trade policy impacts over time</p>
+                </div>
+                <div className="bg-purple-500/20 p-4 rounded-lg">
+                  <h3 className="text-lg font-bold mb-2">Economic Indicators</h3>
+                  <p className="text-purple-200">GDP, employment, and trade correlations</p>
+                </div>
+                <button className="w-full p-4 bg-purple-600 hover:bg-purple-700 rounded-lg text-white font-bold">
+                  Explore Trade Data
+                </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+    // Default gesture playground sections
+    return (
+      <div className="flex flex-col items-center justify-center h-full text-center px-8 relative">
+        {/* Ripples overlay */}
+        {ripples.map(ripple => (
+          <div
+            key={ripple.id}
+            className="absolute rounded-full border-2 border-white pointer-events-none"
+            style={{
+              left: ripple.x - 50,
+              top: ripple.y - 50,
+              width: 100,
+              height: 100,
+              transform: `scale(${ripple.scale})`,
+              opacity: ripple.opacity,
+              transition: 'none'
+            }}
+          />
+        ))}
+
+        {/* Particles overlay */}
+        {particles.map(particle => (
+          <div
+            key={particle.id}
+            className="absolute rounded-full pointer-events-none"
+            style={{
+              left: particle.x,
+              top: particle.y,
+              width: particle.size,
+              height: particle.size,
+              backgroundColor: particle.color,
+              opacity: particle.life,
+              transform: 'translate(-50%, -50%)'
+            }}
+          />
+        ))}
+
+        {/* Swipe trail */}
+        {swipeTrail.map((point, index) => (
+          <div
+            key={index}
+            className="absolute w-2 h-2 bg-white rounded-full pointer-events-none"
+            style={{
+              left: point.x,
+              top: point.y,
+              opacity: index / swipeTrail.length,
+              transform: 'translate(-50%, -50%)'
+            }}
+          />
+        ))}
+
+        {/* Magnetic elements */}
+        {currentSection === 4 && magneticElements.map(elem => (
+          <div
+            key={elem.id}
+            className="absolute bg-white/30 backdrop-blur-md rounded-full pointer-events-none"
+            style={{
+              left: elem.x,
+              top: elem.y,
+              width: elem.size,
+              height: elem.size,
+              transform: 'translate(-50%, -50%)',
+              transition: 'none'
+            }}
+          />
+        ))}
+
+        <div 
+          className="mb-8 transition-all duration-500 ease-out"
+          style={{ 
+            transform: `scale(${currentSection === 2 ? pinchScale : 1}) rotate(${currentSection === 6 ? rotateAngle : 0}deg)`,
+          }}
+        >
+          <h1 className="text-6xl font-bold text-white mb-4 drop-shadow-2xl">
+            {section.title}
+          </h1>
+          <p className="text-2xl text-blue-200">
+            {section.subtitle}
+          </p>
+        </div>
+
+        {/* Interactive elements based on section */}
+        {currentSection === 2 && (
+          <div 
+            className="w-20 h-20 bg-white/30 backdrop-blur-md rounded-2xl flex items-center justify-center shadow-2xl"
+            style={{
+              transform: `translate(${dragPosition.x - window.innerWidth/2}px, ${dragPosition.y - window.innerHeight/2}px)`,
+              transition: isDragging ? 'none' : 'transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)'
+            }}
+          >
+            <span className="text-2xl">🎯</span>
+          </div>
+        )}
+
+        {/* Long press progress indicator */}
+        {longPressProgress > 0 && (
+          <div className="fixed inset-0 flex items-center justify-center pointer-events-none">
+            <div className="w-32 h-32 rounded-full border-4 border-white/30 relative">
+              <div 
+                className="absolute inset-0 rounded-full border-4 border-white"
+                style={{
+                  clipPath: `polygon(50% 50%, 50% 0%, ${50 + 50 * Math.cos(longPressProgress * 2 * Math.PI - Math.PI/2)}% ${50 + 50 * Math.sin(longPressProgress * 2 * Math.PI - Math.PI/2)}%, 50% 50%)`
+                }}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Progress visualization */}
+        <div className="fixed bottom-16 left-1/2 transform -translate-x-1/2">
+          <div className="flex space-x-1">
+            {sections.map((_, index) => (
+              <div
+                key={index}
+                className={`h-1 rounded-full transition-all duration-300 ${
+                  index === currentSection 
+                    ? 'bg-white w-8' 
+                    : index < currentSection
+                    ? 'bg-white/50 w-4'
+                    : 'bg-white/20 w-2'
+                }`}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Dynamic instructions */}
+        <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 text-center">
+          <p className="text-sm text-blue-300 bg-black/20 backdrop-blur-md rounded-full px-4 py-2">
+            {currentSection === 0 ? 'Tap to begin the journey' :
+             currentSection === 1 ? 'Tap anywhere to create ripples' :
+             currentSection === 2 ? 'Drag the target around' :
+             currentSection === 3 ? 'Stretch and release elements' :
+             currentSection === 4 ? 'Touch to attract magnetic fields' :
+             currentSection === 5 ? 'Tap to explode particles' :
+             currentSection === 6 ? 'Use multiple fingers to play' :
+             currentSection === 7 ? 'Draw with your gestures' :
+             currentSection === 8 ? 'Explore VetNav benefits' :
+             currentSection === 9 ? 'Browse Jets statistics' :
+             currentSection === 10 ? 'Search for pets' :
+             'Analyze tariff data'}
+          </p>
+        </div>
+      </div>
+    );
+  };

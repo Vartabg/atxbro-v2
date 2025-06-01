@@ -1,0 +1,32 @@
+{
+    "Financial":  [
+                      "Military retirement pay exclusion from state income tax",
+                      "Veterans preference in state employment (5-10 additional points)",
+                      "Utah Department of Veterans and Military Affairs emergency assistance",
+                      "Small business development programs for veterans"
+                  ],
+    "Education":  [
+                      "Purple Heart Recipient Free Tuition - full waiver at state institutions",
+                      "Utah National Guard State Tuition Assistance Program",
+                      "In-state tuition for veterans using GI Bill",
+                      "Scholarships for children of disabled veterans"
+                  ],
+    "Recreation":  [
+                       "Free hunting and fishing licenses for 100% disabled veterans",
+                       "Reduced-fee licenses for disabled veterans",
+                       "State park annual passes for disabled veterans",
+                       "Veteran license plate programs"
+                   ],
+    "Housing":  [
+                    "Disabled Veterans Property Tax Abatement - up to ,400 for 100% disabled",
+                    "Utah Housing Corporation veteran programs",
+                    "Property tax exemption for surviving spouses",
+                    "Accessible housing modification grants"
+                ],
+    "Other":  [
+                  "Utah State Veterans Nursing Home",
+                  "Utah Veterans Cemetery and Memorial Park",
+                  "Women Veterans Program",
+                  "Stand Down events for homeless veterans"
+              ]
+}

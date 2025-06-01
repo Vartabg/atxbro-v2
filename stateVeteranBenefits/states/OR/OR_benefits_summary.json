@@ -1,0 +1,32 @@
+{
+    "Financial":  [
+                      "Military retirement pay subtraction from state income tax",
+                      "Veterans preference in state employment (5-10 additional points)",
+                      "Oregon Department of Veterans Affairs emergency assistance",
+                      "Small business development programs for veterans"
+                  ],
+    "Education":  [
+                      "Oregon Veterans Educational Aid - tuition and fee assistance at state schools",
+                      "Children of Veterans of Foreign Wars Scholarship",
+                      "In-state tuition for veterans using GI Bill benefits",
+                      "Oregon National Guard State Tuition Assistance"
+                  ],
+    "Recreation":  [
+                       "Free hunting and fishing licenses for 100% disabled veterans",
+                       "Reduced-fee licenses for disabled veterans",
+                       "State park camping discounts for veterans",
+                       "Special veteran license plates"
+                   ],
+    "Housing":  [
+                    "Disabled Veterans Property Tax Exemption - up to ,780 for 40%+ disabled",
+                    "Oregon Veterans Home Loan Program",
+                    "Property tax exemption for surviving spouses",
+                    "Accessible housing modification assistance"
+                ],
+    "Other":  [
+                  "Oregon Veterans\u0027 Home",
+                  "Willamette National Cemetery coordination",
+                  "Women Veterans Coordinator services",
+                  "Homeless veterans assistance programs"
+              ]
+}

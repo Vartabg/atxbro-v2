@@ -1,0 +1,32 @@
+{
+    "Financial":  [
+                      "Military retirement pay deduction - up to ,000 from state taxes",
+                      "Veterans preference in state employment",
+                      "Colorado Enterprise Fund veteran business loans",
+                      "Emergency financial assistance programs"
+                  ],
+    "Education":  [
+                      "Colorado Advanced Industries Accelerator - veteran entrepreneur grants",
+                      "In-state tuition for veterans and dependents using GI Bill",
+                      "National Guard State Tuition Assistance Program",
+                      "Scholarships for children of disabled/deceased veterans"
+                  ],
+    "Recreation":  [
+                       "Free hunting and fishing licenses for 100% disabled veterans",
+                       "Reduced-fee licenses for other disabled veterans",
+                       "State park passes for disabled veterans",
+                       "Special veteran license plates"
+                   ],
+    "Housing":  [
+                    "Disabled Veterans Property Tax Exemption - 50% for 100% disabled veterans",
+                    "Colorado Housing Assistance Corporation veteran programs",
+                    "Property tax exemption for surviving spouses",
+                    "Adaptive housing grants for disabled veterans"
+                ],
+    "Other":  [
+                  "Colorado State Veterans Community Living Center",
+                  "Fort Logan National Cemetery coordination",
+                  "Women Veterans Program",
+                  "Homeless veterans services"
+              ]
+}

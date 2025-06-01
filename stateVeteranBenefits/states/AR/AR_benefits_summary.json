@@ -1,0 +1,32 @@
+{
+    "Financial":  [
+                      "Military retirement pay exclusion from state income tax",
+                      "Veterans preference in state employment",
+                      "Arkansas Department of Veterans Affairs emergency assistance",
+                      "Small business development assistance for veterans"
+                  ],
+    "Education":  [
+                      "Arkansas Academic Challenge Scholarship for military dependents",
+                      "Workforce Challenge Scholarship for veterans in high-demand fields",
+                      "In-state tuition for veterans using GI Bill benefits",
+                      "Arkansas National Guard State Educational Assistance"
+                  ],
+    "Recreation":  [
+                       "Free hunting and fishing licenses for 100% disabled veterans",
+                       "Reduced-fee licenses for disabled veterans",
+                       "State park discounts for veterans",
+                       "Special veteran license plates"
+                   ],
+    "Housing":  [
+                    "Disabled Veterans Property Tax Relief - exemption for 100% disabled veterans",
+                    "Arkansas Development Finance Authority veteran home loan programs",
+                    "Property tax exemption transfers to surviving spouse",
+                    "Accessible housing modification grants"
+                ],
+    "Other":  [
+                  "Arkansas State Veterans Cemetery",
+                  "Veterans nursing home facilities",
+                  "Women Veterans Program services",
+                  "Homeless veterans assistance programs"
+              ]
+}

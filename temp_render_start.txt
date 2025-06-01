@@ -1,0 +1,104 @@
+﻿  const renderSection = () => {
+    const section = sections[currentSection];
+    
+    // Handle program sections first
+    if (currentSection === 8) {
+      return (
+        <div className="flex flex-col items-center justify-center h-full text-center px-8 relative">
+          <div className="space-y-8 w-full max-w-4xl">
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8">
+              <h1 className="text-4xl font-bold mb-4">{section.title}</h1>
+              <p className="text-xl text-blue-200 mb-8">{section.subtitle}</p>
+              
+              {profile && profile.confidence > 0.5 && (
+                <div className="mb-6 p-4 bg-yellow-500/20 rounded-lg">
+                  <p className="text-sm text-yellow-200">
+                    Based on your interaction style, we recommend a {profile.personality} approach
+                  </p>
+                </div>
+              )}
+
+              <div className="grid gap-4 mb-8">
+                <div className="bg-red-500/20 p-4 rounded-lg text-left">
+                  <div className="font-semibold text-red-200 mb-2">
+                    Myth: I make too much money to be eligible
+                  </div>
+                  <div className="text-green-200">
+                    Fact: Income only affects certain benefits like VA Pension
+                  </div>
+                </div>
+                <div className="bg-red-500/20 p-4 rounded-lg text-left">
+                  <div className="font-semibold text-red-200 mb-2">
+                    Myth: I have been out too long to apply
+                  </div>
+                  <div className="text-green-200">
+                    Fact: Most VA benefits have no time limit
+                  </div>
+                </div>
+              </div>
+
+              <button
+                onClick={() => window.open('/vetnav', '_blank')}
+                className={`w-full p-6 rounded-xl text-white font-bold text-xl transition-all duration-300 transform hover:scale-105 ${getPersonalizedCTA().style}`}
+              >
+                {getPersonalizedCTA().text}
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (currentSection === 9) {
+      return <JetsStats />;
+    }
+
+    if (currentSection === 10) {
+      return (
+        <div className="flex flex-col items-center justify-center h-full text-center px-8 relative">
+          <div className="space-y-8 w-full max-w-4xl">
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8">
+              <h1 className="text-4xl font-bold mb-4">{section.title}</h1>
+              <p className="text-xl text-yellow-200 mb-8">{section.subtitle}</p>
+              <div className="space-y-4">
+                <input 
+                  type="text" 
+                  placeholder="Enter ZIP code"
+                  className="w-full p-4 rounded-lg bg-white/20 text-white placeholder-white/70"
+                />
+                <button className="w-full p-4 bg-yellow-600 hover:bg-yellow-700 rounded-lg text-white font-bold">
+                  Search Available Pets
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (currentSection === 11) {
+      return (
+        <div className="flex flex-col items-center justify-center h-full text-center px-8 relative">
+          <div className="space-y-8 w-full max-w-4xl">
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8">
+              <h1 className="text-4xl font-bold mb-4">{section.title}</h1>
+              <p className="text-xl text-purple-200 mb-8">{section.subtitle}</p>
+              <div className="grid gap-6">
+                <div className="bg-purple-500/20 p-4 rounded-lg">
+                  <h3 className="text-lg font-bold mb-2">Historical Tariff Rates</h3>
+                  <p className="text-purple-200">Analyze trade policy impacts over time</p>
+                </div>
+                <div className="bg-purple-500/20 p-4 rounded-lg">
+                  <h3 className="text-lg font-bold mb-2">Economic Indicators</h3>
+                  <p className="text-purple-200">GDP, employment, and trade correlations</p>
+                </div>
+                <button className="w-full p-4 bg-purple-600 hover:bg-purple-700 rounded-lg text-white font-bold">
+                  Explore Trade Data
+                </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }

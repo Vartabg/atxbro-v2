@@ -1,0 +1,32 @@
+{
+    "Financial":  [
+                      "Military retirement pay exclusion from state income tax",
+                      "Veterans preference in state employment",
+                      "South Dakota Department of Veterans Affairs emergency assistance",
+                      "Small business loans and grants for veterans"
+                  ],
+    "Education":  [
+                      "South Dakota Free Tuition for Veterans - reduced tuition at state schools",
+                      "Military Family Scholarship Program",
+                      "In-state tuition for veterans using GI Bill",
+                      "South Dakota National Guard educational assistance"
+                  ],
+    "Recreation":  [
+                       "Free hunting and fishing licenses for 100% disabled veterans",
+                       "Reduced-fee licenses for disabled veterans",
+                       "State park annual passes for disabled veterans",
+                       "Special veteran license plates"
+                   ],
+    "Housing":  [
+                    "Disabled Veterans Property Tax Exemption - up to ,000 for 100% disabled",
+                    "South Dakota Housing Development Authority veteran programs",
+                    "Property tax exemption for surviving spouses",
+                    "Accessible housing modification assistance"
+                ],
+    "Other":  [
+                  "South Dakota Veterans Home",
+                  "Black Hills National Cemetery coordination",
+                  "Women Veterans Program services",
+                  "Homeless veterans assistance programs"
+              ]
+}

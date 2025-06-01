@@ -1,0 +1,41 @@
+﻿        {/* Jets Stats Section */}
+        {currentSection === 9 ? (
+          <JetsStats />
+        ) : currentSection === 10 ? (
+          <div className="space-y-8 w-full max-w-4xl">
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8">
+              <h1 className="text-4xl font-bold mb-4">{section.title}</h1>
+              <p className="text-xl text-yellow-200 mb-8">{section.subtitle}</p>
+              <div className="space-y-4">
+                <input 
+                  type="text" 
+                  placeholder="Enter ZIP code"
+                  className="w-full p-4 rounded-lg bg-white/20 text-white placeholder-white/70"
+                />
+                <button className="w-full p-4 bg-yellow-600 hover:bg-yellow-700 rounded-lg text-white font-bold">
+                  Search Available Pets
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : currentSection === 11 ? (
+          <div className="space-y-8 w-full max-w-4xl">
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8">
+              <h1 className="text-4xl font-bold mb-4">{section.title}</h1>
+              <p className="text-xl text-purple-200 mb-8">{section.subtitle}</p>
+              <div className="grid gap-6">
+                <div className="bg-purple-500/20 p-4 rounded-lg">
+                  <h3 className="text-lg font-bold mb-2">Historical Tariff Rates</h3>
+                  <p className="text-purple-200">Analyze trade policy impacts over time</p>
+                </div>
+                <div className="bg-purple-500/20 p-4 rounded-lg">
+                  <h3 className="text-lg font-bold mb-2">Economic Indicators</h3>
+                  <p className="text-purple-200">GDP, employment, and trade correlations</p>
+                </div>
+                <button className="w-full p-4 bg-purple-600 hover:bg-purple-700 rounded-lg text-white font-bold">
+                  Explore Trade Data
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : (

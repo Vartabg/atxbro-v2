@@ -1,0 +1,32 @@
+{
+    "Financial":  [
+                      "Military retirement pay exclusion from state income tax",
+                      "Veterans preference in state employment (5 additional points)",
+                      "North Dakota Department of Veterans Affairs emergency assistance",
+                      "Small business development programs for veterans"
+                  ],
+    "Education":  [
+                      "North Dakota Free Tuition for Veterans - full tuition waiver at state schools",
+                      "Scholarships for dependents of disabled/deceased veterans",
+                      "In-state tuition for veterans using GI Bill",
+                      "North Dakota National Guard tuition assistance"
+                  ],
+    "Recreation":  [
+                       "Free hunting and fishing licenses for 100% disabled veterans",
+                       "Reduced-fee licenses for disabled veterans",
+                       "State park vehicle permits for disabled veterans",
+                       "Special veteran license plates"
+                   ],
+    "Housing":  [
+                    "Disabled Veterans Property Tax Credit - up to ,400 for 100% disabled",
+                    "North Dakota Housing Finance Agency veteran programs",
+                    "Property tax exemption for surviving spouses",
+                    "Accessible housing modification grants"
+                ],
+    "Other":  [
+                  "North Dakota Veterans Home",
+                  "North Dakota Veterans Cemetery",
+                  "Women Veterans Program services",
+                  "Stand Down events for homeless veterans"
+              ]
+}

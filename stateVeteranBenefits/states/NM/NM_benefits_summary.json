@@ -1,0 +1,32 @@
+{
+    "Financial":  [
+                      "Military retirement pay deduction from state income tax",
+                      "Veterans preference in state employment",
+                      "New Mexico Department of Veterans Services emergency assistance",
+                      "Small business development programs for veterans"
+                  ],
+    "Education":  [
+                      "New Mexico Veterans Scholarship - tuition assistance at state schools",
+                      "Legislative Lottery Scholarship for veterans",
+                      "In-state tuition for veterans using GI Bill",
+                      "National Guard tuition assistance programs"
+                  ],
+    "Recreation":  [
+                       "Free hunting and fishing licenses for disabled veterans",
+                       "State park annual passes for disabled veterans",
+                       "Special veteran license plates",
+                       "Discounted outdoor recreation permits"
+                   ],
+    "Housing":  [
+                    "Disabled Veterans Property Tax Exemption - up to ,000 for 100% disabled",
+                    "New Mexico Mortgage Finance Authority veteran programs",
+                    "Property tax exemption for surviving spouses",
+                    "Accessible housing modification grants"
+                ],
+    "Other":  [
+                  "New Mexico Veterans Home",
+                  "Santa Fe National Cemetery coordination",
+                  "Women Veterans Program services",
+                  "Homeless veterans assistance programs"
+              ]
+}

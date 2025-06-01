@@ -1,0 +1,32 @@
+{
+    "Financial":  [
+                      "Military retirement pay deduction from state income tax",
+                      "Veterans preference in state employment",
+                      "Idaho Division of Veterans Services emergency assistance",
+                      "Small business loans and grants for veterans"
+                  ],
+    "Education":  [
+                      "Idaho Free Tuition for Veterans - full tuition waiver for combat veterans",
+                      "Idaho Opportunity Scholarship for veterans",
+                      "In-state tuition for veterans using GI Bill",
+                      "Idaho National Guard Educational Assistance"
+                  ],
+    "Recreation":  [
+                       "Free hunting and fishing licenses for 100% disabled veterans",
+                       "Reduced-fee licenses for disabled veterans",
+                       "State park discounts for veterans",
+                       "Special veteran license plates"
+                   ],
+    "Housing":  [
+                    "Disabled Veterans Property Tax Reduction - circuit breaker program",
+                    "Idaho Housing and Finance Association veteran programs",
+                    "Property tax exemption for surviving spouses",
+                    "Accessible housing modification assistance"
+                ],
+    "Other":  [
+                  "Idaho State Veterans Home",
+                  "Idaho State Veterans Cemetery",
+                  "Women Veterans Program services",
+                  "Stand Down events for homeless veterans"
+              ]
+}

@@ -1,0 +1,32 @@
+{
+    "Financial":  [
+                      "Military retirement pay deduction from state income tax",
+                      "Veterans preference in state employment",
+                      "Indiana Department of Veterans Affairs emergency assistance",
+                      "Small business development programs for veterans"
+                  ],
+    "Education":  [
+                      "Indiana Purple Heart Recipients scholarship - full tuition for Purple Heart recipients",
+                      "Child of Disabled Veteran or POW/MIA fee remission at state schools",
+                      "In-state tuition for veterans using GI Bill",
+                      "National Guard Supplemental Grant Program"
+                  ],
+    "Recreation":  [
+                       "Free hunting and fishing licenses for 100% disabled veterans",
+                       "Reduced licenses for other disabled veterans",
+                       "State park annual passes for disabled veterans",
+                       "Veteran license plate programs"
+                   ],
+    "Housing":  [
+                    "Disabled Veterans Property Tax Deduction - up to ,500 for 100% disabled",
+                    "Over-65 Disabled Veterans Property Tax Exemption",
+                    "Property tax benefits transfer to surviving spouse",
+                    "Veterans housing assistance programs"
+                ],
+    "Other":  [
+                  "Indiana Veterans Home",
+                  "State veterans cemetery system",
+                  "Women Veterans Coordinator services",
+                  "Homeless veterans assistance programs"
+              ]
+}

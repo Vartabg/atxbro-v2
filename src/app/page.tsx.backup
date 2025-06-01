@@ -1,0 +1,211 @@
+"use client";
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { useGestureProfiler } from '../hooks/useGestureProfiler';
+
+export default function Home() {
+  const [currentSection, setCurrentSection] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [dragPosition, setDragPosition] = useState({ x: 0, y: 0 });
+  const [velocity, setVelocity] = useState({ x: 0, y: 0 });
+  const [swipeDirection, setSwipeDirection] = useState('');
+  const [pinchScale, setPinchScale] = useState(1);
+  const [rotateAngle, setRotateAngle] = useState(0);
+  const [longPressActive, setLongPressActive] = useState(false);
+  const [longPressProgress, setLongPressProgress] = useState(0);
+  const [tapCount, setTapCount] = useState(0);
+  const [fingerCount, setFingerCount] = useState(0);
+  const [ripples, setRipples] = useState([]);
+  const [particles, setParticles] = useState([]);
+  const [magneticElements, setMagneticElements] = useState([]);
+  const [elasticElements, setElasticElements] = useState([]);
+  const [swipeTrail, setSwipeTrail] = useState([]);
+  
+  const containerRef = useRef(null);
+  const animationFrameRef = useRef(null);
+  const lastTouchRef = useRef({ x: 0, y: 0, time: 0 });
+  const gestureStartTime = useRef(0);
+
+  // Psychological profiling integration
+  const { profile, analyzeGesture, metrics } = useGestureProfiler();
+
+  const sections = [
+    { id: 'welcome', title: 'ATX Bro', subtitle: 'Interactive Experience', color: 'from-blue-900' },
+    { id: 'tap-ripple', title: 'Tap Ripples', subtitle: 'Create expanding ripples', color: 'from-purple-900' },
+    { id: 'drag-physics', title: 'Drag Physics', subtitle: 'Drag with momentum', color: 'from-green-900' },
+    { id: 'elastic', title: 'Elastic Elements', subtitle: 'Stretch and bounce', color: 'from-pink-900' },
+    { id: 'magnetic', title: 'Magnetic Fields', subtitle: 'Elements attract to touch', color: 'from-orange-900' },
+    { id: 'particle-system', title: 'Particle System', subtitle: 'Touch creates particles', color: 'from-red-900' },
+    { id: 'multitouch-orchestra', title: 'Touch Orchestra', subtitle: 'Multiple fingers create music', color: 'from-indigo-900' },
+    { id: 'gesture-drawing', title: 'Gesture Canvas', subtitle: 'Draw with your fingers', color: 'from-cyan-900' },
+    { id: 'vetnav', title: 'VetNav', subtitle: 'Veterans Benefits Guide', color: 'from-blue-900' }
+  ];
+  // Enhanced touch handlers with profiling
+  const handleTouchStart = (e) => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = touch.clientX - rect.left;
+    const y = touch.clientY - rect.top;
+    
+    gestureStartTime.current = Date.now();
+    setDragStart({ x, y });
+    setDragPosition({ x, y });
+    setIsDragging(true);
+    setFingerCount(e.touches.length);
+    lastTouchRef.current = { x, y, time: Date.now() };
+
+    // Section-specific interactions
+    if (currentSection === 1) createRipple(x, y);
+    if (currentSection === 5) createParticles(x, y);
+
+    // Long press with progress
+    let progress = 0;
+    const longPressTimer = setInterval(() => {
+      progress += 0.05;
+      setLongPressProgress(progress);
+      if (progress >= 1) {
+        setLongPressActive(true);
+        clearInterval(longPressTimer);
+      }
+    }, 50);
+
+    const clearLongPress = () => {
+      clearInterval(longPressTimer);
+      setLongPressProgress(0);
+      setLongPressActive(false);
+    };
+
+    document.addEventListener('touchend', clearLongPress, { once: true });
+  };
+
+  const handleTouchEnd = () => {
+    const duration = Date.now() - gestureStartTime.current;
+    const totalDistance = Math.sqrt(
+      Math.pow(dragPosition.x - dragStart.x, 2) + 
+      Math.pow(dragPosition.y - dragStart.y, 2)
+    );
+    
+    // Analyze gesture for psychological profiling
+    analyzeGesture({
+      type: totalDistance < 10 ? 'tap' : 'swipe',
+      velocity: Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y),
+      duration,
+      fingerCount,
+      hesitation: longPressProgress > 0 ? longPressProgress * 1000 : 0
+    });
+
+    setIsDragging(false);
+    setSwipeDirection('');
+    setLongPressActive(false);
+    setLongPressProgress(0);
+    setFingerCount(0);
+    
+    if (currentSection === 2 && Math.abs(velocity.x) > 2 || Math.abs(velocity.y) > 2) {
+      // Momentum animation would go here
+    }
+
+    setTimeout(() => setSwipeTrail([]), 1000);
+  };
+  // Personalized CTA based on psychological profile
+  const getPersonalizedCTA = () => {
+    if (!profile || profile.confidence < 0.3) {
+      return {
+        text: "Discover Your Path",
+        style: "bg-blue-600 hover:bg-blue-700",
+        urgency: "normal"
+      };
+    }
+
+    switch (profile.preferredCTA) {
+      case 'urgent':
+        return {
+          text: "CLAIM NOW - Limited Time",
+          style: "bg-red-600 hover:bg-red-700 animate-pulse",
+          urgency: "high"
+        };
+      case 'detailed':
+        return {
+          text: "Explore Complete Benefits Guide",
+          style: "bg-green-600 hover:bg-green-700",
+          urgency: "low"
+        };
+      case 'social':
+        return {
+          text: "Join 2M+ Veterans Who Found Help",
+          style: "bg-purple-600 hover:bg-purple-700",
+          urgency: "social"
+        };
+      case 'logical':
+        return {
+          text: "Calculate Your Eligible Benefits",
+          style: "bg-blue-600 hover:bg-blue-700",
+          urgency: "logical"
+        };
+      default:
+        return {
+          text: "Find Your Benefits",
+          style: "bg-blue-600 hover:bg-blue-700",
+          urgency: "normal"
+        };
+    }
+  };
+
+  // Debug panel for development
+  const renderProfileDebug = () => {
+    if (!profile) return null;
+    
+    return (
+      <div className="fixed top-4 right-4 bg-black/80 text-white p-3 rounded-lg text-xs">
+        <div>Personality: {profile.personality}</div>
+        <div>Confidence: {(profile.confidence * 100).toFixed(0)}%</div>
+        <div>CTA Type: {profile.preferredCTA}</div>
+        <div>Tap Speed: {metrics.tapSpeed.toFixed(1)}</div>
+        <div>Swipe Force: {metrics.swipeForce.toFixed(1)}</div>
+        <div>Hesitation: {metrics.hesitationTime.toFixed(0)}ms</div>
+      </div>
+    );
+  };
+        {/* VetNav section with personalized CTAs */}
+        {currentSection === 8 && (
+          <div className="space-y-8">
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8">
+              <h2 className="text-2xl font-bold mb-6">Veterans Benefits Finder</h2>
+              <p className="text-blue-200 mb-8">Made by a Veteran for Veterans</p>
+              
+              {profile && profile.confidence > 0.5 && (
+                <div className="mb-6 p-4 bg-yellow-500/20 rounded-lg">
+                  <p className="text-sm text-yellow-200">
+                    Based on your interaction style, we recommend a {profile.personality} approach
+                  </p>
+                </div>
+              )}
+
+              <div className="grid gap-4 mb-8">
+                <div className="bg-red-500/20 p-4 rounded-lg text-left">
+                  <div className="font-semibold text-red-200 mb-2">
+                    Myth: I make too much money to be eligible
+                  </div>
+                  <div className="text-green-200">
+                    Fact: Income only affects certain benefits like VA Pension
+                  </div>
+                </div>
+                <div className="bg-red-500/20 p-4 rounded-lg text-left">
+                  <div className="font-semibold text-red-200 mb-2">
+                    Myth: I''ve been out too long to apply
+                  </div>
+                  <div className="text-green-200">
+                    Fact: Most VA benefits have no time limit
+                  </div>
+                </div>
+              </div>
+
+              <button
+                onClick={() => window.open(''/vetnav'', ''_blank'')}
+                className={`w-full p-6 rounded-xl text-white font-bold text-xl transition-all duration-300 transform hover:scale-105 ${getPersonalizedCTA().style}`}
+              >
+                {getPersonalizedCTA().text}
+              </button>
+            </div>
+          </div>
+        )}

@@ -1,0 +1,32 @@
+{
+    "Financial":  [
+                      "Military retirement pay exclusion from state income tax",
+                      "Veterans preference in state employment",
+                      "Delaware Commission of Veterans Affairs emergency assistance",
+                      "Small business development programs for veterans"
+                  ],
+    "Education":  [
+                      "Delaware Educational Benefits for Children of Deceased Veterans",
+                      "Scholarship Incentive Program for veterans",
+                      "In-state tuition for veterans using GI Bill",
+                      "Delaware National Guard State Educational Assistance"
+                  ],
+    "Recreation":  [
+                       "Free hunting and fishing licenses for 100% disabled veterans",
+                       "Reduced-fee licenses for disabled veterans",
+                       "State park discounts for veterans",
+                       "Special veteran license plates"
+                   ],
+    "Housing":  [
+                    "Senior School Tax Credit for disabled veterans over 65",
+                    "Delaware State Housing Authority veteran programs",
+                    "Property tax exemption for surviving spouses",
+                    "Accessible housing modification assistance"
+                ],
+    "Other":  [
+                  "Delaware Veterans Home",
+                  "Delaware Veterans Cemetery",
+                  "Women Veterans Program services",
+                  "Stand Down events for homeless veterans"
+              ]
+}

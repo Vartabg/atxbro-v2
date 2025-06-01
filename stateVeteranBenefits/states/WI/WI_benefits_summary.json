@@ -1,0 +1,32 @@
+{
+    "Financial":  [
+                      "Military retirement pay subtraction from state taxes",
+                      "Veterans preference in state employment (5 additional points)",
+                      "Wisconsin Department of Veterans Affairs emergency loans",
+                      "Small business development assistance for veterans"
+                  ],
+    "Education":  [
+                      "Veterans Education Grant - up to ,000/year for Wisconsin veterans",
+                      "Wisconsin GI Bill - full tuition remission at UW System schools",
+                      "In-state tuition for veterans using federal GI Bill",
+                      "National Guard tuition grant programs"
+                  ],
+    "Recreation":  [
+                       "Free fishing license for disabled veterans",
+                       "Reduced hunting licenses for disabled veterans",
+                       "State park vehicle admission stickers for disabled veterans",
+                       "Special veteran license plates"
+                   ],
+    "Housing":  [
+                    "Disabled Veterans Property Tax Credit - up to ,420 annually",
+                    "Veterans and Surviving Spouses Property Tax Credit",
+                    "Wisconsin Housing and Economic Development Authority veteran programs",
+                    "Accessible housing modification grants"
+                ],
+    "Other":  [
+                  "Wisconsin Veterans Homes (3 locations)",
+                  "Southern Wisconsin Veterans Memorial Cemetery",
+                  "Women Veterans Program",
+                  "Homeless veterans assistance programs"
+              ]
+}

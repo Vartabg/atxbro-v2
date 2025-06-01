@@ -1,0 +1,32 @@
+{
+    "Financial":  [
+                      "Military retirement pay deduction - up to ,000 from state taxes",
+                      "Veterans preference in state employment",
+                      "Michigan Veterans Affairs Agency emergency assistance",
+                      "Small business loans and grants for veterans"
+                  ],
+    "Education":  [
+                      "Michigan Veterans Trust Fund tuition assistance",
+                      "Children of Veterans Tuition Grant - free tuition for children of 100% disabled veterans",
+                      "In-state tuition for veterans and dependents",
+                      "Michigan National Guard educational benefits"
+                  ],
+    "Recreation":  [
+                       "Free hunting and fishing licenses for 100% disabled veterans",
+                       "Reduced-fee licenses for disabled veterans",
+                       "State park motor vehicle permits for disabled veterans",
+                       "Special veteran license plates with benefits"
+                   ],
+    "Housing":  [
+                    "Disabled Veterans Property Tax Exemption - full exemption for 100% disabled",
+                    "Veterans mortgage assistance programs",
+                    "Property tax exemption for surviving spouses",
+                    "Adaptive housing grants for disabled veterans"
+                ],
+    "Other":  [
+                  "Three Michigan Veterans Homes",
+                  "Grand Rapids Home for Veterans",
+                  "Women Veterans Program",
+                  "Homeless veterans services"
+              ]
+}

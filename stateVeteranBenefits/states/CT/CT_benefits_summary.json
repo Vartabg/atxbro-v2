@@ -1,0 +1,32 @@
+{
+    "Financial":  [
+                      "Military retirement pay subtraction from state taxes",
+                      "Veterans preference in state employment",
+                      "Connecticut Department of Veterans Affairs emergency assistance",
+                      "Small business loans and grants for veterans"
+                  ],
+    "Education":  [
+                      "Connecticut Veterans Tuition Waiver - 50% reduction for veterans at state schools",
+                      "Scholarship for dependents of disabled/deceased veterans",
+                      "In-state tuition for veterans using GI Bill",
+                      "Connecticut National Guard Foundation scholarships"
+                  ],
+    "Recreation":  [
+                       "Free hunting and fishing licenses for 100% disabled veterans",
+                       "Reduced-fee licenses for disabled veterans",
+                       "State park discounts for veterans",
+                       "Veteran license plate programs"
+                   ],
+    "Housing":  [
+                    "Disabled Veterans Property Tax Exemption - up to ,000 annually",
+                    "Connecticut Housing Finance Authority veteran programs",
+                    "Additional exemption for surviving spouses",
+                    "Accessible housing modification grants"
+                ],
+    "Other":  [
+                  "Connecticut Veterans Home and Hospital",
+                  "State veterans cemetery coordination",
+                  "Women Veterans Program services",
+                  "Stand Down events for homeless veterans"
+              ]
+}

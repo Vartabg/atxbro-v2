@@ -1,0 +1,95 @@
+﻿  const handleTouchStart = (e) => {
+    const touch = e.touches[0];
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = touch.clientX - rect.left;
+    const y = touch.clientY - rect.top;
+    
+    gestureStartTime.current = Date.now();
+    setDragStart({ x, y });
+    setDragPosition({ x, y });
+    setIsDragging(true);
+    lastTouchRef.current = { x, y, time: Date.now() };
+
+    // Smart gesture application based on context
+    const shouldCreateRipple = () => {
+      // Welcome screen - always show effects
+      if (currentSection === 0) return true;
+      
+      // Only on empty space (not on interactive elements)
+      const target = e.target;
+      const isInteractiveElement = target.tagName === 'BUTTON' || 
+                                  target.tagName === 'INPUT' || 
+                                  target.tagName === 'A' ||
+                                  target.closest('button') ||
+                                  target.closest('input') ||
+                                  target.closest('a') ||
+                                  target.closest('.interactive');
+      
+      return !isInteractiveElement;
+    };
+
+    if (shouldCreateRipple()) {
+      createRipple(x, y);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    const duration = Date.now() - gestureStartTime.current;
+    const totalDistance = Math.sqrt(
+      Math.pow(dragPosition.x - dragStart.x, 2) + 
+      Math.pow(dragPosition.y - dragStart.y, 2)
+    );
+    
+    // Smart particle creation
+    const shouldCreateParticles = () => {
+      // Only on significant movement in non-form areas
+      if (totalDistance < 100) return false;
+      if (currentSection === 0) return true; // Welcome screen
+      
+      // Avoid particles when user is likely trying to scroll/navigate content
+      const target = document.elementFromPoint(dragPosition.x, dragPosition.y);
+      const isContentArea = target?.closest('.content-area') || 
+                           target?.closest('table') ||
+                           target?.closest('form');
+      
+      return !isContentArea;
+    };
+
+    if (shouldCreateParticles()) {
+      createParticles(dragPosition.x, dragPosition.y, 6); // Reduced count
+    }
+    
+    // Navigation logic
+    if (Math.abs(velocity.y) > 12) { // Higher threshold for navigation
+      if (velocity.y < 0) {
+        setCurrentSection(prev => Math.min(sections.length - 1, prev + 1));
+      } else {
+        setCurrentSection(prev => Math.max(0, prev - 1));
+      }
+    }
+    
+    setIsDragging(false);
+    setTimeout(() => setSwipeTrail([]), 600);
+  };
+
+  const handleTap = (e) => {
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    // Smart tap effects
+    const target = e.target;
+    const isButton = target.tagName === 'BUTTON' || target.closest('button');
+    
+    if (isButton) {
+      // Subtle effect for button presses (like iOS button feedback)
+      createRipple(x, y);
+    } else if (currentSection === 0) {
+      // Full effects on welcome screen
+      createRipple(x, y);
+      createParticles(x, y, 4);
+      if (currentSection === 0) {
+        setCurrentSection(1);
+      }
+    }
+  };

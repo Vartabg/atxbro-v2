@@ -1,0 +1,32 @@
+{
+    "Financial":  [
+                      "Military retirement pay deduction - up to ,000 from state taxes",
+                      "Veterans preference in state employment (10 additional points)",
+                      "Small business loans and grants through Missouri Veterans Commission",
+                      "Emergency financial assistance for veterans in crisis"
+                  ],
+    "Education":  [
+                      "Missouri Returning Heroes Education Act - combat veterans get in-state tuition",
+                      "Wartime Veterans Scholarship - up to 50 credit hours at state schools",
+                      "Missouri National Guard State Tuition Assistance",
+                      "Combat Veterans tuition waiver for dependents"
+                  ],
+    "Recreation":  [
+                       "Free hunting and fishing permits for 100% disabled veterans",
+                       "Reduced-fee permits for other disabled veterans",
+                       "State park discounts for veterans",
+                       "Special veteran license plates and benefits"
+                   ],
+    "Housing":  [
+                    "Disabled Veterans Property Tax Credit - up to 100% exemption for 100% disabled",
+                    "Property tax exemption continuation for surviving spouses",
+                    "Veterans Home Loan Program with reduced rates",
+                    "Accessible housing modification assistance"
+                ],
+    "Other":  [
+                  "Seven Missouri Veterans Homes",
+                  "State veterans cemeteries",
+                  "Women Veterans Program services",
+                  "Stand Down events and homeless assistance"
+              ]
+}

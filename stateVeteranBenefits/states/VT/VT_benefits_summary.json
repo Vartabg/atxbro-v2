@@ -1,0 +1,32 @@
+{
+    "Financial":  [
+                      "Military retirement pay exclusion from state income tax",
+                      "Veterans preference in state employment",
+                      "Vermont Office of Veterans Affairs emergency assistance",
+                      "Small business development programs for veterans"
+                  ],
+    "Education":  [
+                      "Vermont Free Tuition for Veterans - full tuition waiver at state colleges",
+                      "Scholarships for children of disabled/deceased veterans",
+                      "In-state tuition for veterans using GI Bill",
+                      "Vermont National Guard State Educational Assistance"
+                  ],
+    "Recreation":  [
+                       "Free hunting and fishing licenses for 100% disabled veterans",
+                       "Reduced-fee licenses for disabled veterans",
+                       "State park discounts for veterans",
+                       "Special veteran license plates"
+                   ],
+    "Housing":  [
+                    "Veterans Property Tax Exemption - up to ,000 for disabled veterans",
+                    "Vermont Housing Finance Agency veteran programs",
+                    "Property tax exemption for surviving spouses",
+                    "Accessible housing modification grants"
+                ],
+    "Other":  [
+                  "Vermont Veterans Home",
+                  "Vermont Veterans Memorial Cemetery",
+                  "Women Veterans Program services",
+                  "Stand Down events for homeless veterans"
+              ]
+}

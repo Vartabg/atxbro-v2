@@ -1,0 +1,32 @@
+{
+    "Financial":  [
+                      "Military retirement pay not subject to state income tax",
+                      "Veterans preference in state employment (10 additional points)",
+                      "Small business development programs for veterans",
+                      "WorkSource Veterans program for employment assistance"
+                  ],
+    "Education":  [
+                      "Washington State Veterans Education Benefit - full tuition at state schools for children of 100% disabled veterans",
+                      "Opportunity Grant for veterans in high-demand programs",
+                      "In-state tuition for veterans and dependents using GI Bill",
+                      "Boeing scholarships for veteran students in STEM"
+                  ],
+    "Recreation":  [
+                       "Free fishing license for disabled veterans",
+                       "Disabled veteran hunting license discounts",
+                       "State park Discover Pass discounts",
+                       "Veteran license plate benefits"
+                   ],
+    "Housing":  [
+                    "Disabled Veterans Property Tax Exemption - full exemption for 100% disabled",
+                    "Veterans Homeownership Assistance Program",
+                    "Housing Trust Fund veteran priority",
+                    "Adaptive housing modifications for disabled veterans"
+                ],
+    "Other":  [
+                  "Two state veterans homes",
+                  "Veterans Innovation Program",
+                  "Women Veterans Program",
+                  "Stand Down events for homeless veterans"
+              ]
+}
