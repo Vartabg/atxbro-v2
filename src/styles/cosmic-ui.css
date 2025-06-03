@@ -1,0 +1,118 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+
+:root {
+  --cosmic-blue: #2563eb;
+  --cosmic-purple: #8b5cf6;
+  --cosmic-red: #e74c3c;
+  --cosmic-gold: #f59e0b;
+  --space-black: #0a0a0f;
+  --nebula-glow: rgba(59, 130, 246, 0.3);
+  --star-white: #ffffff;
+}
+
+.cosmic-ui-panel {
+  animation: hologramFlicker 3s infinite alternate;
+}
+
+@keyframes hologramFlicker {
+  0%, 100% { opacity: 0.9; }
+  50% { opacity: 1; }
+}
+
+.hologram-border {
+  position: relative;
+  background: linear-gradient(45deg, 
+    rgba(37, 99, 235, 0.1) 0%,
+    rgba(139, 92, 246, 0.1) 50%,
+    rgba(37, 99, 235, 0.1) 100%);
+  border: 1px solid var(--cosmic-blue);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.hologram-border::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, var(--cosmic-blue), var(--cosmic-purple));
+  border-radius: 10px;
+  z-index: -1;
+  animation: borderPulse 2s ease-in-out infinite alternate;
+}
+
+@keyframes borderPulse {
+  0% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+.planet-name {
+  font-family: 'Orbitron', monospace;
+  font-weight: 900;
+  font-size: 1.5rem;
+  color: var(--star-white);
+  text-shadow: 0 0 10px currentColor;
+  margin-bottom: 0.5rem;
+  letter-spacing: 2px;
+}
+
+.orbital-data {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+.data-point {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+}
+
+.data-point::before {
+  content: '◦';
+  color: var(--cosmic-blue);
+  margin-right: 0.5rem;
+  animation: pulse 2s infinite;
+}
+
+.navigation-btn {
+  background: linear-gradient(135deg, var(--cosmic-blue), var(--cosmic-purple));
+  color: var(--star-white);
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-family: 'Orbitron', monospace;
+  font-weight: 700;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  overflow: hidden;
+}
+
+.navigation-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4);
+}
+
+.navigation-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.navigation-btn:hover::after {
+  left: 100%;
+} 
