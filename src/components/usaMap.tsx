@@ -40,21 +40,24 @@ const State = ({ featureData, transform, extrudeSettings, showLabels }) => {
                 createdShapes.push(createShapeFromCoords(polygon[0]));
             });
         }
-        
+
+        return { createdShapes, allShapePoints };
+    }, [featureData, scale, centerX, centerY]);
+
+    useEffect(() => {
+        const { allShapePoints } = shapes;
         if (allShapePoints.length > 0) {
             let sumX = 0, sumY = 0;
             allShapePoints.forEach(p => { sumX += p.x; sumY += p.y; });
             setCentroid([sumX / allShapePoints.length, sumY / allShapePoints.length, extrudeSettings.depth + 0.05]);
         }
-
-        return createdShapes;
-    }, [featureData, scale, centerX, centerY, extrudeSettings.depth]);
+    }, [shapes, extrudeSettings.depth]);
 
     const stateName = featureData.properties?.name || featureData.id || 'Unknown State';
 
     return (
         <group>
-            {shapes.map((shape, index) => (
+            {shapes.createdShapes.map((shape, index) => (
                 <mesh
                     key={`${featureData.id || 'state'}-${index}`}
                     ref={meshRef}
