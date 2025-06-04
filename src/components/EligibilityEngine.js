@@ -20,7 +20,7 @@ export class EligibilityEngine {
 
     // Check state benefits
     if (scope === 'both' || scope === 'state') {
-      const userState = userProfile.state || 'texas'; // Default to Texas
+      const userState = userProfile.state || 'texas'; // Default to 'texas'
       if (this.benefits.state[userState]) {
         this.checkBenefitsGroup(this.benefits.state[userState], userProfile, results);
       }
