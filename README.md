@@ -1,18 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Atxbro Platform
+
+This repository hosts the main **Next.js** application used for experimental
+visualizations and tools. A secondary project exists in the
+`atxbro-solutions-hub` directory which provides a minimal sandbox for testing
+new ideas. Both projects are based on Next.js.
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+Ensure you have **Node.js 18+** installed along with `npm` (or your preferred
+package manager).
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+### Running the Development Server
+
+Start the Next.js dev server at [http://localhost:3000](http://localhost:3000):
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
+
+You can also use `yarn dev`, `pnpm dev`, or `bun dev` if those managers are
+available.
+
+### Building for Production
+
+Create an optimized production build:
+
+```bash
+npm run build
+npm start
+```
+
+### 3D Planetary View
+
+When the dev server is running, navigating to
+[http://localhost:3000](http://localhost:3000) automatically loads the 3D
+planetary interface. From this view you can orbit around the planets and select
+one of the available services.
+
+### Launching VetNav
+
+Inside the planetary interface choose the **VetNav** service to open the veteran
+benefits navigator. VetNav provides search and filter tools to explore federal
+and state benefits.
+
+## `atxbro-solutions-hub`
+
+The repository also includes a secondary Next.js project located in the
+`atxbro-solutions-hub` folder. It follows the same setup procedure:
+
+```bash
+cd atxbro-solutions-hub
+npm install
+npm run dev
+```
+
+Use this project for quick experiments and prototype features independent of the
+main application.
 
 ## Running Tests
 
