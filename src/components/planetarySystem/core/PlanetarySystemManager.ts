@@ -10,6 +10,9 @@ import { OrbitalElements, OrbitRenderConfig } from '../types/OrbitalTypes';
 import type { PerformanceMetrics } from '../utils/PerformanceMonitor';
 import { OrbitalMechanics, OrbitalState } from '../physics/OrbitalMechanics';
 import { Earth } from '../planets/earth/Earth';
+import { Mars } from '../planets/mars/Mars';
+import { Jupiter } from '../planets/jupiter/Jupiter';
+import { JetsHome } from '../planets/jetshome/JetsHome';
 import { CosmicUIManager } from './CosmicUIManager';
 
 export class PlanetarySystemManager {
@@ -29,6 +32,10 @@ export class PlanetarySystemManager {
   private startTime = Date.now();
   private showOrbits = true;
   private specialPlanets = new Map<string, any>();
+  private earth!: Earth;
+  private mars!: Mars;
+  private jupiter!: Jupiter;
+  private jetsHome!: JetsHome;
   
   constructor(canvas: HTMLCanvasElement) {
     this.scene = new THREE.Scene();
@@ -271,8 +278,8 @@ export class PlanetarySystemManager {
   private async initializePlanet(planetId: string, config: any): Promise<void> {
     if (planetId === 'vetnav') {
       // Create special Earth implementation
-      const earth = new Earth(config.radius);
-      const earthGroup = earth.getGroup();
+      this.earth = new Earth(config.radius);
+      const earthGroup = this.earth.getGroup();
       
       // Create orbital elements
       const orbitalElements = OrbitalMechanics.createOrbitalElements(
@@ -296,11 +303,40 @@ export class PlanetarySystemManager {
         this.orbitRenderer.createOrbitPath(planetId, orbitalElements, color);
       }
 
-      this.specialPlanets.set(planetId, earth);
+      this.specialPlanets.set(planetId, this.earth);
       this.planets.set(planetId, earthGroup);
       this.scene.add(earthGroup);
-      
       console.log(`Initialized special Earth planet at position:`, earthGroup.position);
+    } else if (planetId === 'tariff-explorer') {
+      // Create special Mars implementation
+      this.mars = new Mars(config.radius);
+      const marsGroup = this.mars.getGroup();
+      marsGroup.position.set(8, 0, 0);
+      marsGroup.userData = { planetId, config };
+      this.specialPlanets.set(planetId, this.mars);
+      this.planets.set(planetId, marsGroup);
+      this.scene.add(marsGroup);
+      console.log(`Initialized special Mars planet at position:`, marsGroup.position);
+    } else if (planetId === 'pet-radar') {
+      // Create special Jupiter implementation
+      this.jupiter = new Jupiter(config.radius);
+      const jupiterGroup = this.jupiter.getGroup();
+      jupiterGroup.position.set(20, 0, 0);
+      jupiterGroup.userData = { planetId, config };
+      this.specialPlanets.set(planetId, this.jupiter);
+      this.planets.set(planetId, jupiterGroup);
+      this.scene.add(jupiterGroup);
+      console.log(`Initialized special Jupiter planet at position:`, jupiterGroup.position);
+    } else if (planetId === 'jetshome') {
+      // Create special JetsHome implementation
+      this.jetsHome = new JetsHome(config.radius);
+      const jetsHomeGroup = this.jetsHome.getGroup();
+      jetsHomeGroup.position.set(-6, 0, 0);
+      jetsHomeGroup.userData = { planetId, config };
+      this.specialPlanets.set(planetId, this.jetsHome);
+      this.planets.set(planetId, jetsHomeGroup);
+      this.scene.add(jetsHomeGroup);
+      console.log(`Initialized special JetsHome planet at position:`, jetsHomeGroup.position);
     } else {
       // Use standard planet creation for other planets
       const planetLOD = this.lodManager.createPlanetLOD(config.radius, 4);
@@ -383,7 +419,7 @@ export class PlanetarySystemManager {
         
         if (this.specialPlanets.has(planetId)) {
           const specialPlanet = this.specialPlanets.get(planetId);
-          if (planetId === 'vetnav' && specialPlanet instanceof Earth) {
+          if (typeof specialPlanet.update === 'function') {
             specialPlanet.update(time, sunDirection);
           }
         } else {
