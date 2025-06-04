@@ -2,7 +2,7 @@
 import VetNav from '../components/VetNav';
 import JetsStats from '../components/JetsStats';
 import Landing3D from '../components/Landing3D';
-import { useState, useEffect, useRef, useCallback } from 'react';
+import React from 'react';
 import { ArrowLeft, ShieldCheck, BarChart3, PawPrint, TrendingUp } from 'lucide-react';
 import { useGestureProfiler } from '../hooks/useGestureProfiler';
 

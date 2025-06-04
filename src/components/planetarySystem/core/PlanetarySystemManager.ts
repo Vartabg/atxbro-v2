@@ -244,13 +244,7 @@ export class PlanetarySystemManager {
     try {
       console.log('Starting planetary system initialization...');
       
-      // Add a simple test object to verify rendering works
-      const testGeometry = new THREE.BoxGeometry(1, 1, 1);
-      const testMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-      const testCube = new THREE.Mesh(testGeometry, testMaterial);
-      testCube.position.set(0, 0, 0);
-      this.scene.add(testCube);
-      console.log('Added test cube to scene');
+      // Test cube removed for cosmic design
 
       // Initialize each planet
       let planetCount = 0;
@@ -691,4 +685,85 @@ export class PlanetarySystemManager {
     }
     
     return group;
+  
+  // Cosmic Phenomena Creation Methods
+  private createAsteroidField(radius: number, color: number): THREE.Group {
+    const group = new THREE.Group();
+    const asteroidCount = 50;
+    
+    for (let i = 0; i < asteroidCount; i++) {
+      const asteroidGeo = new THREE.DodecahedronGeometry(radius * (0.1 + Math.random() * 0.3), 0);
+      const asteroidMat = new THREE.MeshLambertMaterial({ 
+        color: color,
+        wireframe: Math.random() > 0.7 
+      });
+      const asteroid = new THREE.Mesh(asteroidGeo, asteroidMat);
+      
+      const phi = Math.acos(-1 + (2 * i) / asteroidCount);
+      const theta = Math.sqrt(asteroidCount * Math.PI) * phi;
+      const r = radius * 2 * (0.8 + Math.random() * 0.4);
+      
+      asteroid.position.setFromSphericalCoords(r, phi, theta);
+      asteroid.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+      group.add(asteroid);
+    }
+    return group;
   }
+
+  private createNebulaCluster(radius: number, color: number): THREE.Group {
+    const group = new THREE.Group();
+    const cloudCount = 20;
+    
+    for (let i = 0; i < cloudCount; i++) {
+      const cloudGeo = new THREE.SphereGeometry(radius * (0.5 + Math.random() * 1.5), 8, 6);
+      const cloudMat = new THREE.MeshLambertMaterial({ 
+        color: color,
+        transparent: true,
+        opacity: 0.3 + Math.random() * 0.4,
+        wireframe: true
+      });
+      const cloud = new THREE.Mesh(cloudGeo, cloudMat);
+      
+      cloud.position.set(
+        (Math.random() - 0.5) * radius * 6,
+        (Math.random() - 0.5) * radius * 6,
+        (Math.random() - 0.5) * radius * 6
+      );
+      group.add(cloud);
+    }
+    return group;
+  }
+
+  private createStationNetwork(radius: number, color: number): THREE.Group {
+    const group = new THREE.Group();
+    const stationCount = 8;
+    
+    for (let i = 0; i < stationCount; i++) {
+      const stationGeo = new THREE.BoxGeometry(radius * 0.3, radius * 0.8, radius * 0.3);
+      const stationMat = new THREE.MeshLambertMaterial({ 
+        color: color,
+        wireframe: i % 2 === 0
+      });
+      const station = new THREE.Mesh(stationGeo, stationMat);
+      
+      const angle = (i / stationCount) * Math.PI * 2;
+      station.position.set(
+        Math.cos(angle) * radius * 2,
+        (Math.random() - 0.5) * radius,
+        Math.sin(angle) * radius * 2
+      );
+      
+      if (i > 0) {
+        const lineGeo = new THREE.BufferGeometry().setFromPoints([
+          group.children[i-1].position,
+          station.position
+        ]);
+        const lineMat = new THREE.LineBasicMaterial({ color: color, opacity: 0.5, transparent: true });
+        const line = new THREE.Line(lineGeo, lineMat);
+        group.add(line);
+      }
+      group.add(station);
+    }
+    return group;
+  }
+}
