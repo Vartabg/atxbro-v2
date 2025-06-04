@@ -25,7 +25,8 @@ export default function PDFExportModal({ userProfile, benefits, isVisible, onClo
       
       const link = document.createElement('a');
       link.href = url;
-      link.download = VetNav-Benefits-Report-.pdf;
+      const timestamp = new Date().toISOString().split('T')[0];
+      link.download = `VetNav-Benefits-Report-${timestamp}.pdf`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
