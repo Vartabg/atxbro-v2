@@ -50,7 +50,7 @@ export class VetNavPDFExporter {
     
     this.doc.setFontSize(12);
     this.doc.setFont('helvetica', 'normal');
-    this.doc.text(Generated: , 20, 40);
+    this.doc.text(`Generated: ${new Date().toLocaleDateString()}`, 20, 40);
     
     this.doc.setDrawColor(0, 123, 255);
     this.doc.line(20, 45, 190, 45);
@@ -68,12 +68,12 @@ export class VetNavPDFExporter {
     this.doc.setFont('helvetica', 'normal');
     
     const profileText = [
-      Service Branch: ,
-      Years of Service: ,
-      Discharge Status: ,
-      Combat Veteran: ,
-      State: ,
-      Dependents: 
+      `Service Branch: ${profile.serviceInfo.branch}`,
+      `Years of Service: ${profile.serviceInfo.serviceYears}`,
+      `Discharge Status: ${profile.serviceInfo.dischargeStatus}`,
+      `Combat Veteran: ${profile.serviceInfo.combatVeteran ? 'Yes' : 'No'}`,
+      `State: ${profile.demographics.state}`,
+      `Dependents: ${profile.demographics.dependents}`
     ];
 
     profileText.forEach(text => {
@@ -99,14 +99,14 @@ export class VetNavPDFExporter {
       
       this.doc.setFontSize(14);
       this.doc.setFont('helvetica', 'bold');
-      this.doc.text(${index + 1}. , 20, yPos);
+      this.doc.text(`${index + 1}. ${benefit.title}`, 20, yPos);
       
       yPos += 10;
       
       this.doc.setFontSize(10);
       this.doc.setFont('helvetica', 'normal');
       this.doc.setTextColor(0, 150, 0);
-      this.doc.text(${benefit.eligibilityMatch}% Match, 20, yPos);
+      this.doc.text(`${benefit.eligibilityMatch}% Match`, 20, yPos);
       this.doc.setTextColor(0, 0, 0);
       
       yPos += 8;
@@ -118,8 +118,8 @@ export class VetNavPDFExporter {
       
       yPos += 5;
       this.doc.setFont('helvetica', 'bold');
-      this.doc.text(Processing: , 20, yPos);
-      this.doc.text(Est. Value: , 110, yPos);
+      this.doc.text(`Processing: ${benefit.processingTime}`, 20, yPos);
+      this.doc.text(`Est. Value: ${benefit.estimatedValue}`, 110, yPos);
       
       yPos += 15;
     });
@@ -143,14 +143,14 @@ export class VetNavPDFExporter {
       
       this.doc.setFontSize(14);
       this.doc.setFont('helvetica', 'bold');
-      this.doc.text(${benefit.title}:, 20, yPos);
+      this.doc.text(`${benefit.title}:`, 20, yPos);
       yPos += 12;
       
       this.doc.setFontSize(11);
       this.doc.setFont('helvetica', 'normal');
       
       benefit.nextSteps.forEach(step => {
-        this.doc.text(• , 25, yPos);
+        this.doc.text(`• ${step}`, 25, yPos);
         yPos += 8;
       });
       
@@ -161,7 +161,7 @@ export class VetNavPDFExporter {
       
       this.doc.setFont('helvetica', 'normal');
       benefit.requiredDocuments.forEach(doc => {
-        this.doc.text(• , 30, yPos);
+        this.doc.text(`• ${doc}`, 30, yPos);
         yPos += 6;
       });
       
