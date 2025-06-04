@@ -10,9 +10,9 @@ import { OrbitalElements, OrbitRenderConfig } from '../types/OrbitalTypes';
 import type { PerformanceMetrics } from '../utils/PerformanceMonitor';
 import { OrbitalMechanics, OrbitalState } from '../physics/OrbitalMechanics';
 import { Earth } from '../planets/earth/Earth';
-// Mars - will be cosmic phenomenon
-// Jupiter - will be cosmic phenomenon
-// JetsHome - will be cosmic phenomenon
+import { Mars } from '../planets/mars/Mars';
+import { Jupiter } from '../planets/jupiter/Jupiter';
+import { JetsHome } from '../planets/jetshome/JetsHome';
 import { CosmicUIManager } from './CosmicUIManager';
 
 export class PlanetarySystemManager {

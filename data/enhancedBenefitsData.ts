@@ -1,4 +1,4 @@
-﻿// Enhanced benefits data based on research
+// Enhanced benefits data based on research
 export const enhancedBenefitsData = {
   eligibilityMyths: [
     {
