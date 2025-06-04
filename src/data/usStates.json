@@ -1,0 +1,53 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": { "name": "California", "id": "CA", "benefits": 145 },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-124.409591, 32.534156], [-114.131211, 32.534156],
+          [-114.131211, 42.009518], [-124.409591, 42.009518],
+          [-124.409591, 32.534156]
+        ]]
+      }
+    },
+    {
+      "type": "Feature", 
+      "properties": { "name": "Texas", "id": "TX", "benefits": 167 },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-106.645646, 25.837164], [-93.508292, 25.837164],
+          [-93.508292, 36.500704], [-106.645646, 36.500704],
+          [-106.645646, 25.837164]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "New York", "id": "NY", "benefits": 189 },
+      "geometry": {
+        "type": "Polygon", 
+        "coordinates": [[
+          [-79.762152, 40.477399], [-71.777491, 40.477399],
+          [-71.777491, 45.015865], [-79.762152, 45.015865],
+          [-79.762152, 40.477399]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Florida", "id": "FL", "benefits": 134 },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-87.634896, 24.396308], [-79.974306, 24.396308],
+          [-79.974306, 31.000888], [-87.634896, 31.000888],
+          [-87.634896, 24.396308]
+        ]]
+      }
+    }
+  ]
+}
