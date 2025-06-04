@@ -125,7 +125,11 @@ export default function VetNav() {
                       <button
                         key={tab.id}
                         onClick={() => setActiveEducationTab(tab.id)}
-                        className={px-4 py-2 rounded-md transition-all }
+                        className={`px-4 py-2 rounded-md transition-all ${
+                          activeEducationTab === tab.id
+                            ? "bg-white text-blue-700"
+                            : "hover:bg-white/20"
+                        }`}
                       >
                         {tab.label}
                       </button>
