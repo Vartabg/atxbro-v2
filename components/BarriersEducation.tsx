@@ -20,7 +20,7 @@ export default function BarriersEducation() {
               <button
                 key={index}
                 onClick={() => setActiveBarrier(index)}
-                className={w-full text-left p-4 rounded-lg transition-all }
+                className="w-full text-left p-4 rounded-lg transition-all"
               >
                 <h3 className="font-semibold">{barrier.barrier}</h3>
                 <p className="text-sm opacity-80 mt-1">{barrier.description}</p>

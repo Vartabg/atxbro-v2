@@ -456,8 +456,8 @@ export default function Home() {
                 {getPersonalizedCTA().text}
               </button>
             </div>
-          </div>        {/* Jets Stats Section */}
-        {currentSection === 9 ? (
+          </div>
+        ) : currentSection === 9 ? (
           <JetsStats />
         ) : currentSection === 10 ? (
           <div className="space-y-8 w-full max-w-4xl">
@@ -496,8 +496,6 @@ export default function Home() {
               </div>
             </div>
           </div>
-        ) : (
-
         ) : (
           <>
             <div 
