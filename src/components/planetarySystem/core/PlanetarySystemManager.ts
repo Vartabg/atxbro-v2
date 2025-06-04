@@ -9,7 +9,7 @@ import { OrbitRenderer } from '../physics/OrbitRenderer';
 import { OrbitalElements, OrbitRenderConfig } from '../types/OrbitalTypes';
 import type { PerformanceMetrics } from '../utils/PerformanceMonitor';
 import { OrbitalMechanics, OrbitalState } from '../physics/OrbitalMechanics';
-import { Earth } from '../planets/earth/Earth';
+import { Earth } from '../planets/earth';
 import { Mars } from '../planets/mars/Mars';
 import { Jupiter } from '../planets/jupiter/Jupiter';
 import { JetsHome } from '../planets/jetshome/JetsHome';
