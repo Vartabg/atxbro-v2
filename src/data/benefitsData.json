@@ -1,0 +1,125 @@
+{
+  "CA": {
+    "state": "California",
+    "totalBenefits": 145,
+    "categories": [
+      {
+        "name": "Healthcare",
+        "count": 45,
+        "description": "VA medical centers, mental health services, telehealth",
+        "keyBenefits": ["VA Medical Centers", "Mental Health Programs", "Telehealth Services", "Prescription Coverage"]
+      },
+      {
+        "name": "Education",
+        "count": 38,
+        "description": "GI Bill programs, vocational training, apprenticeships",
+        "keyBenefits": ["Post-9/11 GI Bill", "Vocational Rehabilitation", "Yellow Ribbon Program", "Work-Study Programs"]
+      },
+      {
+        "name": "Disability",
+        "count": 32,
+        "description": "Disability compensation, vocational rehabilitation",
+        "keyBenefits": ["Disability Compensation", "Individual Unemployability", "Special Monthly Compensation", "Adaptive Equipment"]
+      },
+      {
+        "name": "Housing",
+        "count": 18,
+        "description": "Home loans, housing assistance, homeless prevention",
+        "keyBenefits": ["VA Home Loans", "Adaptive Housing Grants", "Homeless Prevention", "Housing Vouchers"]
+      },
+      {
+        "name": "Employment",
+        "count": 12,
+        "description": "Career counseling, job placement, federal hiring preference",
+        "keyBenefits": ["VR&E Program", "Federal Hiring Preference", "Career Counseling", "Apprenticeship Programs"]
+      }
+    ],
+    "resources": [
+      { "name": "West LA VA Medical Center", "address": "11301 Wilshire Blvd, Los Angeles, CA 90073", "phone": "(310) 478-3711" },
+      { "name": "Long Beach VA Medical Center", "address": "5901 E 7th St, Long Beach, CA 90822", "phone": "(562) 826-8000" },
+      { "name": "San Francisco VA Medical Center", "address": "4150 Clement St, San Francisco, CA 94121", "phone": "(415) 221-4810" }
+    ]
+  },
+  "TX": {
+    "state": "Texas", 
+    "totalBenefits": 167,
+    "categories": [
+      {
+        "name": "Healthcare",
+        "count": 52,
+        "description": "Extensive VA medical network, specialized care",
+        "keyBenefits": ["VA Medical Centers", "Community Living Centers", "PTSD Programs", "Women Veterans Health"]
+      },
+      {
+        "name": "Education",
+        "count": 41,
+        "description": "Strong GI Bill programs, state-specific benefits",
+        "keyBenefits": ["Hazlewood Act", "Post-9/11 GI Bill", "Texas Veterans Education", "Skills Training"]
+      },
+      {
+        "name": "Disability",
+        "count": 35,
+        "description": "Comprehensive disability services",
+        "keyBenefits": ["Disability Compensation", "Texas Veterans Commission", "Vocational Rehabilitation", "Adaptive Sports"]
+      },
+      {
+        "name": "Housing",
+        "count": 23,
+        "description": "Texas Veterans Land Board programs",
+        "keyBenefits": ["Veterans Land Program", "VA Home Loans", "Housing for Homeless Veterans", "Property Tax Exemptions"]
+      },
+      {
+        "name": "Employment",
+        "count": 16,
+        "description": "Strong veteran employment initiatives",
+        "keyBenefits": ["Texas Veterans Commission", "Skills2Work", "Hiring Red White & You", "Entrepreneurship Programs"]
+      }
+    ],
+    "resources": [
+      { "name": "Michael E. DeBakey VA Medical Center", "address": "2002 Holcombe Blvd, Houston, TX 77030", "phone": "(713) 791-1414" },
+      { "name": "South Texas Veterans Health Care System", "address": "7400 Merton Minter Blvd, San Antonio, TX 78229", "phone": "(210) 617-5300" },
+      { "name": "Dallas VA Medical Center", "address": "4500 S Lancaster Rd, Dallas, TX 75216", "phone": "(214) 742-8387" }
+    ]
+  },
+  "NY": {
+    "state": "New York",
+    "totalBenefits": 189,
+    "categories": [
+      {
+        "name": "Healthcare",
+        "count": 58,
+        "description": "Premier VA healthcare facilities",
+        "keyBenefits": ["James J. Peters VA Medical Center", "Northport VA Medical Center", "Mental Health Services", "Specialty Care"]
+      },
+      {
+        "name": "Education", 
+        "count": 45,
+        "description": "Excellent education benefits and programs",
+        "keyBenefits": ["Veterans Tuition Awards", "Post-9/11 GI Bill", "Yellow Ribbon Program", "SUNY Veterans Benefits"]
+      },
+      {
+        "name": "Disability",
+        "count": 42,
+        "description": "Comprehensive disability support",
+        "keyBenefits": ["Disability Compensation", "Individual Unemployability", "Blind Veterans Services", "Prosthetics"]
+      },
+      {
+        "name": "Housing",
+        "count": 26,
+        "description": "Housing assistance and homeless services",
+        "keyBenefits": ["SSVF Program", "VA Home Loans", "HUD-VASH Vouchers", "Transitional Housing"]
+      },
+      {
+        "name": "Employment",
+        "count": 18,
+        "description": "Strong employment and training programs", 
+        "keyBenefits": ["VR&E Program", "Civil Service Preference", "DVOP Services", "Veterans Business Outreach"]
+      }
+    ],
+    "resources": [
+      { "name": "James J. Peters VA Medical Center", "address": "130 W Kingsbridge Rd, Bronx, NY 10468", "phone": "(718) 584-9000" },
+      { "name": "Northport VA Medical Center", "address": "79 Middleville Rd, Northport, NY 11768", "phone": "(631) 261-4400" },
+      { "name": "Buffalo VA Medical Center", "address": "3495 Bailey Ave, Buffalo, NY 14215", "phone": "(716) 834-9200" }
+    ]
+  }
+}
