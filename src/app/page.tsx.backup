@@ -2,25 +2,14 @@
 import VetNav from '../components/VetNav';
 import JetsStats from '../components/JetsStats';
 import Landing3D from '../components/Landing3D';
-import Landing3DMobile from "../components/Landing3DMobile";
 import PetRadar from '../components/PetRadar';
 import TariffExplorer from '../components/TariffExplorer';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { ArrowLeft, ShieldCheck, BarChart3, PawPrint, TrendingUp } from 'lucide-react';
 import { useGestureProfiler } from '../hooks/useGestureProfiler';
 
 export default function Home() {
   const [currentView, setCurrentView] = useState('landing3d');
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768);
-    };
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
   const { profile } = useGestureProfiler();
 
   const services = [
@@ -128,7 +117,7 @@ export default function Home() {
         style={{ touchAction: 'none' }} 
       >
         {currentView === 'landing3d' ? 
-          isMobile ? <Landing3DMobile services={services} setCurrentView={setCurrentView} /> : <Landing3D services={services} setCurrentView={setCurrentView} /> : 
+          <Landing3D services={services} setCurrentView={setCurrentView} /> : 
           renderServiceView()
         }
         
