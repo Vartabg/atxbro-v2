@@ -2339,7 +2339,8 @@ export default function Landing3D() {
                 maxPolarAngle={Math.PI / 2}
                 minPolarAngle={Math.PI / 3}
               />
-              <ambientLight intensity={0.5} />
+              <ambientLight intensity={0.8} />
+              <directionalLight position={[10, 10, 10]} intensity={1.5} />
               <pointLight position={[10, 10, 10]} />
             </Suspense>
           </Canvas>

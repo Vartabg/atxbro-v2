@@ -128,7 +128,7 @@ export default function Home() {
         style={{ touchAction: 'none' }} 
       >
         {currentView === 'landing3d' ? 
-          isMobile ? <Landing3DMobile services={services} setCurrentView={setCurrentView} /> : <Landing3D services={services} setCurrentView={setCurrentView} /> : 
+          isMobile ? <Landing3DMobile /> : <Landing3D /> : 
           renderServiceView()
         }
         
