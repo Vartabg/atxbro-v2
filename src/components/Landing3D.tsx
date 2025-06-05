@@ -666,6 +666,9 @@ function ConsequenceRipple({ consequence, onInteract }: { consequence: Consequen
   
   useEffect(() => {
     setIsRippleActive(true);
+  return () => {
+    setIsRippleActive(false);
+  };
   }, []);
   
   return (
@@ -1103,8 +1106,17 @@ function ConsequenceNetwork({ network, portalTilt }: { network: any, portalTilt:
 
 function CrossPortalEffect({ sourceService, targetService, influence }: { sourceService: Service, targetService: Service, influence: any }) {
   const effectRef = useRef<THREE.Group | null>(null);
+  const animationActive = useRef(true);
+
+  useEffect(() => {
+    animationActive.current = true;
+    return () => {
+      animationActive.current = false;
+    };
+  }, []);
   
   useFrame((state) => {
+    if (!animationActive.current) return;
     if (effectRef.current) {
       const time = state.clock.elapsedTime;
       effectRef.current.rotation.z = time * 0.5;
@@ -1289,9 +1301,27 @@ function QuantumPortalField({ services, activePortal, onQuantumCollapse }: {
     }));
     setQuantumParticles(particles);
   }, []);
+
+    return () => {
+      setQuantumParticles([]);
+    };
   
   // Quantum field animation
+  useEffect(() => {
+  const animationActive = useRef(true);
+
+  useEffect(() => {
+    animationActive.current = true;
+    return () => {
+      animationActive.current = false;
+    };
+  }, []);
+    return () => {
+      // Cleanup animation when component unmounts
+    };
+  }, []);
   useFrame((state) => {
+    if (!animationActive.current) return;
     if (fieldRef.current) {
       const time = state.clock.elapsedTime;
       
@@ -1506,6 +1536,14 @@ function PredictiveInteractionField({ predictions, services, onPredictionRealize
 // Reality distortion field component
 function RealityDistortionField({ 
   distortionLevel, 
+  const animationActive = useRef(true);
+
+  useEffect(() => {
+    animationActive.current = true;
+    return () => {
+      animationActive.current = false;
+    };
+  }, []);
   gravityWells, 
   quantumTunnels 
 }: { 
@@ -1516,6 +1554,7 @@ function RealityDistortionField({
   const fieldRef = useRef<THREE.Group>(null);
   
   useFrame((state) => {
+    if (!animationActive.current) return;
     if (fieldRef.current) {
       const time = state.clock.elapsedTime;
       
@@ -1637,6 +1676,7 @@ function QuantumEntanglementEffect({ sourcePortal, targetPortal, entanglement }:
   const effectRef = useRef<THREE.Group | null>(null);
   
   useFrame((state) => {
+    if (!animationActive.current) return;
     if (effectRef.current) {
       const time = state.clock.elapsedTime;
       effectRef.current.rotation.z = time * entanglement.resonance * 0.1;
@@ -1893,6 +1933,9 @@ export default function Landing3D() {
   useEffect(() => {
     setIsMounted(true);
   }, []);
+    return () => {
+      setIsMounted(false);
+    };
 
   // Device orientation effect
   useEffect(() => {
@@ -1927,6 +1970,14 @@ export default function Landing3D() {
       nodes,
       synapses
     }));
+
+    return () => {
+      setNeuralNetwork(prev => ({
+        ...prev,
+        nodes: new Map(),
+        synapses: []
+      }));
+    };
     
     // Initialize portal consciousness
     const consciousness = new Map<string, PortalConsciousnessData>();
