@@ -456,7 +456,7 @@ export default function Home() {
                 {getPersonalizedCTA().text}
               </button>
             </div>
-          </div>        {/* Jets Stats Section */}
+          </div>        {/* Jets Stats Section */})
         {currentSection === 9 ? (
           <JetsStats />
         ) : currentSection === 10 ? (

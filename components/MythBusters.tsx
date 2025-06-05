@@ -6,7 +6,7 @@ export default function MythBusters() {
     <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 mb-12">
       <h2 className="text-2xl font-bold mb-6 text-center">Common Myths Debunked</h2>
       <p className="text-blue-200 text-center mb-8">
-        Don't let misinformation prevent you from getting benefits you've earned
+        Don&apos;t let misinformation prevent you from getting benefits you&apos;ve earned
       </p>
       
       <div className="grid lg:grid-cols-2 gap-6">
