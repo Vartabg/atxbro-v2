@@ -2,7 +2,9 @@
 import VetNav from '../components/VetNav';
 import JetsStats from '../components/JetsStats';
 import Landing3D from '../components/Landing3D';
-import React from 'react';
+import PetRadar from '../components/PetRadar';
+import TariffExplorer from '../components/TariffExplorer';
+import React, { useState } from 'react';
 import { ArrowLeft, ShieldCheck, BarChart3, PawPrint, TrendingUp } from 'lucide-react';
 import { useGestureProfiler } from '../hooks/useGestureProfiler';
 
@@ -22,8 +24,8 @@ export default function Home() {
     },
     {
       id: 'jets-stats',
-      title: 'Jets Analytics',
-      subtitle: 'Team Statistics',
+      title: 'JetsHome',
+      subtitle: 'Sports Analytics',
       position3D: [3, 2, 0] as [number, number, number],
       color: 'from-green-600 to-green-800',
       icon: BarChart3,
