@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import VetNav from '../components/VetNav';
 import JetsStats from '../components/JetsStats';
 import Landing3D from '../components/Landing3D';
@@ -104,13 +104,13 @@ export default function Home() {
                 <p className="text-lg md:text-xl text-purple-200 mb-8">Interactive Economic Analysis Dashboard</p>
                 <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 md:p-8">
                   <div className="grid md:grid-cols-2 gap-6">
-                    <div className="bg-black/20 p-4 rounded-lg"> 
-                      <h3 className="text-lg font-bold mb-2 text-purple-200">Historical Tariff Rates</h3> 
-                      <p className="text-purple-300 text-sm">Analyze trade policy impacts over time.</p> 
+                    <div className="bg-black/20 p-4 rounded-lg">
+                      <h3 className="text-lg font-bold mb-2 text-purple-200">Historical Tariff Rates</h3>
+                      <p className="text-purple-300 text-sm">Analyze trade policy impacts over time.</p>
                     </div>
-                    <div className="bg-black/20 p-4 rounded-lg"> 
-                      <h3 className="text-lg font-bold mb-2 text-purple-200">Economic Indicators</h3> 
-                      <p className="text-purple-300 text-sm">GDP, employment, and trade correlations.</p> 
+                    <div className="bg-black/20 p-4 rounded-lg">
+                      <h3 className="text-lg font-bold mb-2 text-purple-200">Economic Indicators</h3>
+                      <p className="text-purple-300 text-sm">GDP, employment, and trade correlations.</p>
                     </div>
                   </div>
                   <button className="mt-6 w-full p-4 bg-purple-500 hover:bg-purple-600 rounded-lg text-white font-bold transition-colors"> Explore Trade Data </button>
@@ -125,15 +125,15 @@ export default function Home() {
 
   return (
     <main className="font-sans antialiased">
-      <div 
+      <div
         className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-800 relative overflow-hidden"
-        style={{ touchAction: 'none' }} 
+        style={{ touchAction: 'none' }}
       >
-        {currentView === 'landing3d' ? 
-          <Landing3D onNavigate={handleViewChange} /> : 
+        {currentView === 'landing3d' ?
+          <Landing3D onNavigate={handleViewChange} /> :
           renderServiceView()
         }
-        
+
         {profile && profile.personality !== 'default' && (
           <div className="fixed top-4 right-4 bg-black/70 text-white p-3 rounded-lg text-xs z-50 shadow-xl">
             <div>Gesture Profile: <span className="font-semibold text-blue-300">{profile.personality}</span></div>

@@ -1,8 +1,5 @@
 "use client";
 import React, { useState, useRef, Suspense } from 'react';
-import { SimpleStarField } from "./SimpleCosmicBackground";
-import { EnhancedPlanet } from "./SafePlanets";
-import { EnhancedPlanet } from "./SafePlanets";
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Sphere, Torus, Cylinder, Html, RoundedBox } from '@react-three/drei';
 import { ShieldCheck, BarChart3, PawPrint, TrendingUp } from 'lucide-react';
@@ -195,7 +192,6 @@ export default function Landing3D({ onNavigate }: Landing3DProps) {
               <span style={{color: 'white'}}>Loading 3D Experience...</span>
             </Html>
           }>
-          <SimpleStarField />
             <ambientLight intensity={0.8} />
             <pointLight position={[10, 10, 10]} intensity={1.5} />
             <directionalLight position={[-5, 5, 5]} intensity={1} color="lightblue" />

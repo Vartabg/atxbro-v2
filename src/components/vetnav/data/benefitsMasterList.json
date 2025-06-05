@@ -1,0 +1,69 @@
+[
+  {
+    "id": "va_health_care",
+    "title": "VA Health Care",
+    "level": "federal",
+    "state": null,
+    "category": "Health",
+    "description": "The VA provides comprehensive medical care to eligible veterans through VA hospitals and clinics nationwide. Services include preventative care, outpatient services, hospital care, medications, and mental health services.",
+    "eligibility": [
+      "Must have served in the active military, naval, or air service",
+      "Must have been discharged under other than dishonorable conditions",
+      "Minimum duty requirements may apply depending on when you served"
+    ],
+    "application": {
+      "url": "https://www.va.gov/health-care/apply/application/introduction",
+      "instructions": "Complete VA Form 10-10EZ online or at your local VA medical center. You can also call 1-877-222-VETS (8387) for assistance."
+    },
+    "source": "https://www.va.gov/health-care/eligibility/",
+    "tags": ["health", "medical", "primary_care", "hospital", "medication"],
+    "priority": "high",
+    "underutilized": true,
+    "underutilizedReason": "Many Veterans are unaware they qualify for VA health care benefits, even without service-connected disabilities."
+  },
+  {
+    "id": "va_disability_compensation",
+    "title": "VA Disability Compensation",
+    "level": "federal",
+    "state": null,
+    "category": "Financial",
+    "description": "Tax-free monthly payment for veterans with disabilities that are the result of a disease or injury incurred or aggravated during active military service. The benefit amount depends on your assigned disability rating (0%-100%) and number of dependents.",
+    "eligibility": [
+      "Have a current physical or mental disability",
+      "Have an injury or disease that began during active duty or was made worse by active military service",
+      "Have a disability that is connected to your military service",
+      "Discharge status must not be dishonorable"
+    ],
+    "application": {
+      "url": "https://www.va.gov/disability/how-to-file-claim/",
+      "instructions": "File a claim online through VA.gov, by mail using VA Form 21-526EZ, in person at a VA regional office, or with the help of a trained Veterans Service Officer (VSO)."
+    },
+    "source": "https://www.va.gov/disability/",
+    "tags": ["disability", "compensation", "financial", "service_connected", "monthly_payment"],
+    "priority": "critical",
+    "underutilized": false,
+    "underutilizedReason": null
+  },
+  {
+    "id": "post_911_gi_bill",
+    "title": "Post-9/11 GI Bill",
+    "level": "federal",
+    "state": null,
+    "category": "Education",
+    "description": "The Post-9/11 GI Bill provides financial support for education and housing to individuals with at least 90 days of aggregate service after September 10, 2001, or individuals discharged with a service-connected disability after 30 days.",
+    "eligibility": [
+      "Served at least 90 days of active duty service after Sept. 10, 2001",
+      "Honorably discharged",
+      "Different benefit levels based on length of service"
+    ],
+    "application": {
+      "url": "https://www.va.gov/education/how-to-apply/",
+      "instructions": "Apply online through VA.gov or by submitting VA Form 22-1990."
+    },
+    "source": "https://www.va.gov/education/about-gi-bill-benefits/post-9-11/",
+    "tags": ["education", "tuition", "housing", "books", "college", "university", "training"],
+    "priority": "high",
+    "underutilized": false,
+    "underutilizedReason": null
+  }
+]
