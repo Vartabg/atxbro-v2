@@ -2197,8 +2197,8 @@ export default function Landing3D() {
         <div className="w-full h-full">
           <Canvas
             camera={{ 
-              position: [0, 0, viewport.aspect < 1 ? 16 : 12],
-              fov: viewport.aspect < 1 ? 70 : 55
+              position: [0, 0, viewport.aspect < 1 ? 14 : 11],
+              fov: viewport.aspect < 1 ? 65 : 50
             }}
             className="w-full h-full"
             onCreated={({ gl }) => {
