@@ -2,7 +2,7 @@
 import dynamic from 'next/dynamic';
 import { Suspense } from 'react';
 
-const DeckGlMapWithNoSSR = dynamic(() => import('../../components/deckGlMap'), {
+const DeckGlMapWithNoSSR = dynamic(() => import('../../components/vetnav/DeckGlMap'), {
   ssr: false,
   loading: () => (
     <div style={{
