@@ -1,3 +1,4 @@
+"use client";
 ﻿"use client";
 import { useState } from 'react';
 import { enhancedBenefitsData } from '../data/enhancedBenefitsData';

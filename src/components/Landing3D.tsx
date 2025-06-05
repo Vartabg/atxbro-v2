@@ -1003,11 +1003,11 @@ function PetRadarInterface({ visible, progress }: AppInterfaceProps) {
 function JetsHomeInterface({ visible, progress }: AppInterfaceProps) {
   if (!visible) return null;
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-amber-900 to-orange-700 z-50" style={{ opacity: progress, transform: `scale(${0.8 + progress * 0.2})` }}>
+    <div className="fixed inset-0 bg-gradient-to-br from-emerald-900 to-green-700 z-50" style={{ opacity: progress, transform: `scale(${0.8 + progress * 0.2})` }}>
       <div className="flex items-center justify-center h-full text-white">
         <div className="text-center">
-          <h1 className="text-4xl font-bold mb-4">Fundraiser Platform</h1>
-          <p className="text-xl mb-8">Support meaningful causes</p>
+          <h1 className="text-4xl font-bold mb-4">JetsHome Sports Analytics</h1>
+          <p className="text-xl mb-8">Track Jets performance and stats</p>
           <button onClick={() => window.location.reload()} className="bg-green-600 hover:bg-green-700 px-6 py-3 rounded-lg">Back to Portal</button>
         </div>
       </div>

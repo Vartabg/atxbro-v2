@@ -1,5 +1,5 @@
 ﻿"use client";
-import { enhancedBenefitsData } from '../data/enhancedBenefitsData';
+import { enhancedBenefitsData } from '../../data/enhancedBenefitsData';
 
 export default function ProcessingTimeline() {
   return (
