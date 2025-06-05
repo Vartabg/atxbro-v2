@@ -1,17 +1,51 @@
-﻿"use client";
-import { useState } from 'react';
+"use client";
+import { useState, ComponentType } from 'react';
 import PDFExportModal from './PDFExportModal';
 import MythBusters from './MythBusters';
 import BarriersEducation from './BarriersEducation';
 import ProcessingTimeline from './ProcessingTimeline';
 
+// Define interfaces for better type safety
+interface UserProfile {
+  serviceInfo: {
+    branch: string;
+    serviceYears: string;
+    dischargeStatus: string;
+    combatVeteran: boolean;
+  };
+  demographics: {
+    age: number;
+    state: string;
+    dependents: number;
+  };
+  disabilities: string[];
+}
+
+interface Benefit {
+  id: string;
+  title: string;
+  description: string;
+  processing: string;
+  eligibilityMatch: number;
+  nextSteps: string[];
+  requiredDocuments: string[];
+  estimatedValue: string;
+  keyFacts: string[];
+}
+
+interface EducationTab {
+  id: string;
+  label: string;
+  component: ComponentType<any>;
+}
+
 export default function VetNav() {
   const [currentStep, setCurrentStep] = useState('welcome');
   const [showPDFModal, setShowPDFModal] = useState(false);
-  const [userProfile, setUserProfile] = useState(null);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [activeEducationTab, setActiveEducationTab] = useState('myths');
 
-  const benefits = [
+  const benefits: Benefit[] = [
     {
       id: "va-healthcare",
       title: "VA Health Care",
@@ -30,7 +64,7 @@ export default function VetNav() {
         "Insurance information (if applicable)",
         "Income verification documents"
       ],
-      estimatedValue: ",000-,000/year",
+      estimatedValue: "$15,000-$50,000/year",
       keyFacts: [
         "No time limit after discharge to apply",
         "Income affects priority group, not eligibility",
@@ -56,7 +90,7 @@ export default function VetNav() {
         "Nexus letter linking condition to service",
         "Buddy statements from fellow service members"
       ],
-      estimatedValue: "-,500/month",
+      estimatedValue: "$1,500-$3,500/month",
       keyFacts: [
         "Covers both physical and mental health conditions",
         "No time limit to file initial claim",
@@ -81,7 +115,7 @@ export default function VetNav() {
         "School enrollment verification",
         "Transfer paperwork (if applicable)"
       ],
-      estimatedValue: ",000-,000 total",
+      estimatedValue: "$100,000-$200,000 total",
       keyFacts: [
         "36 months of benefits for qualifying service",
         "Housing allowance varies by location",
@@ -90,12 +124,12 @@ export default function VetNav() {
     }
   ];
 
-  const handleScreeningComplete = (profileData) => {
+  const handleScreeningComplete = (profileData: UserProfile) => {
     setUserProfile(profileData);
     setCurrentStep('results');
   };
 
-  const educationTabs = [
+  const educationTabs: EducationTab[] = [
     { id: 'myths', label: 'Myth Busters', component: MythBusters },
     { id: 'barriers', label: 'Common Barriers', component: BarriersEducation },
     { id: 'timeline', label: 'Processing Times', component: ProcessingTimeline }
@@ -104,114 +138,56 @@ export default function VetNav() {
   return (
     <section id="vetnav" className="py-20 bg-gradient-to-br from-blue-900 via-blue-800 to-teal-700 text-white">
       <div className="container mx-auto px-4">
-        <div className="text-center max-w-6xl mx-auto">
+        <div className="text-center max-w-4xl mx-auto">
           <h1 className="text-5xl md:text-6xl font-bold mb-6">
-            Veterans Benefits Navigator
+            Veterans Benefits Finder
           </h1>
-          <div className="inline-flex items-center bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-lg font-medium mb-4">
-            Research-Backed • State & Federal
+          <div className="inline-flex items-center bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-lg font-medium mb-8">
+            State & Federal
           </div>
           <p className="text-xl text-blue-100 mb-12">
-            Evidence-based guidance to help you access the benefits you've earned
+            Made by a Veteran for Veterans
           </p>
 
           {currentStep === 'welcome' && (
             <div>
-              {/* Education Tabs */}
-              <div className="mb-12">
-                <div className="flex justify-center mb-6">
-                  <div className="bg-white/10 backdrop-blur-md rounded-lg p-1 inline-flex">
-                    {educationTabs.map((tab) => (
-                      <button
-                        key={tab.id}
-                        onClick={() => setActiveEducationTab(tab.id)}
-                        className={`px-4 py-2 rounded-md transition-all ${
-                          activeEducationTab === tab.id
-                            ? 'bg-white/20'
-                            : 'text-blue-200'
-                        }`}
-                      >
-                        {tab.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Render Active Education Component */}
-                {educationTabs.map((tab) => (
-                  activeEducationTab === tab.id && <tab.component key={tab.id} />
-                ))}
-              </div>
-
-              {/* Call to Action */}
-              <div className="text-center">
-                <button
-                  onClick={() => setCurrentStep('screening')}
-                  className="group relative w-64 h-64 mx-auto rounded-full bg-gradient-to-r from-blue-600 to-teal-500 flex items-center justify-center hover:scale-105 transition-transform duration-300 shadow-2xl"
-                >
-                  <div className="text-center">
-                    <div className="text-2xl font-medium mb-2">Find My Benefits</div>
-                    <div className="text-sm opacity-80">Personalized Assessment</div>
-                  </div>
-                </button>
-                <p className="text-blue-200 mt-4 text-sm">
-                  Based on comprehensive research of veteran benefit barriers and solutions
-                </p>
-              </div>
+              <button
+                onClick={() => setCurrentStep('screening')}
+                className="group relative w-64 h-64 mx-auto rounded-full bg-gradient-to-r from-blue-600 to-teal-500 flex items-center justify-center hover:scale-105 transition-transform duration-300 shadow-2xl"
+              >
+                <span className="text-2xl font-medium">Find My Benefits</span>
+              </button>
             </div>
           )}
 
           {currentStep === 'screening' && (
             <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8">
-              <h2 className="text-2xl font-bold mb-6">Personalized Benefits Assessment</h2>
-              <p className="text-blue-200 mb-8">
-                Help us understand your situation to provide the most relevant benefits information
-              </p>
-              
+              <h2 className="text-2xl font-bold mb-6">Quick Screening</h2>
               <div className="space-y-4">
                 <button
                   onClick={() => handleScreeningComplete({
                     serviceInfo: {
-                      branch: "Army",
-                      serviceYears: "4 years",
-                      dischargeStatus: "Honorable",
+                      branch: 'Army',
+                      serviceYears: '4',
+                      dischargeStatus: 'Honorable',
                       combatVeteran: true
                     },
                     demographics: {
-                      age: 32,
-                      state: "Texas",
+                      age: 35,
+                      state: 'Texas',
                       dependents: 2
                     },
-                    disabilities: ["PTSD", "Hearing Loss"]
+                    disabilities: ['PTSD', 'Tinnitus']
                   })}
                   className="w-full p-4 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-medium"
                 >
-                  I'm a Veteran - Show My Benefits
-                </button>
-                <button
-                  onClick={() => handleScreeningComplete({
-                    serviceInfo: {
-                      branch: "N/A",
-                      serviceYears: "N/A", 
-                      dischargeStatus: "N/A",
-                      combatVeteran: false
-                    },
-                    demographics: {
-                      age: 45,
-                      state: "Texas",
-                      dependents: 1
-                    },
-                    disabilities: []
-                  })}
-                  className="w-full p-4 bg-green-600 hover:bg-green-700 rounded-lg text-white font-medium"
-                >
-                  I'm a Family Member - Show Benefits
+                  I&apos;m a Veteran - Show My Benefits
                 </button>
                 <button
                   onClick={() => setCurrentStep('welcome')}
                   className="w-full p-2 text-blue-200 hover:text-white"
                 >
-                  ← Back to Education
+                  ← Back
                 </button>
               </div>
             </div>
@@ -219,95 +195,42 @@ export default function VetNav() {
 
           {currentStep === 'results' && (
             <div className="space-y-6">
-              <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-                <div>
-                  <h2 className="text-2xl font-bold">Your Personalized Benefits</h2>
-                  <p className="text-blue-200">Based on research-backed eligibility criteria</p>
-                </div>
+              <div className="flex justify-between items-center">
+                <h2 className="text-2xl font-bold mb-6">Your Benefits</h2>
                 <button
                   onClick={() => setShowPDFModal(true)}
-                  className="bg-green-600 hover:bg-green-700 px-6 py-3 rounded-lg text-white font-medium flex items-center gap-2"
+                  className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded text-white font-medium"
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                  Export Complete Report
+                  Export PDF Report
                 </button>
               </div>
               
               {benefits.map((benefit) => (
                 <div key={benefit.id} className="bg-white/10 backdrop-blur-md rounded-lg p-6 text-left">
-                  <div className="flex justify-between items-start mb-4">
-                    <h3 className="text-xl font-bold text-blue-200">{benefit.title}</h3>
-                    <span className="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">
-                      {benefit.eligibilityMatch}% Match
-                    </span>
-                  </div>
-                  
-                  <p className="text-white/90 mb-4">{benefit.description}</p>
-                  
-                  <div className="grid md:grid-cols-3 gap-4 mb-4 text-sm">
-                    <div className="bg-blue-500/20 p-3 rounded">
-                      <p className="text-blue-200 font-semibold">Processing Time</p>
-                      <p className="text-white">{benefit.processing}</p>
-                    </div>
-                    <div className="bg-green-500/20 p-3 rounded">
-                      <p className="text-green-200 font-semibold">Estimated Value</p>
-                      <p className="text-white">{benefit.estimatedValue}</p>
-                    </div>
-                    <div className="bg-purple-500/20 p-3 rounded">
-                      <p className="text-purple-200 font-semibold">Documents Needed</p>
-                      <p className="text-white">{benefit.requiredDocuments.length} items</p>
-                    </div>
-                  </div>
-
-                  <div className="mb-4">
-                    <h4 className="text-blue-200 font-semibold mb-2">Key Facts:</h4>
-                    <ul className="text-sm space-y-1">
-                      {benefit.keyFacts.map((fact, index) => (
-                        <li key={index} className="flex items-center text-green-200">
-                          <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                          </svg>
-                          {fact}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  
+                  <h3 className="text-xl font-bold mb-3 text-blue-200">{benefit.title}</h3>
+                  <p className="text-white/90 mb-3">{benefit.description}</p>
+                  <p className="text-blue-200 text-sm mb-4">Processing Time: {benefit.processing}</p>
                   <div className="flex gap-4">
-                    <button className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white font-medium">
-                      View Details
+                    <button className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white">
+                      Learn More
                     </button>
-                    <button className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded text-white font-medium">
-                      Start Application
+                    <button className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded text-white">
+                      Apply Now
                     </button>
                   </div>
                 </div>
               ))}
-              
-              <div className="text-center">
-                <button
-                  onClick={() => setCurrentStep('welcome')}
-                  className="text-blue-200 hover:text-white underline"
-                >
-                  ← Return to Education Center
-                </button>
-              </div>
+              <button
+                onClick={() => setCurrentStep('welcome')}
+                className="w-full p-2 text-blue-200 hover:text-white mt-6"
+              >
+                ← Start Over
+              </button>
             </div>
           )}
 
-          <div className="mt-16 bg-red-600 text-white p-6 rounded-lg">
-            <div className="grid md:grid-cols-2 gap-4 text-center">
-              <div>
-                <p className="font-bold mb-2">Crisis Support</p>
-                <p>Veterans Crisis Line: 988, Press 1 | Text: 838255</p>
-              </div>
-              <div>
-                <p className="font-bold mb-2">Free Help Available</p>
-                <p>Contact your local Veterans Service Organization (VSO)</p>
-              </div>
-            </div>
+          <div className="mt-16 bg-red-600 text-white p-4 rounded-lg">
+            <strong>Need immediate help?</strong> Veterans Crisis Line: 988, Press 1 | Text: 838255
           </div>
         </div>
       </div>
