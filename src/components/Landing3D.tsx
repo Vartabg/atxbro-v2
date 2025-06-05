@@ -2,13 +2,11 @@
 
 import React, { useState, useRef, Suspense, useEffect } from 'react';
 import { Canvas, useFrame, ThreeEvent } from '@react-three/fiber';
-import { OrbitControls, Box, Sphere, Torus, Cylinder, Html, RoundedBox, Line, Trail, useLOD } from '@react-three/drei';
+import { OrbitControls, Box, Sphere, Torus, Cylinder, Html, RoundedBox, Line, Trail } from '@react-three/drei';
 import { ShieldCheck, BarChart3, PawPrint, TrendingUp, LucideProps } from 'lucide-react';
+import JetsStats from './JetsStats';
 import { useSpring, animated, SpringValue } from '@react-spring/three';
 import * as THREE from 'three';
-import { PerformanceMonitor } from '../utils/performanceMonitor';
-import { TextureManager } from '../utils/textureManager';
-import { MobileOptimizedMaterials } from '../utils/mobileOptimizedMaterials';
 
 // Viewport size hook
 const useViewportSize = () => {
@@ -225,14 +223,6 @@ interface AppTransitionState {
   currentApp: string | null;
   transitionProgress: number;
 }
-
-
-// LOD configuration for mobile performance
-const useMobileLOD = (distance: number) => {
-  if (distance > 15) return 'low';
-  if (distance > 8) return 'medium'; 
-  return 'high';
-};
 
 interface ServiceObjectProps {
   service: Service;
@@ -851,12 +841,6 @@ function ServiceObject({
     },
   };
 
-  
-  // Create LOD-optimized material
-  const optimizedMaterial = useMemo(() => {
-    return MobileOptimizedMaterials.createLODMaterial(currentBaseColor, lodLevel);
-  }, [currentBaseColor, lodLevel]);
-
   const commonMaterialProps = {
     color: hovered && !isActive && !portalState.isTransitioning ? 'hotpink' : service.color,
     emissive: isActive && !portalState.isTransitioning ? 
@@ -873,7 +857,7 @@ function ServiceObject({
       renderedShape = (
         <group ref={vetNavGroupRef}> 
           <Sphere args={[1, 32, 32]} ref={vetNavPrimaryMeshRef} {...eventHandlers}>
-            <primitive object={optimizedMaterial} />
+            <meshStandardMaterial {...commonMaterialProps} />
           </Sphere>
           <Sphere args={[1.05, 32, 32]} ref={vetNavOuterMeshRef}>
             <meshBasicMaterial color={service.color} wireframe opacity={0.2} transparent />
@@ -980,18 +964,10 @@ function VetNavInterface({ visible, progress }: AppInterfaceProps) {
         <div className="text-center">
           <h1 className="text-4xl font-bold mb-4">VetNav Benefits Portal</h1>
           <p className="text-xl mb-8">Navigate your veteran benefits</p>
+          <div className="mb-6"><JetsStats /></div>
           <button onClick={() => window.location.reload()} className="bg-green-600 hover:bg-green-700 px-6 py-3 rounded-lg">Back to Portal</button>
         </div>
       </div>
-    
-      {process.env.NODE_ENV === 'development' && (
-        <div className="fixed top-4 right-4 bg-black/70 text-white p-2 rounded text-xs z-50">
-          <div>FPS: {performanceStats.fps}</div>
-          <div>Textures: {performanceStats.memory.textures}</div>
-          <div>Draw Calls: {performanceStats.memory.drawCalls}</div>
-        </div>
-      )}
-
     </div>
   );
 }
@@ -1004,6 +980,7 @@ function TariffInterface({ visible, progress }: AppInterfaceProps) {
         <div className="text-center">
           <h1 className="text-4xl font-bold mb-4">Tariff Explorer</h1>
           <p className="text-xl mb-8">Analyze trade data and tariffs</p>
+          <div className="mb-6"><JetsStats /></div>
           <button onClick={() => window.location.reload()} className="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg">Back to Portal</button>
         </div>
       </div>
@@ -1019,6 +996,7 @@ function PetRadarInterface({ visible, progress }: AppInterfaceProps) {
         <div className="text-center">
           <h1 className="text-4xl font-bold mb-4">Pet Radar</h1>
           <p className="text-xl mb-8">Find lost pets in your area</p>
+          <div className="mb-6"><JetsStats /></div>
           <button onClick={() => window.location.reload()} className="bg-pink-600 hover:bg-pink-700 px-6 py-3 rounded-lg">Back to Portal</button>
         </div>
       </div>
@@ -1034,6 +1012,7 @@ function JetsHomeInterface({ visible, progress }: AppInterfaceProps) {
         <div className="text-center">
           <h1 className="text-4xl font-bold mb-4">JetsHome Sports Analytics</h1>
           <p className="text-xl mb-8">Track Jets performance and stats</p>
+          <div className="mb-6"><JetsStats /></div>
           <button onClick={() => window.location.reload()} className="bg-green-600 hover:bg-green-700 px-6 py-3 rounded-lg">Back to Portal</button>
         </div>
       </div>
@@ -1810,13 +1789,6 @@ export default function Landing3D() {
   // All useState declarations at the top
   const [isMounted, setIsMounted] = useState(false);
   const [activeServiceId, setActiveServiceId] = useState<string | null>(null);
-
-  // Performance monitoring for mobile optimization
-  const perfMonitor = useRef(new PerformanceMonitor());
-  const textureManager = useRef(TextureManager.getInstance());
-  const [performanceStats, setPerformanceStats] = useState({ fps: 0, memory: { textures: 0, geometries: 0, drawCalls: 0 } });
-  
-
   const [portalState, setPortalState] = useState<PortalState>({
     activePortal: null,
     expansionProgress: 0,
