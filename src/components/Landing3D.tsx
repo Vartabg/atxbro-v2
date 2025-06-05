@@ -6,6 +6,8 @@ import { OrbitControls, Box, Sphere, Torus, Cylinder, Html, RoundedBox, Line, Tr
 import { ShieldCheck, BarChart3, PawPrint, TrendingUp, LucideProps } from 'lucide-react';
 import JetsStats from './JetsStats';
 import { useSpring, animated, SpringValue } from '@react-spring/three';
+import TariffExplorer from './TariffExplorer';
+import PetRadar from './PetRadar';
 import * as THREE from 'three';
 
 // Viewport size hook
