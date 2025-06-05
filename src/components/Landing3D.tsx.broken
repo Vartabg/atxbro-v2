@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useRef, Suspense, useEffect } from 'react';
 import { Canvas, useFrame, ThreeEvent } from '@react-three/fiber';
@@ -206,7 +206,6 @@ interface Service {
 }
 
 interface PortalState {
-  activePortal: string | null;
   expansionProgress: number;
   isTransitioning: boolean;
 }
@@ -610,7 +609,7 @@ function PetRadarContent({ visible, progress }: AppContentProps) {
   );
 }
 
-function JetsHomeContent({ visible, progress }: AppContentProps) {
+function FundraiserContent({ visible, progress }: AppContentProps) {
   if (!visible) return null;
   
   return (
@@ -652,6 +651,17 @@ function JetsHomeContent({ visible, progress }: AppContentProps) {
 }
 
 function ConsequenceRipple({ consequence, onInteract }: { consequence: Consequence; onInteract: (consequence: Consequence) => void }) {
+ const animationActive = useRef(true);
+ useEffect(() => { animationActive.current = true; return () => { animationActive.current = false; }; }, []);
+  const animationActive = useRef(true);
+  useEffect(() => { animationActive.current = true; return () => { animationActive.current = false; }; }, []);
+
+  useEffect(() => {
+    animationActive.current = true;
+    return () => {
+      animationActive.current = false;
+    };
+  }, []);
   const meshRef = useRef<THREE.Mesh | null>(null);
   const [isRippleActive, setIsRippleActive] = useState(false);
   
@@ -665,6 +675,9 @@ function ConsequenceRipple({ consequence, onInteract }: { consequence: Consequen
   
   useEffect(() => {
     setIsRippleActive(true);
+  return () => {
+    setIsRippleActive(false);
+  };
   }, []);
   
   return (
@@ -878,7 +891,7 @@ function ServiceObject({
         </Torus>
       );
       break;
-    case 'jetshome':
+    case 'fundraiser':
       renderedShape = (
         <RoundedBox args={[1.5, 1.5, 1.5]} radius={0.1} smoothness={4} ref={generalMeshRef} {...eventHandlers}>
           <meshStandardMaterial {...commonMaterialProps} />
@@ -908,8 +921,8 @@ function ServiceObject({
         return <TariffContent visible={true} progress={progress} />;
       case 'pet-radar':
         return <PetRadarContent visible={true} progress={progress} />;
-      case 'jetshome':
-        return <JetsHomeContent visible={true} progress={progress} />;
+      case 'fundraiser':
+        return <FundraiserContent visible={true} progress={progress} />;
       default:
         return null;
     }
@@ -1000,7 +1013,7 @@ function PetRadarInterface({ visible, progress }: AppInterfaceProps) {
   );
 }
 
-function JetsHomeInterface({ visible, progress }: AppInterfaceProps) {
+function FundraiserInterface({ visible, progress }: AppInterfaceProps) {
   if (!visible) return null;
   return (
     <div className="fixed inset-0 bg-gradient-to-br from-amber-900 to-orange-700 z-50" style={{ opacity: progress, transform: `scale(${0.8 + progress * 0.2})` }}>
@@ -1037,6 +1050,17 @@ const useDeviceOrientation = () => {
 };
 
 function ConsequenceNetwork({ network, portalTilt }: { network: any, portalTilt: { x: number, y: number } }) {
+ const animationActive = useRef(true);
+ useEffect(() => { animationActive.current = true; return () => { animationActive.current = false; }; }, []);
+  const animationActive = useRef(true);
+  useEffect(() => { animationActive.current = true; return () => { animationActive.current = false; }; }, []);
+
+  useEffect(() => {
+    animationActive.current = true;
+    return () => {
+      animationActive.current = false;
+    };
+  }, []);
   return (
     <group rotation={[portalTilt.x, portalTilt.y, 0]}>
       {Array.from(network.nodes.values()).map((node: any) => (
@@ -1101,9 +1125,33 @@ function ConsequenceNetwork({ network, portalTilt }: { network: any, portalTilt:
 }
 
 function CrossPortalEffect({ sourceService, targetService, influence }: { sourceService: Service, targetService: Service, influence: any }) {
+ const animationActive = useRef(true);
+ useEffect(() => { animationActive.current = true; return () => { animationActive.current = false; }; }, []);
+
+  useEffect(() => {
+    animationActive.current = true;
+    return () => {
+      animationActive.current = false;
+    };
+  }, []);
   const effectRef = useRef<THREE.Group | null>(null);
+
+ useEffect(() => {
+   animationActive.current = true;
+   return () => {
+     animationActive.current = false;
+   };
+ }, []);
+
+  useEffect(() => {
+    animationActive.current = true;
+    return () => {
+      animationActive.current = false;
+    };
+  }, []);
   
   useFrame((state) => {
+    if (!animationActive.current) return;
     if (effectRef.current) {
       const time = state.clock.elapsedTime;
       effectRef.current.rotation.z = time * 0.5;
@@ -1152,6 +1200,14 @@ function CrossPortalEffect({ sourceService, targetService, influence }: { source
 }
 
 function DimensionalLayer({ layerIndex, currentLayer, services, children }: { layerIndex: number, currentLayer: number, services: Service[], children: React.ReactNode }) {
+
+  const animationActive = useRef(true);
+  useEffect(() => {
+    animationActive.current = true;
+    return () => {
+      animationActive.current = false;
+    };
+  }, []);
   const layerRef = useRef<THREE.Group | null>(null);
   const isActive = layerIndex === currentLayer;
   const offset = (layerIndex - currentLayer) * 15;
@@ -1168,67 +1224,32 @@ function DimensionalLayer({ layerIndex, currentLayer, services, children }: { la
       if (!isActive) {
         layerRef.current.rotation.y += 0.0005 * (layerIndex + 1);
       }
-    }
-  });
-  
-  return (
-    <animated.group 
-      ref={layerRef}
-      position={position}
-      scale={scale}
-    >
-      <animated.group>
-        {children}
-        
-        {isActive && layerIndex === 1 && (
-          <group>
-            {services.map((service, i) => (
-              <Torus 
-                key={`${service.id}-datalayer-${i}`}
-                args={[1.2, 0.02, 4, 32]}
-                position={service.position3D}
-                rotation={[Math.PI/2, 0, 0]}
-              >
-                <meshBasicMaterial color="#00ffff" transparent opacity={0.25} />
-              </Torus>
-            ))}
-          </group>
-        )}
-        
-        {isActive && layerIndex === 2 && (
-          <group>
-            {services.map((service, i) => (
-              <group key={`${service.id}-possibilitylayer-${i}`} position={service.position3D}>
-                {Array.from({ length: 5 }).map((_, j) => (
-                  <Sphere 
-                    key={j}
-                    args={[0.1, 8, 8]}
-                    position={[
-                      (Math.random() - 0.5) * 2,
-                      (Math.random() - 0.5) * 2,
-                      (Math.random() - 0.5) * 2
-                    ]}
-                  >
-                    <meshBasicMaterial 
-                      color={service.color} 
-                      transparent 
-                      opacity={0.4}
-                    />
-                  </Sphere>
-                ))}
-              </group>
-            ))}
-          </group>
-        )}
-      </animated.group>
-    </animated.group>
+      ref: layerRef,
+      position: position,
+      scale: scale,
+    },
+      React.createElement(animated.group, {},
+        children,
+        isActive && layerIndex === 1 && React.createElement("group", {},
+          services.map((service, i) =>
+            React.createElement(Torus, {
+              key: `${service.id}-datalayer-${i}`,
+              args: [1.2, 0.02, 4, 32],
+              position: service.position3D,
+              rotation: [Math.PI/2, 0, 0]
+            },
+              React.createElement("meshBasicMaterial", {
+                color: "#00ffff",
+                transparent: true,
+                opacity: 0.25
+              })
+            )
+          )
+        )
+      )
+    )
   );
 }
-
-const useQuantumSuperposition = (portalId: string) => {
-  const [activeStates, setActiveStates] = useState<QuantumState[]>([]);
-  
-  useEffect(() => {
     // Create quantum superposition - portal exists in multiple states simultaneously
     const states: QuantumState[] = [
       { state: 'dormant', probability: 0.4, energy: 0.2 },
@@ -1246,30 +1267,19 @@ const useQuantumSuperposition = (portalId: string) => {
         probability: Math.max(0, Math.min(1, s.probability + (Math.random() - 0.5) * 0.1)),
         energy: Math.max(0, Math.min(1, s.energy + (Math.random() - 0.5) * 0.05))
       })));
-    }, 2000);
-    
-    return () => clearInterval(interval);
   }, [portalId]);
   
-  return activeStates;
-};
 
+      animationActive.current = false;
+    };
+  }, []);
 function QuantumPortalField({ services, activePortal, onQuantumCollapse }: {
-  services: Service[];
-  activePortal: string | null;
+ services: Service[];
+ activePortal: string | null;
+ onQuantumCollapse: (portalId: string) => void;
   onQuantumCollapse: (portalId: string) => void;
 }) {
-  const fieldRef = useRef<THREE.Group | null>(null);
-  const [fieldEnergy, setFieldEnergy] = useState(0);
-  const [quantumParticles, setQuantumParticles] = useState<Array<{
-    id: number;
-    position: [number, number, number];
-    velocity: [number, number, number];
-    energy: number;
-    phase: number;
-  }>>([]);
   
-  // Initialize quantum particles
   useEffect(() => {
     const particles = Array.from({ length: 50 }).map((_, i) => ({
       id: i,
@@ -1288,19 +1298,12 @@ function QuantumPortalField({ services, activePortal, onQuantumCollapse }: {
     }));
     setQuantumParticles(particles);
   }, []);
-  
-  // Quantum field animation
-  useFrame((state) => {
-    if (fieldRef.current) {
       const time = state.clock.elapsedTime;
       
       // Update field energy
       const newEnergy = Math.sin(time * 0.5) * 0.5 + 0.5;
       setFieldEnergy(newEnergy);
       
-      // Update quantum particles
-      setQuantumParticles(prev => prev.map(particle => {
-        // Update position based on velocity
         const newPosition: [number, number, number] = [
           particle.position[0] + particle.velocity[0],
           particle.position[1] + particle.velocity[1],
@@ -1315,9 +1318,6 @@ function QuantumPortalField({ services, activePortal, onQuantumCollapse }: {
           if (Math.abs(newPosition[i]) > bound) {
             newVelocity[i] *= -1;
             newPosition[i] = Math.sign(newPosition[i]) * bound;
-          }
-        });
-        
         // Update phase and energy
         const newPhase = (particle.phase + 0.01) % (Math.PI * 2);
         const newEnergy = Math.max(0.2, Math.min(1, particle.energy + (Math.random() - 0.5) * 0.1));
@@ -1327,9 +1327,6 @@ function QuantumPortalField({ services, activePortal, onQuantumCollapse }: {
           position: newPosition,
           velocity: newVelocity,
           phase: newPhase,
-          energy: newEnergy
-        };
-      }));
       
       // Rotate field
       fieldRef.current.rotation.y = time * 0.1;
@@ -1377,9 +1374,6 @@ function QuantumPortalField({ services, activePortal, onQuantumCollapse }: {
             <meshBasicMaterial
               color="#00ffff"
               transparent
-              opacity={particle.energy * 0.5}
-            />
-          </Sphere>
           
           {/* Particle trail */}
           <Trail
@@ -1402,9 +1396,6 @@ function QuantumPortalField({ services, activePortal, onQuantumCollapse }: {
               color={service.color}
               transparent
               opacity={service.id === activePortal ? 0.2 : 0.05}
-            />
-          </Sphere>
-          
           {/* Quantum probability waves */}
           {Array.from({ length: 3 }).map((_, i) => (
             <Torus
@@ -1418,38 +1409,27 @@ function QuantumPortalField({ services, activePortal, onQuantumCollapse }: {
                 opacity={(0.2 - i * 0.05) * (service.id === activePortal ? 1 : 0.3)}
               />
             </Torus>
-          ))}
-        </group>
-      ))}
     </group>
   );
 }
 
 function PredictiveInteractionField({ predictions, services, onPredictionRealized }: { 
-  predictions: TemporalPrediction[], 
-  services: Service[],
-  onPredictionRealized: (prediction: TemporalPrediction) => void
+ const animationActive = useRef(true);
+ useEffect(() => { animationActive.current = true; return () => { animationActive.current = false; }; }, []);
 }) {
-  const [predictionVisuals, setPredictionVisuals] = useState<Array<TemporalPrediction & { visualId: number; alpha: number; scale: number; position: [number, number, number] }>>([]);
-  
+
+  useEffect(() => {
+    animationActive.current = true;
+    return () => {
+      animationActive.current = false;
+    };
   useEffect(() => {
     const visuals = predictions.map(prediction => ({
       ...prediction,
       visualId: Math.random(),
-      alpha: 0,
-      scale: 0.1,
-      position: prediction.target ? 
-        services.find((s: Service) => s.id === prediction.target)?.position3D || [0, 0, 0] as [number, number, number] :
-        [Math.random() * 6 - 3, Math.random() * 6 - 3, Math.random() * 2 - 1] as [number, number, number]
-    }));
-    
-    setPredictionVisuals(visuals);
-    
+function PredictiveInteractionField({ predictions, services, onPredictionRealized }: {
     // Single timeout to handle all animations
     const timeout = setTimeout(() => {
-      setPredictionVisuals(prev => 
-        prev.map(visual => ({
-          ...visual,
           alpha: visual.confidence,
           scale: 1
         }))
@@ -1497,6 +1477,13 @@ function PredictiveInteractionField({ predictions, services, onPredictionRealize
             </Cylinder>
           )}
         </group>
+
+ useEffect(() => {
+   animationActive.current = true;
+   return () => {
+     animationActive.current = false;
+   };
+ }, []);
       ))}
     </group>
   );
@@ -1504,7 +1491,16 @@ function PredictiveInteractionField({ predictions, services, onPredictionRealize
 
 // Reality distortion field component
 function RealityDistortionField({ 
+ const animationActive = useRef(true);
+ useEffect(() => { animationActive.current = true; return () => { animationActive.current = false; }; }, []);
   distortionLevel, 
+
+  useEffect(() => {
+    animationActive.current = true;
+    return () => {
+      animationActive.current = false;
+    };
+  }, []);
   gravityWells, 
   quantumTunnels 
 }: { 
@@ -1512,9 +1508,17 @@ function RealityDistortionField({
   gravityWells: GravityWell[];
   quantumTunnels: QuantumTunnel[];
 }) {
+
+  useEffect(() => {
+    animationActive.current = true;
+    return () => {
+      animationActive.current = false;
+    };
+  }, []);
   const fieldRef = useRef<THREE.Group>(null);
   
   useFrame((state) => {
+    if (!animationActive.current) return;
     if (fieldRef.current) {
       const time = state.clock.elapsedTime;
       
@@ -1629,13 +1633,23 @@ function RealityDistortionField({
 }
 
 function QuantumEntanglementEffect({ sourcePortal, targetPortal, entanglement }: {
+ const animationActive = useRef(true);
+ useEffect(() => { animationActive.current = true; return () => { animationActive.current = false; }; }, []);
   sourcePortal: Service;
   targetPortal: Service;
   entanglement: QuantumEntanglementData;
 }) {
+
+  useEffect(() => {
+    animationActive.current = true;
+    return () => {
+      animationActive.current = false;
+    };
+  }, []);
   const effectRef = useRef<THREE.Group | null>(null);
   
   useFrame((state) => {
+    if (!animationActive.current) return;
     if (effectRef.current) {
       const time = state.clock.elapsedTime;
       effectRef.current.rotation.z = time * entanglement.resonance * 0.1;
@@ -1742,13 +1756,13 @@ const services: Service[] = [
     description: 'Help find lost pets in your area.' 
   },
   { 
-    id: 'jetshome', 
-    title: 'JetsHome', 
-    subtitle: 'Sports Analytics', 
+    id: 'fundraiser', 
+    title: 'Fundraiser Tool', 
+    subtitle: 'Support Causes', 
     position3D: [2.5, -1.5, 0], 
-    color: '#10b981', 
+    color: '#f59e0b', 
     icon: TrendingUp, 
-    description: 'Track Jets performance, stats, and analytics.' 
+    description: 'Manage and promote fundraising campaigns.' 
   }
 ];
 
@@ -1892,6 +1906,9 @@ export default function Landing3D() {
   useEffect(() => {
     setIsMounted(true);
   }, []);
+    return () => {
+      setIsMounted(false);
+    };
 
   // Device orientation effect
   useEffect(() => {
@@ -1926,6 +1943,14 @@ export default function Landing3D() {
       nodes,
       synapses
     }));
+
+    return () => {
+      setNeuralNetwork(prev => ({
+        ...prev,
+        nodes: new Map(),
+        synapses: []
+      }));
+    };
     
     // Initialize portal consciousness
     const consciousness = new Map<string, PortalConsciousnessData>();
@@ -2338,7 +2363,8 @@ export default function Landing3D() {
                 maxPolarAngle={Math.PI / 2}
                 minPolarAngle={Math.PI / 3}
               />
-              <ambientLight intensity={0.5} />
+              <ambientLight intensity={0.8} />
+              <directionalLight position={[10, 10, 10]} intensity={1.5} />
               <pointLight position={[10, 10, 10]} />
             </Suspense>
           </Canvas>
@@ -2347,3 +2373,4 @@ export default function Landing3D() {
     </div>
   );
 }
+export default Landing3D;

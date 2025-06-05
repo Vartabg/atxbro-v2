@@ -11,6 +11,8 @@ import { useGestureProfiler } from '../hooks/useGestureProfiler';
 
 export default function Home() {
   const [currentView, setCurrentView] = useState('landing3d');
+  const handleViewChange = (view: string) => { console.log("Changing view to:", view); setCurrentView(view); };
+  console.log("Current view:", currentView);
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -128,7 +130,7 @@ export default function Home() {
         style={{ touchAction: 'none' }} 
       >
         {currentView === 'landing3d' ? 
-          isMobile ? <Landing3DMobile /> : <Landing3D /> : 
+          <Landing3D onNavigate={handleViewChange} /> : 
           renderServiceView()
         }
         

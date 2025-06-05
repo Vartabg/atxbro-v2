@@ -610,7 +610,7 @@ function PetRadarContent({ visible, progress }: AppContentProps) {
   );
 }
 
-function JetsHomeContent({ visible, progress }: AppContentProps) {
+function FundraiserContent({ visible, progress }: AppContentProps) {
   if (!visible) return null;
   
   return (
@@ -878,7 +878,7 @@ function ServiceObject({
         </Torus>
       );
       break;
-    case 'jetshome':
+    case 'fundraiser':
       renderedShape = (
         <RoundedBox args={[1.5, 1.5, 1.5]} radius={0.1} smoothness={4} ref={generalMeshRef} {...eventHandlers}>
           <meshStandardMaterial {...commonMaterialProps} />
@@ -908,8 +908,8 @@ function ServiceObject({
         return <TariffContent visible={true} progress={progress} />;
       case 'pet-radar':
         return <PetRadarContent visible={true} progress={progress} />;
-      case 'jetshome':
-        return <JetsHomeContent visible={true} progress={progress} />;
+      case 'fundraiser':
+        return <FundraiserContent visible={true} progress={progress} />;
       default:
         return null;
     }
@@ -1000,7 +1000,7 @@ function PetRadarInterface({ visible, progress }: AppInterfaceProps) {
   );
 }
 
-function JetsHomeInterface({ visible, progress }: AppInterfaceProps) {
+function FundraiserInterface({ visible, progress }: AppInterfaceProps) {
   if (!visible) return null;
   return (
     <div className="fixed inset-0 bg-gradient-to-br from-amber-900 to-orange-700 z-50" style={{ opacity: progress, transform: `scale(${0.8 + progress * 0.2})` }}>
@@ -1742,13 +1742,13 @@ const services: Service[] = [
     description: 'Help find lost pets in your area.' 
   },
   { 
-    id: 'jetshome', 
-    title: 'JetsHome', 
-    subtitle: 'Sports Analytics', 
+    id: 'fundraiser', 
+    title: 'Fundraiser Tool', 
+    subtitle: 'Support Causes', 
     position3D: [2.5, -1.5, 0], 
-    color: '#10b981', 
+    color: '#f59e0b', 
     icon: TrendingUp, 
-    description: 'Track Jets performance, stats, and analytics.' 
+    description: 'Manage and promote fundraising campaigns.' 
   }
 ];
 

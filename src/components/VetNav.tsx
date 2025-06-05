@@ -1,385 +1,323 @@
 ﻿"use client";
-import { useState, useMemo, useEffect } from 'react';
-import Head from 'next/head';
-import benefitsData from './vetnavBenefitsDatabase.json';
+import { useState } from 'react';
+import PDFExportModal from './PDFExportModal';
+import MythBusters from './MythBusters';
+import BarriersEducation from './BarriersEducation';
+import ProcessingTimeline from './ProcessingTimeline';
 
 export default function VetNav() {
- const [currentView, setCurrentView] = useState('main');
- const [filters, setFilters] = useState({
-   state: '',
-   category: '',
-   eligibility: '',
-   searchTerm: ''
- });
+  const [currentStep, setCurrentStep] = useState('welcome');
+  const [showPDFModal, setShowPDFModal] = useState(false);
+  const [userProfile, setUserProfile] = useState(null);
+  const [activeEducationTab, setActiveEducationTab] = useState('myths');
 
- useEffect(() => {
-   // Set dynamic viewport height for iOS
-   function setVh() {
-     const vh = window.innerHeight * 0.01;
-     document.documentElement.style.setProperty('--vh', `${vh}px`);
-   }
-   window.addEventListener('resize', setVh);
-   setVh();
-   
-   return () => window.removeEventListener('resize', setVh);
- }, []);
+  const benefits = [
+    {
+      id: "va-healthcare",
+      title: "VA Health Care",
+      description: "Comprehensive healthcare services including preventive, primary, and specialty care. Eligible regardless of service-connected disability status.",
+      processing: "30-60 days enrollment",
+      eligibilityMatch: 95,
+      nextSteps: [
+        "Apply online at VA.gov/health-care",
+        "Gather military discharge papers (DD214)",
+        "Complete enrollment interview if required",
+        "Provide income information for priority group determination"
+      ],
+      requiredDocuments: [
+        "DD214 or discharge papers",
+        "Social Security card",
+        "Insurance information (if applicable)",
+        "Income verification documents"
+      ],
+      estimatedValue: ",000-,000/year",
+      keyFacts: [
+        "No time limit after discharge to apply",
+        "Income affects priority group, not eligibility",
+        "PACT Act expanded eligibility for toxic exposure veterans"
+      ]
+    },
+    {
+      id: "disability-comp",
+      title: "Disability Compensation", 
+      description: "Monthly tax-free payment for veterans with service-connected disabilities. Both physical and mental health conditions qualify.",
+      processing: "131-141 days average",
+      eligibilityMatch: 88,
+      nextSteps: [
+        "File claim at VA.gov/disability",
+        "Gather all medical evidence and service records",
+        "Obtain nexus letter from healthcare provider",
+        "Attend C&P examination if scheduled",
+        "Submit buddy statements if applicable"
+      ],
+      requiredDocuments: [
+        "VA Form 21-526EZ",
+        "Medical records (service and private)",
+        "Nexus letter linking condition to service",
+        "Buddy statements from fellow service members"
+      ],
+      estimatedValue: "-,500/month",
+      keyFacts: [
+        "Covers both physical and mental health conditions",
+        "No time limit to file initial claim",
+        "Presumptive conditions require less evidence"
+      ]
+    },
+    {
+      id: "education",
+      title: "Post-9/11 GI Bill",
+      description: "Education benefits for tuition, housing, and books. Transferable to family members in some cases.",
+      processing: "30 days",
+      eligibilityMatch: 92,
+      nextSteps: [
+        "Apply at VA.gov/education",
+        "Choose approved school/program",
+        "Submit enrollment certification",
+        "Understand housing allowance eligibility"
+      ],
+      requiredDocuments: [
+        "VA Form 22-1990",
+        "DD214 showing qualifying service",
+        "School enrollment verification",
+        "Transfer paperwork (if applicable)"
+      ],
+      estimatedValue: ",000-,000 total",
+      keyFacts: [
+        "36 months of benefits for qualifying service",
+        "Housing allowance varies by location",
+        "Can be transferred to dependents"
+      ]
+    }
+  ];
 
- const categories = ['Education', 'Housing', 'Financial', 'Recreation', 'Other'];
- const states = [...new Set(benefitsData.map(b => b.state))].sort();
- const eligibilityTypes = [...new Set(benefitsData.flatMap(b => b.eligibility))].sort();
+  const handleScreeningComplete = (profileData) => {
+    setUserProfile(profileData);
+    setCurrentStep('results');
+  };
 
- const filteredBenefits = useMemo(() => {
-   return benefitsData.filter(benefit => {
-     return (!filters.state || benefit.state === filters.state) &&
-            (!filters.category || benefit.category === filters.category) &&
-            (!filters.eligibility || benefit.eligibility.includes(filters.eligibility)) &&
-            (!filters.searchTerm || 
-             benefit.title.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
-             benefit.description.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
-             benefit.tags.some(tag => tag.includes(filters.searchTerm.toLowerCase()))
-            );
-   });
- }, [filters]);
+  const educationTabs = [
+    { id: 'myths', label: 'Myth Busters', component: MythBusters },
+    { id: 'barriers', label: 'Common Barriers', component: BarriersEducation },
+    { id: 'timeline', label: 'Processing Times', component: ProcessingTimeline }
+  ];
 
- const toTitleCase = (str) => {
-   const exceptions = ['and', 'or', 'but', 'for', 'nor', 'so', 'yet', 'a', 'an', 'the', 'as', 'at', 'by', 'in', 'of', 'on', 'to', 'up', 'with', 'from'];
-   return str.toLowerCase().split(' ').map((word, index) => {
-     if (index === 0 || !exceptions.includes(word)) {
-       return word.charAt(0).toUpperCase() + word.slice(1);
-     }
-     return word;
-   }).join(' ');
- };
+  return (
+    <section id="vetnav" className="py-20 bg-gradient-to-br from-blue-900 via-blue-800 to-teal-700 text-white">
+      <div className="container mx-auto px-4">
+        <div className="text-center max-w-6xl mx-auto">
+          <h1 className="text-5xl md:text-6xl font-bold mb-6">
+            Veterans Benefits Navigator
+          </h1>
+          <div className="inline-flex items-center bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-lg font-medium mb-4">
+            Research-Backed • State & Federal
+          </div>
+          <p className="text-xl text-blue-100 mb-12">
+            Evidence-based guidance to help you access the benefits you've earned
+          </p>
 
- const mythBusters = [
-   {
-     myth: "I Make Too Much Money to Be Eligible",
-     fact: "Income Only Affects Certain Benefits Like VA Pension. Most VA Healthcare and Disability Compensation Don't Have Income Limits."
-   },
-   {
-     myth: "I've Been Out Too Long to Apply", 
-     fact: "Most VA Benefits Have No Time Limit. You Can Apply Years After Discharge."
-   },
-   {
-     myth: "I Never Deployed So I'm Not Eligible",
-     fact: "Deployment is Not Required for Most VA Benefits. Service-Connected Disabilities from Training Injuries Also Qualify."
-   },
-   {
-     myth: "VA Healthcare is Only for Combat Veterans",
-     fact: "All Eligible Veterans Can Access VA Healthcare Regardless of Combat Experience."
-   }
- ];
+          {currentStep === 'welcome' && (
+            <div>
+              {/* Education Tabs */}
+              <div className="mb-12">
+                <div className="flex justify-center mb-6">
+                  <div className="bg-white/10 backdrop-blur-md rounded-lg p-1 inline-flex">
+                    {educationTabs.map((tab) => (
+                      <button
+                        key={tab.id}
+                        onClick={() => setActiveEducationTab(tab.id)}
+                        className={`px-4 py-2 rounded-md transition-all ${
+                          activeEducationTab === tab.id
+                            ? 'bg-white/20'
+                            : 'text-blue-200'
+                        }`}
+                      >
+                        {tab.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
 
- const MainMenu = () => (
-   <div className="ios-container">
-     <div className="ios-content">
-       <div className="text-center mb-8">
-         <h1 className="text-3xl font-bold mb-4">
-           Veterans Benefits Finder
-         </h1>
-         <div className="inline-flex items-center bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium mb-4">
-           {benefitsData.length} Benefits Across All 50 States
-         </div>
-       </div>
-       
-       <div className="w-full max-w-sm mx-auto space-y-4">
-         <button
-           onClick={() => setCurrentView('search')}
-           className="w-full bg-gradient-to-br from-blue-600 to-teal-500 p-6 rounded-2xl hover:scale-105 transition-all duration-300 shadow-xl"
-         >
-           <div className="text-4xl mb-3">🔍</div>
-           <h3 className="text-xl font-bold mb-2">Find Benefits</h3>
-           <p className="text-blue-100 text-sm">Search through 789 state and federal benefits</p>
-         </button>
+                {/* Render Active Education Component */}
+                {educationTabs.map((tab) => (
+                  activeEducationTab === tab.id && <tab.component key={tab.id} />
+                ))}
+              </div>
 
-         <button
-           onClick={() => setCurrentView('categories')}
-           className="w-full bg-gradient-to-br from-purple-600 to-indigo-500 p-6 rounded-2xl hover:scale-105 transition-all duration-300 shadow-xl"
-         >
-           <div className="text-4xl mb-3">📋</div>
-           <h3 className="text-xl font-bold mb-2">Browse Categories</h3>
-           <p className="text-purple-100 text-sm">Explore by Education, Housing, Financial, Recreation</p>
-         </button>
+              {/* Call to Action */}
+              <div className="text-center">
+                <button
+                  onClick={() => setCurrentStep('screening')}
+                  className="group relative w-64 h-64 mx-auto rounded-full bg-gradient-to-r from-blue-600 to-teal-500 flex items-center justify-center hover:scale-105 transition-transform duration-300 shadow-2xl"
+                >
+                  <div className="text-center">
+                    <div className="text-2xl font-medium mb-2">Find My Benefits</div>
+                    <div className="text-sm opacity-80">Personalized Assessment</div>
+                  </div>
+                </button>
+                <p className="text-blue-200 mt-4 text-sm">
+                  Based on comprehensive research of veteran benefit barriers and solutions
+                </p>
+              </div>
+            </div>
+          )}
 
-         <button
-           onClick={() => setCurrentView('states')}
-           className="w-full bg-gradient-to-br from-green-600 to-emerald-500 p-6 rounded-2xl hover:scale-105 transition-all duration-300 shadow-xl"
-         >
-           <div className="text-4xl mb-3">🗺️</div>
-           <h3 className="text-xl font-bold mb-2">By State</h3>
-           <p className="text-green-100 text-sm">Find benefits specific to your state</p>
-         </button>
+          {currentStep === 'screening' && (
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8">
+              <h2 className="text-2xl font-bold mb-6">Personalized Benefits Assessment</h2>
+              <p className="text-blue-200 mb-8">
+                Help us understand your situation to provide the most relevant benefits information
+              </p>
+              
+              <div className="space-y-4">
+                <button
+                  onClick={() => handleScreeningComplete({
+                    serviceInfo: {
+                      branch: "Army",
+                      serviceYears: "4 years",
+                      dischargeStatus: "Honorable",
+                      combatVeteran: true
+                    },
+                    demographics: {
+                      age: 32,
+                      state: "Texas",
+                      dependents: 2
+                    },
+                    disabilities: ["PTSD", "Hearing Loss"]
+                  })}
+                  className="w-full p-4 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-medium"
+                >
+                  I'm a Veteran - Show My Benefits
+                </button>
+                <button
+                  onClick={() => handleScreeningComplete({
+                    serviceInfo: {
+                      branch: "N/A",
+                      serviceYears: "N/A", 
+                      dischargeStatus: "N/A",
+                      combatVeteran: false
+                    },
+                    demographics: {
+                      age: 45,
+                      state: "Texas",
+                      dependents: 1
+                    },
+                    disabilities: []
+                  })}
+                  className="w-full p-4 bg-green-600 hover:bg-green-700 rounded-lg text-white font-medium"
+                >
+                  I'm a Family Member - Show Benefits
+                </button>
+                <button
+                  onClick={() => setCurrentStep('welcome')}
+                  className="w-full p-2 text-blue-200 hover:text-white"
+                >
+                  ← Back to Education
+                </button>
+              </div>
+            </div>
+          )}
 
-         <button
-           onClick={() => setCurrentView('myths')}
-           className="w-full bg-gradient-to-br from-amber-600 to-yellow-500 p-6 rounded-2xl hover:scale-105 transition-all duration-300 shadow-xl"
-         >
-           <div className="text-4xl mb-3">💡</div>
-           <h3 className="text-xl font-bold mb-2">Myth Busters</h3>
-           <p className="text-amber-100 text-sm">Common misconceptions about veteran benefits</p>
-         </button>
-       </div>
+          {currentStep === 'results' && (
+            <div className="space-y-6">
+              <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div>
+                  <h2 className="text-2xl font-bold">Your Personalized Benefits</h2>
+                  <p className="text-blue-200">Based on research-backed eligibility criteria</p>
+                </div>
+                <button
+                  onClick={() => setShowPDFModal(true)}
+                  className="bg-green-600 hover:bg-green-700 px-6 py-3 rounded-lg text-white font-medium flex items-center gap-2"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  Export Complete Report
+                </button>
+              </div>
+              
+              {benefits.map((benefit) => (
+                <div key={benefit.id} className="bg-white/10 backdrop-blur-md rounded-lg p-6 text-left">
+                  <div className="flex justify-between items-start mb-4">
+                    <h3 className="text-xl font-bold text-blue-200">{benefit.title}</h3>
+                    <span className="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                      {benefit.eligibilityMatch}% Match
+                    </span>
+                  </div>
+                  
+                  <p className="text-white/90 mb-4">{benefit.description}</p>
+                  
+                  <div className="grid md:grid-cols-3 gap-4 mb-4 text-sm">
+                    <div className="bg-blue-500/20 p-3 rounded">
+                      <p className="text-blue-200 font-semibold">Processing Time</p>
+                      <p className="text-white">{benefit.processing}</p>
+                    </div>
+                    <div className="bg-green-500/20 p-3 rounded">
+                      <p className="text-green-200 font-semibold">Estimated Value</p>
+                      <p className="text-white">{benefit.estimatedValue}</p>
+                    </div>
+                    <div className="bg-purple-500/20 p-3 rounded">
+                      <p className="text-purple-200 font-semibold">Documents Needed</p>
+                      <p className="text-white">{benefit.requiredDocuments.length} items</p>
+                    </div>
+                  </div>
 
-       <div className="mt-8 w-full max-w-sm mx-auto bg-blue-600 text-white p-4 rounded-lg text-center">
-         <strong className="text-sm">Need Immediate Help?</strong><br />
-         <span className="text-sm">Veterans Crisis Line: 988, Press 1 | Text: 838255</span>
-       </div>
-     </div>
-   </div>
- );
+                  <div className="mb-4">
+                    <h4 className="text-blue-200 font-semibold mb-2">Key Facts:</h4>
+                    <ul className="text-sm space-y-1">
+                      {benefit.keyFacts.map((fact, index) => (
+                        <li key={index} className="flex items-center text-green-200">
+                          <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          </svg>
+                          {fact}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  
+                  <div className="flex gap-4">
+                    <button className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white font-medium">
+                      View Details
+                    </button>
+                    <button className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded text-white font-medium">
+                      Start Application
+                    </button>
+                  </div>
+                </div>
+              ))}
+              
+              <div className="text-center">
+                <button
+                  onClick={() => setCurrentStep('welcome')}
+                  className="text-blue-200 hover:text-white underline"
+                >
+                  ← Return to Education Center
+                </button>
+              </div>
+            </div>
+          )}
 
- const SearchView = () => (
-   <div className="ios-container">
-     <div className="ios-content">
-       <div className="flex items-center justify-between mb-6">
-         <h2 className="text-2xl font-bold">Search Benefits</h2>
-         <button
-           onClick={() => setCurrentView('main')}
-           className="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg transition-colors text-sm"
-         >
-           ← Menu
-         </button>
-       </div>
-       
-       <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 mb-6">
-         <div className="space-y-3">
-           <select 
-             value={filters.state} 
-             onChange={(e) => setFilters({...filters, state: e.target.value})}
-             className="w-full p-3 rounded-lg bg-white/20 text-white border-0 text-sm"
-           >
-             <option value="" className="text-black">All States</option>
-             {states.map(state => (
-               <option key={state} value={state} className="text-black">{state}</option>
-             ))}
-           </select>
-           
-           <select 
-             value={filters.category} 
-             onChange={(e) => setFilters({...filters, category: e.target.value})}
-             className="w-full p-3 rounded-lg bg-white/20 text-white border-0 text-sm"
-           >
-             <option value="" className="text-black">All Categories</option>
-             {categories.map(cat => (
-               <option key={cat} value={cat} className="text-black">{cat}</option>
-             ))}
-           </select>
+          <div className="mt-16 bg-red-600 text-white p-6 rounded-lg">
+            <div className="grid md:grid-cols-2 gap-4 text-center">
+              <div>
+                <p className="font-bold mb-2">Crisis Support</p>
+                <p>Veterans Crisis Line: 988, Press 1 | Text: 838255</p>
+              </div>
+              <div>
+                <p className="font-bold mb-2">Free Help Available</p>
+                <p>Contact your local Veterans Service Organization (VSO)</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-           <select 
-             value={filters.eligibility} 
-             onChange={(e) => setFilters({...filters, eligibility: e.target.value})}
-             className="w-full p-3 rounded-lg bg-white/20 text-white border-0 text-sm"
-           >
-             <option value="" className="text-black">All Eligibility</option>
-             {eligibilityTypes.map(type => (
-               <option key={type} value={type} className="text-black">{toTitleCase(type)}</option>
-             ))}
-           </select>
-
-           <input
-             type="text"
-             placeholder="Search Benefits..."
-             value={filters.searchTerm}
-             onChange={(e) => setFilters({...filters, searchTerm: e.target.value})}
-             className="w-full p-3 rounded-lg bg-white/20 text-white placeholder-white/70 border-0 text-sm"
-           />
-         </div>
-         
-         <div className="text-center mt-4">
-           <span className="bg-green-600 px-3 py-1 rounded-full text-sm">
-             {filteredBenefits.length} Benefits Found
-           </span>
-         </div>
-       </div>
-
-       <div className="ios-scrollable">
-         {filteredBenefits.slice(0, 50).map((benefit) => (
-           <div key={benefit.id} className="bg-white/10 backdrop-blur-md rounded-lg p-4 mb-3">
-             <div className="flex justify-between items-start mb-2">
-               <h3 className="text-lg font-bold text-blue-200 flex-1 pr-2">{toTitleCase(benefit.title)}</h3>
-               <span className="bg-blue-600 px-2 py-1 rounded text-xs flex-shrink-0">{benefit.state}</span>
-             </div>
-             <p className="text-white/90 mb-3 text-sm">{toTitleCase(benefit.description)}</p>
-             <div className="flex flex-wrap gap-1 mb-3">
-               <span className="bg-green-600 px-2 py-1 rounded text-xs">{benefit.category}</span>
-               {benefit.eligibility.map(req => (
-                 <span key={req} className="bg-amber-600 px-2 py-1 rounded text-xs">{toTitleCase(req)}</span>
-               ))}
-             </div>
-             <div className="flex gap-2">
-               <button className="bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded text-white text-sm flex-1">
-                 Learn More
-               </button>
-               <button className="bg-green-600 hover:bg-green-700 px-3 py-2 rounded text-white text-sm flex-1">
-                 Apply Now
-               </button>
-             </div>
-           </div>
-         ))}
-       </div>
-     </div>
-   </div>
- );
-
- const CategoriesView = () => (
-   <div className="ios-container">
-     <div className="ios-content">
-       <div className="flex items-center justify-between mb-6">
-         <h2 className="text-2xl font-bold">Browse by Category</h2>
-         <button
-           onClick={() => setCurrentView('main')}
-           className="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg transition-colors text-sm"
-         >
-           ← Menu
-         </button>
-       </div>
-       
-       <div className="ios-scrollable">
-         {categories.map(category => {
-           const categoryBenefits = benefitsData.filter(b => b.category === category);
-           return (
-             <button
-               key={category}
-               onClick={() => {
-                 setFilters({...filters, category: category});
-                 setCurrentView('search');
-               }}
-               className="w-full bg-gradient-to-br from-blue-600/80 to-purple-600/80 p-5 rounded-xl hover:scale-105 transition-all duration-300 text-left mb-4"
-             >
-               <h3 className="text-xl font-bold mb-2">{category}</h3>
-               <p className="text-blue-100 mb-2 text-sm">{categoryBenefits.length} benefits available</p>
-               <div className="text-xs text-blue-200">
-                 {categoryBenefits.slice(0, 3).map(b => b.state).filter((state, index, arr) => arr.indexOf(state) === index).join(', ')}
-                 {categoryBenefits.length > 3 && '...'}
-               </div>
-             </button>
-           );
-         })}
-       </div>
-     </div>
-   </div>
- );
-
- const StatesView = () => (
-   <div className="ios-container">
-     <div className="ios-content">
-       <div className="flex items-center justify-between mb-6">
-         <h2 className="text-2xl font-bold">Browse by State</h2>
-         <button
-           onClick={() => setCurrentView('main')}
-           className="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg transition-colors text-sm"
-         >
-           ← Menu
-         </button>
-       </div>
-       
-       <div className="ios-scrollable">
-         <div className="grid grid-cols-2 gap-3">
-           {states.map(state => {
-             const stateBenefits = benefitsData.filter(b => b.state === state);
-             return (
-               <button
-                 key={state}
-                 onClick={() => {
-                   setFilters({...filters, state: state});
-                   setCurrentView('search');
-                 }}
-                 className="bg-gradient-to-br from-green-600/80 to-blue-600/80 p-4 rounded-xl hover:scale-105 transition-all duration-300 text-center"
-               >
-                 <div className="text-lg font-bold mb-1">{state}</div>
-                 <div className="text-xs text-green-100">{stateBenefits.length} benefits</div>
-               </button>
-             );
-           })}
-         </div>
-       </div>
-     </div>
-   </div>
- );
-
- const MythsView = () => (
-   <div className="ios-container">
-     <div className="ios-content">
-       <div className="flex items-center justify-between mb-6">
-         <h2 className="text-2xl font-bold">Myth Busters</h2>
-         <button
-           onClick={() => setCurrentView('main')}
-           className="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg transition-colors text-sm"
-         >
-           ← Menu
-         </button>
-       </div>
-       
-       <div className="ios-scrollable">
-         {mythBusters.map((myth, index) => (
-           <div key={index} className="bg-gradient-to-r from-amber-500/20 to-green-500/20 p-4 rounded-lg border-l-4 border-yellow-500 mb-4">
-             <div className="font-semibold text-amber-200 mb-2 text-sm">❌ Myth: {myth.myth}</div>
-             <div className="text-green-200 text-sm">✅ Fact: {myth.fact}</div>
-           </div>
-         ))}
-       </div>
-     </div>
-   </div>
- );
-
- return (
-   <>
-     <Head>
-       <meta
-         name="viewport"
-         content="width=device-width, initial-scale=1, viewport-fit=cover"
-       />
-     </Head>
-     <div className="ios-wrapper">
-       {currentView === 'main' && <MainMenu />}
-       {currentView === 'search' && <SearchView />}
-       {currentView === 'categories' && <CategoriesView />}
-       {currentView === 'states' && <StatesView />}
-       {currentView === 'myths' && <MythsView />}
-     </div>
-     <style jsx global>{`
-       :root {
-         --vh: 100vh;
-       }
-       
-       html, body {
-         margin: 0;
-         padding: 0;
-         height: -webkit-fill-available;
-         touch-action: manipulation;
-       }
-       
-       .ios-wrapper {
-         position: fixed;
-         top: env(safe-area-inset-top);
-         left: env(safe-area-inset-left);
-         right: env(safe-area-inset-right);
-         bottom: env(safe-area-inset-bottom);
-         background: linear-gradient(to bottom right, #1e3a8a, #1e40af, #0f766e);
-         color: white;
-         overflow-y: scroll;
-         -webkit-overflow-scrolling: touch;
-         overscroll-behavior: contain;
-         height: calc(var(--vh) * 100 - env(safe-area-inset-top) - env(safe-area-inset-bottom));
-       }
-       
-       .ios-container {
-         padding: 1rem;
-         min-height: 100%;
-       }
-       
-       .ios-content {
-         padding-bottom: 2rem;
-       }
-       
-       .ios-scrollable {
-         overflow-y: scroll;
-         -webkit-overflow-scrolling: touch;
-         overscroll-behavior: contain;
-         max-height: 60vh;
-         padding-bottom: 1rem;
-       }
-     `}</style>
-   </>
- );
+      <PDFExportModal
+        userProfile={userProfile}
+        benefits={benefits}
+        isVisible={showPDFModal}
+        onClose={() => setShowPDFModal(false)}
+      />
+    </section>
+  );
 }
