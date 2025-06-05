@@ -481,8 +481,13 @@ export class PlanetarySystemManager {
     return this.specialPlanets.get(planetId);
   }
 } 
+<<<<<<< HEAD
   // Cosmic Phenomena Creation Methods;
 //   private createAsteroidField(radius: number, color: number): THREE.Group {
+=======
+  // Cosmic Phenomena Creation Methods
+  private createAsteroidField(radius: number, color: number): THREE.Group {
+>>>>>>> f9f0c79e45cd7a5a376e667e340f6d11d63d8f1e
     const group = new THREE.Group();
     const asteroidCount = 50;
     
@@ -513,7 +518,11 @@ export class PlanetarySystemManager {
     }
     
     return group;
+<<<<<<< HEAD
 export export   }
+=======
+  }
+>>>>>>> f9f0c79e45cd7a5a376e667e340f6d11d63d8f1e
 
   private createNebulaCluster(radius: number, color: number): THREE.Group {
     const group = new THREE.Group();

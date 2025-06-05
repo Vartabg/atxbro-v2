@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 "use client";
 import { useState, ComponentType } from 'react';
 import PDFExportModal from './PDFExportModal';
@@ -244,3 +245,6 @@ export default function VetNav() {
     </section>
   );
 }
+=======
+﻿
+>>>>>>> f9f0c79e45cd7a5a376e667e340f6d11d63d8f1e
