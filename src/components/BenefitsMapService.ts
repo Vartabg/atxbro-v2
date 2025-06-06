@@ -35,7 +35,6 @@ class BenefitsMapService {
       if (Array.isArray(rawData)) {
         this.benefitsData = rawData;
       } else if (typeof rawData === 'object' && rawData !== null) {
-        // Find the first property that is an array and use it
         const arrayKey = Object.keys(rawData).find(key => Array.isArray(rawData[key]));
         this.benefitsData = arrayKey ? rawData[arrayKey] : [];
       } else {
@@ -71,7 +70,6 @@ class BenefitsMapService {
   }
 
   public getStateElevation = (feature: any): number => {
-    // Defensive coding: ensure feature and properties exist
     const stateCode = feature?.properties?.iso_3166_2;
     if (!stateCode) return 0;
     
@@ -94,6 +92,11 @@ class BenefitsMapService {
     const red = 255 * (1 - ratio);
     const green = 255 * ratio;
     return [red, green, 50, 210];
+  }
+  
+  public getStateBenefits = (stateCode: string | null): Benefit[] => {
+    if (!stateCode) return [];
+    return this.benefitsData.filter(benefit => benefit.state === stateCode);
   }
 }
 
