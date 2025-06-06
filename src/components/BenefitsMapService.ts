@@ -94,7 +94,7 @@ class BenefitsMapService {
     return [red, green, 50, 210];
   }
   
-  public getStateBenefits = (stateCode: string | null): Benefit[] => {
+  public getStateBenefitsData = (stateCode: string | null): Benefit[] => {
     if (!stateCode) return [];
     return this.benefitsData.filter(benefit => benefit.state === stateCode);
   }
