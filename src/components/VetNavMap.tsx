@@ -4,12 +4,33 @@ import DeckGL from '@deck.gl/react';
 import { GeoJsonLayer } from '@deck.gl/layers';
 import { LightingEffect, AmbientLight, DirectionalLight } from '@deck.gl/core';
 import { feature as topojsonFeature } from 'topojson-client';
+import { geoAlbersUsa } from 'd3-geo';
 import { benefitsMapService } from './BenefitsMapService';
 import { StateInfoCard } from './StateInfoCard';
 
 const ambientLight = new AmbientLight({ color: [255, 255, 255], intensity: 1.0 });
 const directionalLight = new DirectionalLight({ color: [255, 255, 255], intensity: 1.0, direction: [-1, -2, -3] });
 const lightingEffect = new LightingEffect({ ambientLight, directionalLight });
+
+// This function will invert AlbersUSA projection back to WGS84 (lng, lat)
+const albersProjection = geoAlbersUsa().scale(1300).translate([487.5, 305]);
+const unproject = albersProjection.invert;
+
+const transformCoordinates = (geometry) => {
+  if (!geometry) return;
+
+  if (geometry.type === 'Polygon') {
+    geometry.coordinates = geometry.coordinates.map(ring =>
+      ring.map(coord => unproject(coord) || [0,0])
+    );
+  } else if (geometry.type === 'MultiPolygon') {
+    geometry.coordinates = geometry.coordinates.map(polygon =>
+      polygon.map(ring =>
+        ring.map(coord => unproject(coord) || [0,0])
+      )
+    );
+  }
+};
 
 const VetNavMap = ({ onSelectState }) => {
   const [viewState, setViewState] = useState({
@@ -24,16 +45,18 @@ const VetNavMap = ({ onSelectState }) => {
   const [selectedStateStats, setSelectedStateStats] = useState(null);
 
   useEffect(() => {
-    // Fetch local TopoJSON file instead of external GeoJSON
     fetch('/data/states-albers-10m.json')
       .then(response => response.json())
       .then(topology => {
-        // Convert TopoJSON to GeoJSON
         const geojson = topojsonFeature(topology, topology.objects.states);
+        
+        // Transform coordinates for each feature
+        geojson.features.forEach(feature => transformCoordinates(feature.geometry));
+        
         setStatesData(geojson);
-        console.log(`Loaded and processed ${geojson.features.length} states from local file.`);
+        console.log(`Loaded and transformed ${geojson.features.length} states.`);
       })
-      .catch(error => console.error('Error loading local map data:', error));
+      .catch(error => console.error('Error loading map data:', error));
   }, []);
 
   const handleStateClick = (info) => {
@@ -49,10 +72,7 @@ const VetNavMap = ({ onSelectState }) => {
   };
   
   const handleConfirmSelection = (stateName) => {
-    console.log(`Confirmed selection for ${stateName}. Triggering navigation.`);
-    if (onSelectState) {
-      onSelectState(stateName);
-    }
+    if (onSelectState) onSelectState(stateName);
   };
 
   const layers = [
@@ -82,9 +102,7 @@ const VetNavMap = ({ onSelectState }) => {
         controller={true}
         onViewStateChange={({ viewState }) => setViewState(viewState)}
         style={{background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)'}}
-      >
-        {/* Base map removed previously, using a CSS gradient background */}
-      </DeckGL>
+      />
       <StateInfoCard 
         state={selectedState} 
         stats={selectedStateStats}
