@@ -4,6 +4,7 @@ import React, { useState, useRef, Suspense } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Html, Stars, Sphere } from '@react-three/drei';
 import { ShieldCheck, BarChart3, PawPrint, TrendingUp } from 'lucide-react';
+import { PerformanceDisplay } from './PerformanceMonitor';
 
 interface Service {
   id: string;
@@ -57,6 +58,7 @@ function AnimatedServiceSphere({ service, isActive, onClick }: {
 
 export default function Landing3D() {
   const [activeServiceId, setActiveServiceId] = useState<string | null>(null);
+  const [showPerformance, setShowPerformance] = useState(process.env.NODE_ENV === 'development');
 
   const services: Service[] = [
     { 
@@ -66,7 +68,7 @@ export default function Landing3D() {
       position: [-4, 2, 0], 
       color: '#2563eb', 
       icon: ShieldCheck, 
-      description: 'Navigate veteran benefits effectively.' 
+      description: 'Navigate veteran benefits effectively with comprehensive coverage mapping.' 
     },
     { 
       id: 'tariff-explorer', 
@@ -75,7 +77,7 @@ export default function Landing3D() {
       position: [4, 2, 0], 
       color: '#10b981', 
       icon: BarChart3, 
-      description: 'Explore and understand trade tariffs.' 
+      description: 'Explore global trade data and understand tariff impacts on markets.' 
     },
     { 
       id: 'pet-radar', 
@@ -84,7 +86,7 @@ export default function Landing3D() {
       position: [-3, -2, 0], 
       color: '#8b5cf6', 
       icon: PawPrint, 
-      description: 'Help find lost pets in your area.' 
+      description: 'Advanced pet tracking system for reuniting families with their pets.' 
     },
     { 
       id: 'jets-home', 
@@ -93,7 +95,7 @@ export default function Landing3D() {
       position: [3, -2, 0], 
       color: '#dc2626', 
       icon: TrendingUp, 
-      description: 'Advanced sports statistics and analytics.' 
+      description: 'Comprehensive sports analytics and statistics platform for Jets fans.' 
     },
   ];
 
@@ -101,16 +103,28 @@ export default function Landing3D() {
     setActiveServiceId(prevId => (prevId === id ? null : id));
   };
 
+  const handleKeyPress = (event: React.KeyboardEvent) => {
+    if (event.key === 'Escape') {
+      setActiveServiceId(null);
+    }
+  };
+
   return (
-    <div className="relative w-full bg-black">
+    <div className="relative w-full bg-black" onKeyDown={handleKeyPress} tabIndex={0}>
       <div className="w-full h-80 sm:h-96 md:h-screen">
         <Canvas
           camera={{ position: [0, 0, 12], fov: 50 }}
           className="w-full h-full"
+          gl={{ 
+            antialias: false, // Disable for better mobile performance
+            alpha: false,
+            powerPreference: "high-performance"
+          }}
         >
           <Suspense fallback={
             <Html center>
-              <div className="text-white text-lg animate-pulse">
+              <div className="text-white text-lg animate-pulse flex items-center gap-2">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
                 Loading cosmic experience...
               </div>
             </Html>
@@ -123,8 +137,8 @@ export default function Landing3D() {
             <Stars 
               radius={100} 
               depth={50} 
-              count={5000} 
-              factor={4} 
+              count={3000} // Reduced for better mobile performance
+              factor={3} 
               saturation={0} 
               fade 
               speed={1}
@@ -148,56 +162,75 @@ export default function Landing3D() {
               dampingFactor={0.05}
               autoRotate={!activeServiceId}
               autoRotateSpeed={0.5}
+              maxPolarAngle={Math.PI * 0.8}
+              minPolarAngle={Math.PI * 0.2}
             />
           </Suspense>
         </Canvas>
       </div>
 
+      {/* Performance Monitor (Development only) */}
+      {showPerformance && <PerformanceDisplay />}
+
       {/* Overlay Text */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <div className="text-center space-y-4">
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent drop-shadow-2xl">
+          <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent drop-shadow-2xl">
             What's good, bro
           </h1>
-          <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto px-4 drop-shadow-lg">
+          <p className="text-base sm:text-lg md:text-xl text-white/90 max-w-2xl mx-auto px-4 drop-shadow-lg">
             Explore interactive cosmic spheres • Click to discover applications
           </p>
-          <div className="text-sm text-white/60">
-            🌟 Interactive 3D Navigation • 🖱️ Drag to explore
+          <div className="text-xs sm:text-sm text-white/60">
+            🌟 Interactive 3D Navigation • 🖱️ Drag to explore • 📱 Touch friendly
           </div>
         </div>
       </div>
 
       {/* Service Info Panel */}
       {activeServiceId && (
-        <div className="absolute bottom-4 left-4 bg-black/90 backdrop-blur-md text-white p-6 rounded-xl max-w-sm border border-white/30 shadow-2xl animate-slide-up">
+        <div className="absolute bottom-4 left-4 bg-black/90 backdrop-blur-md text-white p-4 sm:p-6 rounded-xl max-w-xs sm:max-w-sm border border-white/30 shadow-2xl animate-slide-up">
           <div className="flex items-center gap-3 mb-3">
             <div 
-              className="w-4 h-4 rounded-full animate-pulse"
+              className="w-3 h-3 sm:w-4 sm:h-4 rounded-full animate-pulse"
               style={{ backgroundColor: services.find(s => s.id === activeServiceId)?.color }}
             />
-            <h3 className="text-xl font-bold text-blue-400">
+            <h3 className="text-lg sm:text-xl font-bold text-blue-400">
               {services.find(s => s.id === activeServiceId)?.title}
             </h3>
           </div>
-          <p className="text-sm text-white/80 mb-4 leading-relaxed">
+          <p className="text-xs sm:text-sm text-white/80 mb-4 leading-relaxed">
             {services.find(s => s.id === activeServiceId)?.description}
           </p>
           <div className="flex items-center justify-between text-xs text-white/60">
             <span>🌟 Click sphere to explore</span>
             <span>ESC to deselect</span>
           </div>
+          <button 
+            className="mt-3 w-full py-2 px-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg text-white text-sm font-medium hover:from-blue-600 hover:to-purple-700 transition-all duration-200 pointer-events-auto"
+            onClick={() => {
+              // This would navigate to the specific app
+              console.log(`Navigate to ${activeServiceId}`);
+            }}
+          >
+            Launch Application →
+          </button>
         </div>
       )}
 
       {/* Performance indicator */}
       <div className="absolute top-4 right-4 text-white/50 text-xs font-mono">
-        3D Navigation • WebGL • 60fps
+        3D • WebGL • 60fps
       </div>
 
       {/* Navigation hint */}
-      <div className="absolute bottom-4 right-4 text-white/50 text-xs">
+      <div className="absolute bottom-4 right-4 text-white/50 text-xs hidden sm:block">
         Mouse: Orbit • Scroll: Zoom • Click: Select
+      </div>
+
+      {/* Mobile navigation hint */}
+      <div className="absolute bottom-4 right-4 text-white/50 text-xs block sm:hidden">
+        Touch: Navigate • Tap: Select
       </div>
     </div>
   );
