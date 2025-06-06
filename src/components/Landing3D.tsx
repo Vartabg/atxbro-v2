@@ -1,122 +1,204 @@
-'use client';
-import { Suspense, useState, useEffect, useMemo } from 'react';
-import { Canvas } from '@react-three/fiber';
-import { AdvancedPlanetarySystemWithMoons } from './AdvancedPlanetarySystemWithMoons';
-import { CameraController } from './CameraController';
-import { PlanetPortalCard } from './PlanetPortalCard';
-import VetNavPortal from './VetNavPortal';
-import VetNav from './VetNav';
-import TariffExplorer from './TariffExplorer';
-import PetRadar from './PetRadar';
-import JetsStats from './JetsStats';
-import { QuantumParticleField, GravitationalWaves } from './QuantumEffects';
+"use client";
 
-// ... (interface PlanetData)
+import React, { useState, useRef, Suspense } from 'react';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { OrbitControls, Html, Stars, Sphere } from '@react-three/drei';
+import { ShieldCheck, BarChart3, PawPrint, TrendingUp } from 'lucide-react';
 
-interface PlanetData {
+interface Service {
   id: string;
-  name: string;
-  app: string;
+  title: string;
+  subtitle: string;
   position: [number, number, number];
-  size: number;
-  type: string;
+  color: string;
+  icon: React.ComponentType;
   description: string;
-  features: string[];
-  atmosphereColor: string;
 }
 
+function AnimatedServiceSphere({ service, isActive, onClick }: { 
+  service: Service; 
+  isActive: boolean; 
+  onClick: (id: string) => void;
+}) {
+  const meshRef = useRef<any>(null);
+
+  useFrame((state, delta) => {
+    if (meshRef.current) {
+      meshRef.current.rotation.y += delta * 0.5;
+      meshRef.current.rotation.x += delta * 0.2;
+    }
+  });
+
+  return (
+    <group position={service.position} onClick={() => onClick(service.id)}>
+      <Sphere ref={meshRef} args={[isActive ? 1.2 : 1, 32, 32]}>
+        <meshStandardMaterial 
+          color={service.color}
+          emissive={isActive ? service.color : '#000000'}
+          emissiveIntensity={isActive ? 0.4 : 0.1}
+          roughness={0.3}
+          metalness={0.7}
+        />
+      </Sphere>
+      
+      {isActive && (
+        <Sphere args={[1.4, 32, 32]}>
+          <meshBasicMaterial 
+            color={service.color}
+            transparent
+            opacity={0.2}
+            wireframe
+          />
+        </Sphere>
+      )}
+    </group>
+  );
+}
 
 export default function Landing3D() {
-  const [selectedPlanet, setSelectedPlanet] = useState<PlanetData | null>(null);
-  const [isTracking, setIsTracking] = useState(false);
-  const [activeApp, setActiveApp] = useState<string | null>(null);
-  const [showMap, setShowMap] = useState(false);
+  const [activeServiceId, setActiveServiceId] = useState<string | null>(null);
 
-  // Mobile-first camera logic
-  const cameraPosition = useMemo(() => {
-    const aspect = typeof window !== 'undefined' ? window.innerWidth / window.innerHeight : 16 / 9;
-    // If the screen is portrait (taller than it is wide), pull camera back
-    const z = aspect < 1 ? 75 : 50;
-    return [0, 0, z];
-  }, []);
+  const services: Service[] = [
+    { 
+      id: 'vetnav', 
+      title: 'VetNav', 
+      subtitle: 'Benefits Navigator', 
+      position: [-4, 2, 0], 
+      color: '#2563eb', 
+      icon: ShieldCheck, 
+      description: 'Navigate veteran benefits effectively.' 
+    },
+    { 
+      id: 'tariff-explorer', 
+      title: 'Tariff Explorer', 
+      subtitle: 'Trade Insights', 
+      position: [4, 2, 0], 
+      color: '#10b981', 
+      icon: BarChart3, 
+      description: 'Explore and understand trade tariffs.' 
+    },
+    { 
+      id: 'pet-radar', 
+      title: 'Pet Radar', 
+      subtitle: 'Lost & Found Pets', 
+      position: [-3, -2, 0], 
+      color: '#8b5cf6', 
+      icon: PawPrint, 
+      description: 'Help find lost pets in your area.' 
+    },
+    { 
+      id: 'jets-home', 
+      title: 'Jets Home', 
+      subtitle: 'Sports Analytics', 
+      position: [3, -2, 0], 
+      color: '#dc2626', 
+      icon: TrendingUp, 
+      description: 'Advanced sports statistics and analytics.' 
+    },
+  ];
 
-  const handlePlanetClick = (planetData: PlanetData) => {
-    setSelectedPlanet(planetData);
-    setIsTracking(true);
-    setActiveApp(null); 
-    setShowMap(false);
-  };
-
-  const handleClosePortal = () => {
-    setSelectedPlanet(null);
-    setIsTracking(false);
-    setActiveApp(null);
-    setShowMap(false);
-  };
-
-  const handleLaunchApp = (appType: string) => {
-    setActiveApp(appType);
-    setShowMap(false);
-  };
-  
-  const handleShowMap = () => {
-    setShowMap(true);
-    setActiveApp(null);
-  };
-
-  const closeApp = () => {
-    setActiveApp(null);
-    setShowMap(false);
+  const handleServiceClick = (id: string) => {
+    setActiveServiceId(prevId => (prevId === id ? null : id));
   };
 
   return (
-    <div className="relative w-full h-full">
-      <div className="w-full h-screen">
-        <Canvas camera={{ position: cameraPosition, fov: 60 }} className="w-full h-full">
-          <Suspense fallback={null}>
-            <ambientLight intensity={0.2} />
-            <directionalLight position={[10, 10, 5]} intensity={1} />
-            <CameraController targetPlanet={selectedPlanet} isTracking={isTracking} />
-            <QuantumParticleField />
-            <GravitationalWaves />
-            <AdvancedPlanetarySystemWithMoons onPlanetClick={handlePlanetClick} selectedPlanet={selectedPlanet} />
+    <div className="relative w-full bg-black">
+      <div className="w-full h-80 sm:h-96 md:h-screen">
+        <Canvas
+          camera={{ position: [0, 0, 12], fov: 50 }}
+          className="w-full h-full"
+        >
+          <Suspense fallback={
+            <Html center>
+              <div className="text-white text-lg animate-pulse">
+                Loading cosmic experience...
+              </div>
+            </Html>
+          }>
+            <ambientLight intensity={0.4} />
+            <directionalLight position={[10, 10, 10]} intensity={1} color="#ffffff" />
+            <pointLight position={[-10, -10, -10]} intensity={0.6} color="#4a90e2" />
+            <pointLight position={[10, -10, 10]} intensity={0.4} color="#8b5cf6" />
+            
+            <Stars 
+              radius={100} 
+              depth={50} 
+              count={5000} 
+              factor={4} 
+              saturation={0} 
+              fade 
+              speed={1}
+            />
+            
+            {services.map(service => (
+              <AnimatedServiceSphere 
+                key={service.id} 
+                service={service}
+                isActive={service.id === activeServiceId}
+                onClick={handleServiceClick} 
+              />
+            ))}
+            
+            <OrbitControls 
+              enableZoom={true} 
+              enablePan={true} 
+              minDistance={8} 
+              maxDistance={20}
+              enableDamping={true}
+              dampingFactor={0.05}
+              autoRotate={!activeServiceId}
+              autoRotateSpeed={0.5}
+            />
           </Suspense>
         </Canvas>
       </div>
 
-      {!selectedPlanet && (
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="text-center text-white">
-            <h1 className="text-6xl md:text-8xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-cyan-400 bg-clip-text text-transparent mb-4">
-              What's good, bro
-            </h1>
-            <p className="text-xl md:text-2xl text-blue-200 opacity-80">
-              Select a planet to begin your journey
-            </p>
+      {/* Overlay Text */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div className="text-center space-y-4">
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent drop-shadow-2xl">
+            What's good, bro
+          </h1>
+          <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto px-4 drop-shadow-lg">
+            Explore interactive cosmic spheres • Click to discover applications
+          </p>
+          <div className="text-sm text-white/60">
+            🌟 Interactive 3D Navigation • 🖱️ Drag to explore
+          </div>
+        </div>
+      </div>
+
+      {/* Service Info Panel */}
+      {activeServiceId && (
+        <div className="absolute bottom-4 left-4 bg-black/90 backdrop-blur-md text-white p-6 rounded-xl max-w-sm border border-white/30 shadow-2xl animate-slide-up">
+          <div className="flex items-center gap-3 mb-3">
+            <div 
+              className="w-4 h-4 rounded-full animate-pulse"
+              style={{ backgroundColor: services.find(s => s.id === activeServiceId)?.color }}
+            />
+            <h3 className="text-xl font-bold text-blue-400">
+              {services.find(s => s.id === activeServiceId)?.title}
+            </h3>
+          </div>
+          <p className="text-sm text-white/80 mb-4 leading-relaxed">
+            {services.find(s => s.id === activeServiceId)?.description}
+          </p>
+          <div className="flex items-center justify-between text-xs text-white/60">
+            <span>🌟 Click sphere to explore</span>
+            <span>ESC to deselect</span>
           </div>
         </div>
       )}
 
-      {selectedPlanet && !activeApp && !showMap && ( <PlanetPortalCard planet={selectedPlanet} onClose={handleClosePortal} onLaunchApp={handleLaunchApp} onShowMap={handleShowMap} /> )}
-      
-      {selectedPlanet && showMap && (
-        <div className="fixed inset-0 bg-black/95 z-50">
-          <div className="h-full flex flex-col">
-            <div className="flex justify-between items-center p-4 border-b border-gray-700">
-              <h2 className="text-xl font-bold text-white">{selectedPlanet.name} - Interactive Map</h2>
-              <button onClick={() => setShowMap(false)} className="text-white hover:text-gray-300 text-2xl"> × </button>
-            </div>
-            <div className="flex-1">
-              <VetNavPortal onNavigateToApp={() => setActiveApp('vetnav')} />
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Performance indicator */}
+      <div className="absolute top-4 right-4 text-white/50 text-xs font-mono">
+        3D Navigation • WebGL • 60fps
+      </div>
 
-      {activeApp === 'vetnav' && ( <div className="fixed inset-0 bg-black/95 z-50"> <VetNav /> <button onClick={closeApp} className="fixed top-4 right-4 text-white hover:text-gray-300 text-2xl z-60"> × </button> </div> )}
-      {activeApp === 'tariff-explorer' && ( <div className="fixed inset-0 bg-black/95 z-50"> <TariffExplorer /> <button onClick={closeApp} className="fixed top-4 right-4 text-white hover:text-gray-300 text-2xl z-60"> × </button> </div> )}
-      {activeApp === 'pet-radar' && ( <div className="fixed inset-0 bg-black/95 z-50"> <PetRadar /> <button onClick={closeApp} className="fixed top-4 right-4 text-white hover:text-gray-300 text-2xl z-60"> × </button> </div> )}
-      {activeApp === 'jetshome' && ( <div className="fixed inset-0 bg-black/95 z-50"> <JetsStats /> <button onClick={closeApp} className="fixed top-4 right-4 text-white hover:text-gray-300 text-2xl z-60"> × </button> </div> )}
+      {/* Navigation hint */}
+      <div className="absolute bottom-4 right-4 text-white/50 text-xs">
+        Mouse: Orbit • Scroll: Zoom • Click: Select
+      </div>
     </div>
   );
 }
