@@ -88,7 +88,7 @@ export default function VetNav() {
          >
            <div className="text-4xl mb-3">🔍</div>
            <h3 className="text-xl font-bold mb-2">Find Benefits</h3>
-           <p className="text-blue-100 text-sm">Search through 789 state and federal benefits</p>
+           <p className="text-blue-100 text-sm">Search through {benefitsData.length} state and federal benefits</p>
          </button>
 
          <button
