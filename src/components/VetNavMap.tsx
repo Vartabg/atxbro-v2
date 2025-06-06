@@ -1,25 +1,13 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import DeckGL from '@deck.gl/react';
-import { Map } from 'react-map-gl';
 import { GeoJsonLayer } from '@deck.gl/layers';
 import { LightingEffect, AmbientLight, DirectionalLight } from '@deck.gl/core';
 import { benefitsMapService } from './BenefitsMapService';
 import { StateInfoCard } from './StateInfoCard';
 
-const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoiZ2Fyb3Zza2kiLCJhIjoiY2x5YWc1b2Y4MGlsbDJrcGo4cDI1bTlwcSJ9.sP_j_9oB9t0aA45vSg79jQ';
-
-const ambientLight = new AmbientLight({
-  color: [255, 255, 255],
-  intensity: 1.0
-});
-
-const directionalLight = new DirectionalLight({
-  color: [255, 255, 255],
-  intensity: 1.0,
-  direction: [-1, -2, -3]
-});
-
+const ambientLight = new AmbientLight({ color: [255, 255, 255], intensity: 1.0 });
+const directionalLight = new DirectionalLight({ color: [255, 255, 255], intensity: 1.0, direction: [-1, -2, -3] });
 const lightingEffect = new LightingEffect({ ambientLight, directionalLight });
 
 const VetNavMap = ({ onSelectState }) => {
@@ -57,7 +45,7 @@ const VetNavMap = ({ onSelectState }) => {
   
   const handleConfirmSelection = (stateName) => {
     console.log(`Confirmed selection for ${stateName}. Triggering navigation.`);
-    if(onSelectState) {
+    if (onSelectState) {
       onSelectState(stateName);
     }
   };
@@ -89,10 +77,7 @@ const VetNavMap = ({ onSelectState }) => {
         controller={true}
         onViewStateChange={({ viewState }) => setViewState(viewState)}
       >
-        <Map
-          mapStyle="mapbox://styles/mapbox/dark-v11"
-          mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
-        />
+        {/* The <Map> component has been removed to isolate the dependency issue */}
       </DeckGL>
       <StateInfoCard 
         state={selectedState} 
