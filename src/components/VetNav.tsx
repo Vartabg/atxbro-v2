@@ -1,7 +1,6 @@
 ﻿"use client";
 import { useState, useMemo, useEffect } from 'react';
 import Head from 'next/head';
-import benefitsData from './vetnavBenefitsDatabase.json';
 
 export default function VetNav() {
  const [currentView, setCurrentView] = useState('main');

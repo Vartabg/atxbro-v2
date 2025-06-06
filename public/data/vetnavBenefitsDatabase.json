@@ -1,0 +1,20 @@
+{
+  "benefits": [
+    {
+      "name": "VA Healthcare",
+      "description": "Comprehensive medical services",
+      "category": "healthcare"
+    },
+    {
+      "name": "Disability Compensation", 
+      "description": "Monthly payments for service-connected conditions",
+      "category": "disability"
+    }
+  ],
+  "states": {
+    "TX": {
+      "name": "Texas",
+      "programs": ["Hazlewood Act", "Property Tax Exemption"]
+    }
+  }
+}
