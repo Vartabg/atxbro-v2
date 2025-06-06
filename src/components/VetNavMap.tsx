@@ -28,9 +28,11 @@ const State = ({ featureData, points, transform, showLabels }) => {
         };
 
         if (geomType === 'Polygon') {
-            processPolygon(coords[0]);
+            if (coords[0]?.length >= 4) processPolygon(coords[0]);
         } else if (geomType === 'MultiPolygon') {
-            coords.forEach(polygon => processPolygon(polygon[0]));
+            coords.forEach(polygon => {
+                if (polygon[0]?.length >= 4) processPolygon(polygon[0]);
+            });
         }
 
         const transformedPoints = points.map(p => {
@@ -83,18 +85,13 @@ const VetNavMap = ({ topoJsonPath = '/data/states-albers-10m.json', citiesDataPa
             fetch(topoJsonPath).then(res => res.json()),
             fetch(citiesDataPath).then(res => res.text())
         ]).then(([topology, citiesCsv]) => {
-            // Process State Shapes
             if (!topology.objects?.states) throw new Error('TopoJSON is missing "objects.states"');
             const geoJson = topojsonFeature(topology, topology.objects.states);
             
-            // Process City Points
             const cities = csvParse(citiesCsv, (d) => ({
-                x: +d.lng, // Using lng/lat as projected coords for simplicity
-                y: +d.lat,
-                population: +d.population
+                x: +d.lng, y: +d.lat, population: +d.population
             }));
 
-            // Calculate map bounds from shapes
             let allCoords = [];
             geoJson.features.forEach(f => {
                 if(f.geometry?.type === 'Polygon') allCoords.push(...f.geometry.coordinates[0]);
@@ -103,10 +100,8 @@ const VetNavMap = ({ topoJsonPath = '/data/states-albers-10m.json', citiesDataPa
 
             let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
             allCoords.forEach(c => {
-                minX = Math.min(minX, c[0]);
-                maxX = Math.max(maxX, c[0]);
-                minY = Math.min(minY, c[1]);
-                maxY = Math.max(maxY, c[1]);
+                minX = Math.min(minX, c[0]); maxX = Math.max(maxX, c[0]);
+                minY = Math.min(minY, c[1]); maxY = Math.max(maxY, c[1]);
             });
 
             const dataWidth = maxX - minX;
@@ -117,13 +112,28 @@ const VetNavMap = ({ topoJsonPath = '/data/states-albers-10m.json', citiesDataPa
             };
             setTransformParams(params);
 
-            // Assign cities to states (this is computationally intensive)
+            // Assign cities to states with defensive checks
             const statesWithPoints = geoJson.features.map(feature => {
-                const statePolygon = turfPolygon(feature.geometry.coordinates);
-                const pointsInState = cities.filter(city => {
-                    const cityPoint = turfPoint([city.x, city.y]);
-                    return pointInPolygon(cityPoint, statePolygon);
-                });
+                let pointsInState = [];
+                if (feature.geometry) {
+                    const turfGeometries = [];
+                    if (feature.geometry.type === 'Polygon' && feature.geometry.coordinates[0]?.length >= 4) {
+                        turfGeometries.push(turfPolygon(feature.geometry.coordinates));
+                    } else if (feature.geometry.type === 'MultiPolygon') {
+                        feature.geometry.coordinates.forEach(poly => {
+                            if (poly[0]?.length >= 4) {
+                                turfGeometries.push(turfPolygon(poly));
+                            }
+                        });
+                    }
+
+                    if (turfGeometries.length > 0) {
+                        pointsInState = cities.filter(city => {
+                            const cityPoint = turfPoint([city.x, city.y]);
+                            return turfGeometries.some(statePolygon => pointInPolygon(cityPoint, statePolygon));
+                        });
+                    }
+                }
                 return { ...feature, properties: {...feature.properties, points: pointsInState } };
             });
 
@@ -150,7 +160,7 @@ const VetNavMap = ({ topoJsonPath = '/data/states-albers-10m.json', citiesDataPa
                         featureData={feature}
                         points={feature.properties.points}
                         transform={transformParams}
-                        showLabels={false} // Labels can be re-enabled later
+                        showLabels={false}
                     />
                 ))}
             </group>
