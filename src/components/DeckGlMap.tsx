@@ -1,208 +1,102 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import DeckGL from '@deck.gl/react';
+import { Map } from 'react-map-gl';
 import { GeoJsonLayer } from '@deck.gl/layers';
 import { LightingEffect, AmbientLight, DirectionalLight } from '@deck.gl/core';
 import { benefitsMapService } from './BenefitsMapService';
+import { StateInfoCard } from './StateInfoCard';
 
-const DeckGlMap = () => {
+const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoiZ2Fyb3Zza2kiLCJhIjoiY2x5YWc1b2Y4MGlsbDJrcGo4cDI1bTlwcSJ9.sP_j_9oB9t0aA45vSg79jQ';
+
+const ambientLight = new AmbientLight({ color: [255, 255, 255], intensity: 1.0 });
+const directionalLight = new DirectionalLight({ color: [255, 255, 255], intensity: 1.0, direction: [-1, -2, -3] });
+const lightingEffect = new LightingEffect({ ambientLight, directionalLight });
+
+const DeckGlMap = ({ onSelectState }) => {
   const [viewState, setViewState] = useState({
-    longitude: -96,
-    latitude: 38,
-    zoom: 3.7,
-    pitch: 35,
-    bearing: -10
+    longitude: -98.5795,
+    latitude: 39.8283,
+    zoom: 3.5,
+    pitch: 45,
+    bearing: 0
   });
-  
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [statesData, setStatesData] = useState(null);
   const [selectedState, setSelectedState] = useState(null);
-
-  // Setup lighting
-  const ambientLight = new AmbientLight({
-    color: [255, 255, 255],
-    intensity: 0.3
-  });
-  
-  const directionalLight = new DirectionalLight({
-    color: [255, 255, 255],
-    intensity: 0.8,
-    direction: [-1, -2, -1]
-  });
-  
-  const lightingEffect = new LightingEffect({
-    ambientLight,
-    directionalLight
-  });
+  const [selectedStateStats, setSelectedStateStats] = useState(null);
 
   useEffect(() => {
-    setLoading(true);
-    fetch('/data/us-states-realistic.json')
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then(geojson => {
-        console.log('Loaded states:', geojson.features?.length || 'No features found');
-        setData(geojson);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error('Error loading map data:', err);
-        setError(err.message);
-        setLoading(false);
+    fetch('https://d2ad6b4ur77vpj.cloudfront.net/naturalearth-3.3.0/ne_110m_admin_1_states_provinces_shp.geojson')
+      .then(response => response.json())
+      .then(data => {
+        setStatesData(data);
+        console.log(`Loaded ${data.features.length} states.`);
       });
   }, []);
 
-  if (loading) {
-    return (
-      <div style={{ 
-        width: '100%', 
-        height: '100vh', 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-      }}>
-        <div className="text-center text-white">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-          <p className="text-lg">Loading Veterans Benefits Map...</p>
-        </div>
-      </div>
-    );
-  }
+  const handleStateClick = (info) => {
+    if (info.object) {
+      const stateCode = info.object.properties.iso_3166_2;
+      const stats = benefitsMapService.getStateStats(stateCode);
+      setSelectedState(info.object);
+      setSelectedStateStats(stats);
+      console.log(`Clicked state: ${info.object.properties.name}`);
 
-  if (error) {
-    return (
-      <div style={{ 
-        width: '100%', 
-        height: '100vh', 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center',
-        background: '#f0f0f0',
-        color: 'red'
-      }}>
-        <p>Error loading map: {error}</p>
-      </div>
-    );
-  }
+      // Correctly handle the returned array of benefits
+      const benefitsArray = benefitsMapService.getStateBenefitsData(stateCode);
+      console.log(`${info.object.properties.name} benefits: ${benefitsArray.length} available`);
+
+    } else {
+      setSelectedState(null);
+      setSelectedStateStats(null);
+    }
+  };
+
+  const handleConfirmSelection = (stateName) => {
+    console.log(`Confirmed selection for ${stateName}. Triggering navigation.`);
+    if (onSelectState) {
+      onSelectState(stateName);
+    }
+  };
 
   const layers = [
     new GeoJsonLayer({
-      id: 'states-3d',
-      data,
-      pickable: true,
+      id: 'states-layer',
+      data: statesData,
+      opacity: 1,
       stroked: true,
       filled: true,
       extruded: true,
-      wireframe: false,
-      lineWidthUnits: 'pixels',
-      lineWidthMinPixels: 1.5,
-      getFillColor: d => {
-        const stateName = d.properties?.name || d.properties?.NAME || d.properties?.STATE_NAME;
-        if (!stateName) return [100, 100, 100, 160];
-        
-        // Use real benefits data for colors
-        return benefitsMapService.getStateColor(stateName);
-      },
-      getLineColor: d => {
-        const stateName = d.properties?.name || d.properties?.NAME || d.properties?.STATE_NAME;
-        const isSelected = selectedState === stateName;
-        return isSelected ? [255, 255, 0, 255] : [255, 255, 255, 200]; // Yellow if selected
-      },
-      getElevation: d => {
-        const stateName = d.properties?.name || d.properties?.NAME || d.properties?.STATE_NAME;
-        if (!stateName) return 1000;
-        
-        // Use real benefits data for elevation
-        return benefitsMapService.getStateElevation(stateName);
-      },
-      elevationScale: 1,
-      material: {
-        ambient: 0.4,
-        diffuse: 0.8,
-        shininess: 32,
-        specularColor: [255, 255, 255]
-      },
-      onClick: info => {
-        if (info.object) {
-          const stateName = info.object.properties?.name || info.object.properties?.NAME || info.object.properties?.STATE_NAME;
-          console.log('Clicked state:', stateName);
-          setSelectedState(stateName);
-          
-          // Log benefits data for the state
-          const stateBenefits = benefitsMapService.getStateBenefits(stateName);
-          console.log(`${stateName} benefits:`, stateBenefits.length, 'available');
-        }
-      },
-      onHover: info => {
-        // TODO: Add hover tooltip with benefits preview
-      }
+      pickable: true,
+      getElevation: benefitsMapService.getStateElevation,
+      getFillColor: (d) => (selectedState && d.properties.iso_3166_2 === selectedState.properties.iso_3166_2) ? [0, 255, 255, 255] : benefitsMapService.getStateColor(d),
+      getLineColor: [255, 255, 255, 150],
+      getLineWidth: 1,
+      lineWidthMinPixels: 1,
+      onClick: handleStateClick,
     })
   ];
 
   return (
     <div className="relative w-full h-full">
       <DeckGL
-        initialViewState={viewState}
-        controller={{ 
-          dragRotate: true, 
-          scrollZoom: true,
-          touchRotate: true,
-          touchZoom: true
-        }}
-        viewState={viewState}
-        onViewStateChange={({ viewState }) => setViewState(viewState)}
         layers={layers}
         effects={[lightingEffect]}
-        glOptions={{ antialias: true }}
-        parameters={{ 
-          depthTest: true,
-          clearColor: [0.1, 0.1, 0.2, 1.0]
-        }}
-        style={{ width: '100%', height: '100vh' }}
+        initialViewState={viewState}
+        controller={true}
+        onViewStateChange={({ viewState }) => setViewState(viewState)}
+      >
+        <Map
+          mapStyle="mapbox://styles/mapbox/dark-v11"
+          mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
+        />
+      </DeckGL>
+      <StateInfoCard 
+        state={selectedState} 
+        stats={selectedStateStats}
+        onClose={() => setSelectedState(null)}
+        onConfirm={handleConfirmSelection}
       />
-      
-      {/* Benefits Info Overlay */}
-      {selectedState && (
-        <div className="absolute top-4 left-4 bg-white bg-opacity-95 rounded-lg p-4 max-w-sm shadow-lg">
-          <h3 className="text-lg font-bold text-blue-800 mb-2">{selectedState}</h3>
-          <div className="text-sm space-y-1">
-            <p><strong>Available Benefits:</strong> {benefitsMapService.getStateBenefits(selectedState).length}</p>
-            <p><strong>Federal Benefits:</strong> {benefitsMapService.getStateBenefitsData().get(selectedState)?.federalBenefits || 0}</p>
-            <p><strong>State Benefits:</strong> {benefitsMapService.getStateBenefitsData().get(selectedState)?.stateBenefits || 0}</p>
-            <button 
-              onClick={() => setSelectedState(null)}
-              className="mt-2 text-blue-600 hover:text-blue-800 text-xs"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Legend */}
-      <div className="absolute bottom-4 right-4 bg-white bg-opacity-95 rounded-lg p-3 shadow-lg">
-        <h4 className="text-sm font-bold mb-2">Benefits Density</h4>
-        <div className="space-y-1 text-xs">
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-3 bg-red-500"></div>
-            <span>Low</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-3 bg-yellow-500"></div>
-            <span>Medium</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-3 bg-green-500"></div>
-            <span>High</span>
-          </div>
-        </div>
-      </div>
     </div>
   );
 };
