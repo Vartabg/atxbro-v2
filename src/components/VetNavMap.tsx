@@ -16,7 +16,7 @@ const lightingEffect = new LightingEffect({ ambientLight, directionalLight });
 const albersProjection = geoAlbersUsa().scale(1300).translate([487.5, 305]);
 const unproject = albersProjection.invert;
 
-const INITIAL_VIEW_STATE = { longitude: -105, latitude: 40, zoom: 3, pitch: 45, bearing: 0, transitionDuration: 1000, transitionInterpolator: new FlyToInterpolator() };
+const INITIAL_VIEW_STATE = { longitude: -105, latitude: 40, zoom: 3, pitch: 50, bearing: 0, transitionDuration: 1000, transitionInterpolator: new FlyToInterpolator() };
 
 const transformCoordinates = (geometry) => {
   if (!geometry) return;
@@ -92,12 +92,36 @@ const VetNavMap = ({ onSelectState }) => {
   
   const layers = [
     new GeoJsonLayer({
-      id: 'states-layer', data: statesData, opacity: 0.9, stroked: true, filled: true, extruded: true, pickable: true,
-      getElevation: d => (selectedState && d.properties.id === selectedState.properties.id ? 75000 : 50000),
-      getFillColor: d => selectedState && d.properties.id === selectedState.properties.id ? [0, 255, 255, 255] : benefitsMapService.getStateColor(),
-      getLineColor: [0, 255, 255, 200], getLineWidth: 1, lineWidthMinPixels: 2, onClick: handleStateClick,
-      updateTriggers: { getFillColor: [selectedState], getElevation: [selectedState] },
-      transitions: { getFillColor: 500, getElevation: 500 }
+      id: 'states-layer',
+      data: statesData,
+      opacity: 0.6, // Overall layer opacity for translucency
+      stroked: true,
+      filled: true,
+      extruded: true,
+      pickable: true,
+      material: { // More "glass-like" material
+        ambient: 0.7,
+        diffuse: 0.5,
+        shininess: 128,
+        specularColor: [180, 220, 255]
+      },
+      getElevation: d => {
+        // Subtle height variation for a better 3D feel
+        const idHash = Array.from(d.properties.id || '').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+        const baseHeight = 10000 + (idHash % 5) * 4000;
+        return selectedState && d.properties.id === selectedState.properties.id ? baseHeight + 50000 : baseHeight;
+      },
+      getFillColor: [80, 150, 255, 140], // Ethereal blue with alpha for translucency
+      getLineColor: [150, 220, 255, 255], // Brighter border color
+      getLineWidth: 1,
+      lineWidthMinPixels: 1,
+      onClick: handleStateClick,
+      updateTriggers: {
+        getElevation: [selectedState]
+      },
+      transitions: {
+        getElevation: { duration: 500 }
+      }
     })
   ];
 
