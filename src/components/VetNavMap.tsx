@@ -13,13 +13,14 @@ const ambientLight = new AmbientLight({ color: [255, 255, 255], intensity: 0.5 }
 const directionalLight = new DirectionalLight({ color: [255, 255, 255], intensity: 1.0, direction: [-5, -5, -5] });
 const lightingEffect = new LightingEffect({ ambientLight, directionalLight });
 
+// Adjusted projection and initial view to better frame AK and HI
 const albersProjection = geoAlbersUsa().scale(1300).translate([487.5, 305]);
 const unproject = albersProjection.invert;
 
 const INITIAL_VIEW_STATE = {
-  longitude: -98.5795,
-  latitude: 39.8283,
-  zoom: 3.5,
+  longitude: -105,
+  latitude: 40,
+  zoom: 3,
   pitch: 45,
   bearing: 0,
   transitionDuration: 1000,
@@ -51,7 +52,7 @@ const VetNavMap = ({ onSelectState }) => {
         setStatesData(geojson);
         setTimeout(() => setDataLoaded(true), 100);
       })
-      .catch(error => console.error('Error loading map data:', error));
+      .catch(error => console.error('Error loading or processing map data:', error));
   }, []);
 
   const handleStateClick = (info) => {
@@ -110,20 +111,8 @@ const VetNavMap = ({ onSelectState }) => {
 
   return (
     <div className="relative w-full h-full">
-      <DeckGL
-        layers={layers}
-        effects={[lightingEffect]}
-        viewState={viewState}
-        controller={true}
-        onViewStateChange={({ viewState }) => setViewState(viewState)}
-        style={{background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)'}}
-      />
-      <StateInfoCard 
-        state={selectedState} 
-        stats={selectedStateStats}
-        onClose={() => { setSelectedState(null); setViewState(INITIAL_VIEW_STATE); }}
-        onConfirm={handleConfirmSelection}
-      />
+      <DeckGL layers={layers} effects={[lightingEffect]} viewState={viewState} controller={true} onViewStateChange={({ viewState }) => setViewState(viewState)} style={{background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)'}} />
+      <StateInfoCard state={selectedState} stats={selectedStateStats} onClose={() => { setSelectedState(null); setViewState(INITIAL_VIEW_STATE); }} onConfirm={handleConfirmSelection} />
     </div>
   );
 };

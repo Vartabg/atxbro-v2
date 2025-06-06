@@ -4,7 +4,7 @@ export function StateInfoCard({ state, stats, onClose, onConfirm }) {
   if (!state || !stats) return null;
 
   return (
-    <div className="fixed bottom-4 right-4 w-96 bg-black/90 backdrop-blur-xl text-white rounded-2xl border border-sky-500/30 shadow-2xl z-50 animate-fade-in-up">
+    <div className="fixed bottom-0 inset-x-0 sm:bottom-4 sm:right-4 sm:left-auto sm:inset-x-auto w-full sm:w-96 bg-black/90 backdrop-blur-xl text-white rounded-t-2xl sm:rounded-2xl border-t sm:border border-sky-500/30 shadow-2xl z-50 animate-fade-in-up">
       <div className="flex items-center justify-between p-4 border-b border-gray-700/50">
         <div>
           <h3 className="text-xl font-bold text-sky-300">{state.properties.name}</h3>

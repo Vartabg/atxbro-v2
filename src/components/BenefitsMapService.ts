@@ -1,28 +1,15 @@
 import { v4 as uuidv4 } from 'uuid';
 
-interface Benefit {
-  id: string;
-  name: string;
-  state: string;
-}
+interface Benefit { id: string; name: string; state: string; }
+interface StateBenefitStats { [stateCode: string]: { count: number; federalCount: number; stateCount: number; }; }
 
-interface StateBenefitStats {
-  [stateCode: string]: {
-    count: number;
-    federalCount: number;
-    stateCount: number;
-  };
-}
-
-const fipsToAbbr = { '01': 'AL', '02': 'AK', '04': 'AZ', '05': 'AR', '06': 'CA', '08': 'CO', '09': 'CT', '10': 'DE', '11': 'DC', '12': 'FL', '13': 'GA', '15': 'HI', '16': 'ID', '17': 'IL', '18': 'IN', '19': 'IA', '20': 'KS', '21': 'KY', '22': 'LA', '23': 'ME', '24': 'MD', '25': 'MA', '26': 'MI', '27': 'MN', '28': 'MS', '29': 'MO', '30': 'MT', '31': 'NE', '32': 'NV', '33': 'NH', '34': 'NJ', '35': 'NM', '36': 'NY', '37': 'NC', '38': 'ND', '39': 'OH', '40': 'OK', '41': 'OR', '42': 'PA', '44': 'RI', '45': 'SC', '46': 'SD', '47': 'TN', '48': 'TX', '49': 'UT', '50': 'VT', '51': 'VA', '53': 'WA', '54': 'WV', '55': 'WI', '56': 'WY', '60': 'AS', '66': 'GU', '69': 'MP', '72': 'PR', '78': 'VI' };
+const fipsToAbbr = { '01': 'AL', '02': 'AK', '04': 'AZ', '05': 'AR', '06': 'CA', '08': 'CO', '09': 'CT', '10': 'DE', '11': 'DC', '12': 'FL', '13': 'GA', '15': 'HI', '16': 'ID', '17': 'IL', '18': 'IN', '19': 'IA', '20': 'KS', '21': 'KY', '22': 'LA', '23': 'ME', '24': 'MD', '25': 'MA', '26': 'MI', '27': 'MN', '28': 'MS', '29': 'MO', '30': 'MT', '31': 'NE', '32': 'NV', '33': 'NH', '34': 'NJ', '35': 'NM', '36': 'NY', '37': 'NC', '38': 'ND', '39': 'OH', '40': 'OK', '41': 'OR', '42': 'PA', '44': 'RI', '45': 'SC', '46': 'SD', '47': 'TN', '48': 'TX', '49': 'UT', '50': 'VT', '51': 'VA', '53': 'WA', '54': 'WV', '55': 'WI', '56': 'WY' };
 
 class BenefitsMapService {
   private benefitsData: Benefit[] = [];
   private stateStats: StateBenefitStats = {};
 
-  constructor() {
-    this.loadBenefitsData();
-  }
+  constructor() { this.loadBenefitsData(); }
 
   private async loadBenefitsData() {
     try {
@@ -39,27 +26,19 @@ class BenefitsMapService {
         this.benefitsData = arrayKey ? rawData[arrayKey] : [];
       }
       this.calculateStateStats();
-      console.log(`Benefits data loaded with ${this.benefitsData.length} items.`);
     } catch (error) {
-      console.error("Failed to load or process benefits data:", error);
+      console.error("Failed to load benefits data:", error);
     }
   }
 
   private calculateStateStats() {
-    const stats: StateBenefitStats = {};
     this.benefitsData.forEach(benefit => {
       const state = benefit.state || 'Federal';
-      if (!stats[state]) {
-        stats[state] = { count: 0, federalCount: 0, stateCount: 0 };
+      if (!this.stateStats[state]) {
+        this.stateStats[state] = { count: 0, federalCount: 0, stateCount: 0 };
       }
-      stats[state].count++;
-      if (state === 'Federal') {
-        stats[state].federalCount++;
-      } else {
-        stats[state].stateCount++;
-      }
+      this.stateStats[state].count++;
     });
-    this.stateStats = stats;
   }
 
   public getStateStats = (fipsCode: string | null) => {
@@ -72,21 +51,19 @@ class BenefitsMapService {
   public getStateElevation = (feature: any) => {
     const fipsCode = feature?.properties?.id;
     const stats = this.getStateStats(fipsCode);
-    // Simple elevation based on total benefits count
-    return stats.count > 0 ? stats.count * 2000 : 1000;
+    return stats.count > 0 ? stats.count * 15000 : 1000;
   }
 
+  // Restoring the "greenish" color scheme based on benefit count
   public getStateColor = (feature: any) => {
     const fipsCode = feature?.properties?.id;
     const stats = this.getStateStats(fipsCode);
-    if (!stats || stats.count === 0) {
-      return [80, 80, 90, 200]; // Default dark grey/blue for states with no data
-    }
-    // Gradient from red (federal-heavy) to green (state-heavy)
-    const ratio = stats.count > 0 ? stats.stateCount / stats.count : 0;
-    const red = 255 * (1 - ratio);
-    const green = 255 * ratio;
-    return [red, green, 50, 210];
+    const benefitCount = stats.count;
+
+    if (benefitCount > 10) return [46, 125, 50, 200]; // Rich Green
+    if (benefitCount > 5) return [70, 130, 180, 200]; // Teal
+    if (benefitCount > 0) return [156, 39, 176, 200]; // Purple
+    return [80, 80, 90, 180]; // Default dark grey/blue
   }
 }
 
