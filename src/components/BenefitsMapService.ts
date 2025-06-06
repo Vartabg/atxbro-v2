@@ -31,7 +31,6 @@ class BenefitsMapService {
       }
       const rawData = await response.json();
 
-      // Intelligently find the array within the loaded data
       if (Array.isArray(rawData)) {
         this.benefitsData = rawData;
       } else if (typeof rawData === 'object' && rawData !== null) {
@@ -80,7 +79,7 @@ class BenefitsMapService {
   public getStateColor = (feature: any): [number, number, number, number] => {
     const stateCode = feature?.properties?.iso_3166_2;
     if (!stateCode) {
-        return [80, 80, 80, 200]; // Default grey
+        return [80, 80, 80, 200];
     }
 
     const stats = this.stateStats[stateCode];
@@ -94,9 +93,14 @@ class BenefitsMapService {
     return [red, green, 50, 210];
   }
   
-  public getStateBenefitsData = (stateCode: string | null): Benefit[] => {
+  public getStateBenefits = (stateCode: string | null): Benefit[] => {
     if (!stateCode) return [];
     return this.benefitsData.filter(benefit => benefit.state === stateCode);
+  }
+
+  public getStateBenefitsData = (stateCode: string | null): Benefit[] => {
+    // This function now also exists and points to the same logic.
+    return this.getStateBenefits(stateCode);
   }
 }
 
