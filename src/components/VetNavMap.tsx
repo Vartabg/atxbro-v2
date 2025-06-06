@@ -9,7 +9,6 @@ import bbox from '@turf/bbox';
 import { benefitsMapService } from './BenefitsMapService';
 import { StateInfoCard } from './StateInfoCard';
 
-// Final Lighting Pass: More "top-down"
 const ambientLight = new AmbientLight({ color: [255, 255, 255], intensity: 0.3 });
 const directionalLight = new DirectionalLight({ color: [255, 255, 255], intensity: 0.8, direction: [-2, -4, -2] });
 const lightingEffect = new LightingEffect({ ambientLight, directionalLight });
@@ -65,14 +64,7 @@ const VetNavMap = ({ onSelectState }) => {
         { padding: 40 }
       );
       
-      setViewState({
-        ...viewState,
-        longitude,
-        latitude,
-        zoom: zoom * 0.9,
-        transitionDuration: 1200,
-        transitionInterpolator: new FlyToInterpolator({speed: 1.5})
-      });
+      setViewState({ ...viewState, longitude, latitude, zoom: zoom * 0.9, transitionDuration: 1200, transitionInterpolator: new FlyToInterpolator({speed: 1.5}) });
 
     } else {
       setSelectedState(null);
@@ -94,12 +86,7 @@ const VetNavMap = ({ onSelectState }) => {
       filled: true,
       extruded: true,
       pickable: true,
-      material: {
-        ambient: 0.5,
-        diffuse: 0.6,
-        shininess: 32,
-        specularColor: [100, 120, 130]
-      },
+      material: { ambient: 0.5, diffuse: 0.6, shininess: 32, specularColor: [100, 120, 130] },
       getElevation: d => {
         const baseHeight = benefitsMapService.getStateElevation(d);
         return selectedState && d.properties.iso_3166_2 === selectedState.properties.iso_3166_2 ? baseHeight + 50000 : baseHeight;
@@ -108,7 +95,7 @@ const VetNavMap = ({ onSelectState }) => {
       getLineColor: [255, 255, 255, 150],
       getLineWidth: 1,
       lineWidthMinPixels: 1,
-      onClick: handleStateClick,
+      onClick: handleStateClick, // This line is now restored.
       updateTriggers: {
         getFillColor: [selectedState],
         getElevation: [selectedState]
