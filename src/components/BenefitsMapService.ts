@@ -24,7 +24,14 @@ class BenefitsMapService {
 
   private async loadBenefitsData() {
     try {
-      const response = await fetch('/data/vetnavBenefitsDatabase.json');
+      // Handle server-side vs client-side fetch URL
+      const baseUrl = typeof window === 'undefined'
+        ? `http://localhost:${process.env.PORT || 3000}`
+        : '';
+      const dataUrl = `${baseUrl}/data/vetnavBenefitsDatabase.json`;
+
+      const response = await fetch(dataUrl);
+      
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -37,10 +44,6 @@ class BenefitsMapService {
         this.benefitsData = arrayKey ? rawData[arrayKey] : [];
       } else {
         this.benefitsData = [];
-      }
-
-      if (this.benefitsData.length === 0) {
-        console.warn("Warning: Benefits data array is empty or could not be found.");
       }
 
       this.calculateStateStats();
