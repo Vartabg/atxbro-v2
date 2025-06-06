@@ -31,11 +31,9 @@ const VetNavMap = ({ onSelectState }) => {
   const [selectedStateStats, setSelectedStateStats] = useState(null);
   const cardRef = useRef(null);
 
-  // Click outside to close logic
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (cardRef.current && !cardRef.current.contains(event.target)) {
-        // Only close if a state is selected and the click was outside the card
         if (selectedState) {
           setSelectedState(null);
           setViewState(INITIAL_VIEW_STATE);
@@ -58,7 +56,6 @@ const VetNavMap = ({ onSelectState }) => {
   }, []);
 
   const handleStateClick = (info, event) => {
-    // Stop the event from bubbling up to the document listener
     event.srcEvent.stopPropagation();
     
     if (info.object) {
@@ -68,6 +65,13 @@ const VetNavMap = ({ onSelectState }) => {
       setSelectedStateStats(stats);
       
       const [minLng, minLat, maxLng, maxLat] = bbox(info.object);
+
+      // Add defensive check for a valid bounding box
+      if (![minLng, minLat, maxLng, maxLat].every(isFinite)) {
+        console.error("Skipping fly-to due to invalid bounding box for state:", info.object.properties.name);
+        return;
+      }
+      
       const { longitude, latitude, zoom } = new WebMercatorViewport(viewState).fitBounds([[minLng, minLat], [maxLng, maxLat]], { padding: 40 });
       
       setViewState({ ...viewState, longitude, latitude, zoom: zoom * 0.9, transitionDuration: 1200, transitionInterpolator: new FlyToInterpolator({speed: 1.5}) });
@@ -84,7 +88,7 @@ const VetNavMap = ({ onSelectState }) => {
       extruded: true,
       pickable: true,
       getElevation: d => (selectedState && d.properties.id === selectedState.properties.id ? 75000 : 50000),
-      getFillColor: d => selectedState && d.properties.id === selectedState.properties.id ? [0, 255, 255, 255] : benefitsMapService.getStateColor(), // Uniform initial color
+      getFillColor: d => selectedState && d.properties.id === selectedState.properties.id ? [0, 255, 255, 255] : benefitsMapService.getStateColor(),
       getLineColor: [0, 255, 255, 200],
       getLineWidth: 1,
       lineWidthMinPixels: 2,
