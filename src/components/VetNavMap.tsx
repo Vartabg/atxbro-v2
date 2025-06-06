@@ -1,99 +1,36 @@
 'use client';
-import React, { useState, useEffect, useMemo } from 'react';
-import DeckGL from '@deck.gl/react';
-import { GeoJsonLayer } from '@deck.gl/layers';
-import { LightingEffect, AmbientLight, DirectionalLight, OrthographicView, COORDINATE_SYSTEM } from '@deck.gl/core';
-import { feature as topojsonFeature } from 'topojson-client';
-import { benefitsMapService } from './BenefitsMapService';
+import React, { useState } from 'react';
 import { StateInfoCard } from './StateInfoCard';
-
-const ambientLight = new AmbientLight({ color: [255, 255, 255], intensity: 0.5 });
-const directionalLight = new DirectionalLight({ color: [255, 255, 255], intensity: 1.0, direction: [-5, -5, -5] });
-const lightingEffect = new LightingEffect({ ambientLight, directionalLight });
-
-const INITIAL_VIEW_STATE = {
-  target: [0, 0, 0],
-  zoom: -3.3,
-};
+import { benefitsMapService } from './BenefitsMapService';
 
 const VetNavMap = ({ onSelectState }) => {
-  const [viewState, setViewState] = useState(INITIAL_VIEW_STATE);
-  const [statesData, setStatesData] = useState(null);
   const [selectedState, setSelectedState] = useState(null);
   const [hoveredState, setHoveredState] = useState(null);
-  
-  useEffect(() => {
-    fetch('/data/states-albers-10m.json')
-      .then(res => res.json())
-      .then(topology => {
-        const geojson = topojsonFeature(topology, topology.objects.states);
-        setStatesData(geojson);
-      })
-      .catch(error => console.error('Error loading map data:', error));
-  }, []);
 
-  const selectedStateData = useMemo(() => {
-    return selectedState ? statesData?.features.find(f => f.properties.id === selectedState) : null;
-  }, [selectedState, statesData]);
-
-  const stats = useMemo(() => {
-    return selectedState ? benefitsMapService.getStateStats(selectedState) : null;
-  }, [selectedState]);
-
-  const layers = [
-    new GeoJsonLayer({
-      id: 'states-layer',
-      data: statesData,
-      // This tells the layer to treat coordinates as plain x/y values
-      coordinateSystem: COORDINATE_SYSTEM.CARTESIAN,
-      pickable: true,
-      stroked: true,
-      filled: true,
-      extruded: true,
-      material: { ambient: 0.5, diffuse: 0.5, shininess: 32 },
-      getElevation: d => {
-        const height = benefitsMapService.getStateElevation(d.properties.id);
-        if (d.properties.id === selectedState) return height + 50000;
-        if (d.properties.id === hoveredState) return height + 25000;
-        return height;
-      },
-      getFillColor: d => {
-        if (d.properties.id === selectedState) return [0, 200, 255, 255];
-        if (d.properties.id === hoveredState) return [100, 200, 255, 230];
-        return benefitsMapService.getStateColor(d.properties.id);
-      },
-      getLineColor: [255, 255, 255, 150],
-      lineWidthMinPixels: 1,
-      onClick: (info) => info.object ? setSelectedState(info.object.properties.id) : setSelectedState(null),
-      onHover: (info) => info.object ? setHoveredState(info.object.properties.id) : setHoveredState(null),
-      updateTriggers: {
-        getFillColor: [selectedState, hoveredState],
-        getElevation: [selectedState, hoveredState]
-      },
-      transitions: {
-        getFillColor: { duration: 300 },
-        getElevation: { duration: 300 }
-      }
-    })
+  const states = [
+    { id: 'TX', name: 'Texas', x: 400, y: 350, w: 120, h: 80 },
+    { id: 'CA', name: 'California', x: 50, y: 250, w: 80, h: 120 },
+    { id: 'FL', name: 'Florida', x: 550, y: 400, w: 80, h: 60 },
+    { id: 'NY', name: 'New York', x: 580, y: 150, w: 60, h: 40 }
   ];
 
   return (
-    <div className="relative w-full h-full">
-      <DeckGL
-        views={new OrthographicView({ id: 'ortho-view' })}
-        layers={layers}
-        effects={[lightingEffect]}
-        initialViewState={INITIAL_VIEW_STATE}
-        controller={true}
-        onViewStateChange={({viewState}) => setViewState(viewState)}
-        style={{ background: 'transparent' }}
-      />
-      <StateInfoCard 
-        state={selectedStateData} 
-        stats={stats}
-        onClose={() => setSelectedState(null)} 
-        onConfirm={(stateName) => onSelectState && onSelectState(stateName)}
-      />
+    <div className="relative w-full h-full bg-gradient-to-br from-blue-900 to-blue-700 flex items-center justify-center">
+      <div className="text-white text-center">
+        <h2 className="text-2xl font-bold mb-4">Interactive Veterans Benefits Map</h2>
+        <p className="mb-4">Click on a state below to explore benefits:</p>
+        <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
+          {states.map((state) => (
+            <button
+              key={state.id}
+              onClick={() => onSelectState && onSelectState(state.name)}
+              className="bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-lg transition-colors"
+            >
+              {state.name}
+            </button>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };

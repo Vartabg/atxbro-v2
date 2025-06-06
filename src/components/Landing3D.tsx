@@ -8,9 +8,10 @@ import VetNavPortal from './VetNavPortal';
 import VetNav from './VetNav';
 import TariffExplorer from './TariffExplorer';
 import PetRadar from './PetRadar';
+import JetsStats from './JetsStats';
 import { QuantumParticleField, GravitationalWaves } from './QuantumEffects';
 
-// ... (interface PlanetData and const JetsHomePlaceholder remain the same)
+// ... (interface PlanetData)
 
 interface PlanetData {
   id: string;
@@ -24,17 +25,6 @@ interface PlanetData {
   atmosphereColor: string;
 }
 
-const JetsHomePlaceholder = () => (
- <div className="min-h-screen bg-gradient-to-br from-green-900 to-red-900 text-white p-8">
-  <div className="max-w-4xl mx-auto text-center">
-   <h1 className="text-4xl font-bold mb-6">🏈 Jets Analytics</h1>
-   <p className="text-xl text-green-200 mb-8">Professional sports analytics and performance tracking</p>
-   <div className="bg-green-800/50 backdrop-blur-md rounded-xl p-6">
-    <p className="text-lg">Coming Soon: Game Analytics & Player Stats</p>
-   </div>
-  </div>
- </div>
-);
 
 export default function Landing3D() {
   const [selectedPlanet, setSelectedPlanet] = useState<PlanetData | null>(null);
@@ -126,7 +116,7 @@ export default function Landing3D() {
       {activeApp === 'vetnav' && ( <div className="fixed inset-0 bg-black/95 z-50"> <VetNav /> <button onClick={closeApp} className="fixed top-4 right-4 text-white hover:text-gray-300 text-2xl z-60"> × </button> </div> )}
       {activeApp === 'tariff-explorer' && ( <div className="fixed inset-0 bg-black/95 z-50"> <TariffExplorer /> <button onClick={closeApp} className="fixed top-4 right-4 text-white hover:text-gray-300 text-2xl z-60"> × </button> </div> )}
       {activeApp === 'pet-radar' && ( <div className="fixed inset-0 bg-black/95 z-50"> <PetRadar /> <button onClick={closeApp} className="fixed top-4 right-4 text-white hover:text-gray-300 text-2xl z-60"> × </button> </div> )}
-      {activeApp === 'jetshome' && ( <div className="fixed inset-0 bg-black/95 z-50"> <JetsHomePlaceholder /> <button onClick={closeApp} className="fixed top-4 right-4 text-white hover:text-gray-300 text-2xl z-60"> × </button> </div> )}
+      {activeApp === 'jetshome' && ( <div className="fixed inset-0 bg-black/95 z-50"> <JetsStats /> <button onClick={closeApp} className="fixed top-4 right-4 text-white hover:text-gray-300 text-2xl z-60"> × </button> </div> )}
     </div>
   );
 }
