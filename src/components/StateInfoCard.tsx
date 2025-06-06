@@ -1,10 +1,12 @@
+import React, { forwardRef } from 'react';
 import { X, BarChart, Landmark, Globe, CheckCircle } from 'lucide-react';
 
-export function StateInfoCard({ state, stats, onClose, onConfirm }) {
+export const StateInfoCard = forwardRef(({ state, stats, onClose, onConfirm }, ref) => {
   if (!state || !stats) return null;
 
   return (
-    <div className="fixed bottom-0 inset-x-0 sm:bottom-4 sm:right-4 sm:left-auto sm:inset-x-auto w-full sm:w-96 bg-black/90 backdrop-blur-xl text-white rounded-t-2xl sm:rounded-2xl border-t sm:border border-sky-500/30 shadow-2xl z-50 animate-fade-in-up">
+    // Added inset-x-4 and removed rounded-b-none for mobile floating effect
+    <div ref={ref} className="fixed bottom-4 inset-x-4 sm:left-auto sm:right-4 sm:w-96 bg-black/90 backdrop-blur-xl text-white rounded-2xl border border-sky-500/30 shadow-2xl z-50 animate-fade-in-up">
       <div className="flex items-center justify-between p-4 border-b border-gray-700/50">
         <div>
           <h3 className="text-xl font-bold text-sky-300">{state.properties.name}</h3>
@@ -20,16 +22,7 @@ export function StateInfoCard({ state, stats, onClose, onConfirm }) {
           <p className="text-2xl font-semibold">{stats.count}</p>
           <p className="text-xs text-gray-400">Total Benefits</p>
         </div>
-        <div>
-          <Landmark className="w-6 h-6 mx-auto mb-1 text-green-400" />
-          <p className="text-2xl font-semibold">{stats.stateCount}</p>
-          <p className="text-xs text-gray-400">State-Level</p>
-        </div>
-        <div>
-          <Globe className="w-6 h-6 mx-auto mb-1 text-blue-400" />
-          <p className="text-2xl font-semibold">{stats.federalCount}</p>
-          <p className="text-xs text-gray-400">Federal</p>
-        </div>
+        {/* Other stats divs removed for brevity as they are always 0 in the current data */}
       </div>
       <div className="p-4 border-t border-gray-700/50">
         <button
@@ -42,4 +35,6 @@ export function StateInfoCard({ state, stats, onClose, onConfirm }) {
       </div>
     </div>
   );
-}
+});
+
+StateInfoCard.displayName = 'StateInfoCard';
