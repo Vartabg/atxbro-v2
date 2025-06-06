@@ -30,6 +30,21 @@ const VetNavMap = ({ onSelectState }) => {
   const [selectedState, setSelectedState] = useState(null);
   const [selectedStateStats, setSelectedStateStats] = useState(null);
   const cardRef = useRef(null);
+  const containerRef = useRef(null);
+  const [dimensions, setDimensions] = useState({ width: 1, height: 1 });
+
+  useEffect(() => {
+    if (containerRef.current) {
+      const observer = new ResizeObserver(entries => {
+        for (let entry of entries) {
+          const { width, height } = entry.contentRect;
+          setDimensions({ width, height });
+        }
+      });
+      observer.observe(containerRef.current);
+      return () => observer.disconnect();
+    }
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -65,14 +80,11 @@ const VetNavMap = ({ onSelectState }) => {
       setSelectedStateStats(stats);
       
       const [minLng, minLat, maxLng, maxLat] = bbox(info.object);
-
-      // Add defensive check for a valid bounding box
-      if (![minLng, minLat, maxLng, maxLat].every(isFinite)) {
-        console.error("Skipping fly-to due to invalid bounding box for state:", info.object.properties.name);
-        return;
-      }
       
-      const { longitude, latitude, zoom } = new WebMercatorViewport(viewState).fitBounds([[minLng, minLat], [maxLng, maxLat]], { padding: 40 });
+      if (![minLng, minLat, maxLng, maxLat].every(isFinite)) return;
+      
+      const viewport = new WebMercatorViewport({ ...viewState, ...dimensions });
+      const { longitude, latitude, zoom } = viewport.fitBounds([[minLng, minLat], [maxLng, maxLat]], { padding: 40 });
       
       setViewState({ ...viewState, longitude, latitude, zoom: zoom * 0.9, transitionDuration: 1200, transitionInterpolator: new FlyToInterpolator({speed: 1.5}) });
     }
@@ -80,32 +92,17 @@ const VetNavMap = ({ onSelectState }) => {
   
   const layers = [
     new GeoJsonLayer({
-      id: 'states-layer',
-      data: statesData,
-      opacity: 0.9,
-      stroked: true,
-      filled: true,
-      extruded: true,
-      pickable: true,
+      id: 'states-layer', data: statesData, opacity: 0.9, stroked: true, filled: true, extruded: true, pickable: true,
       getElevation: d => (selectedState && d.properties.id === selectedState.properties.id ? 75000 : 50000),
       getFillColor: d => selectedState && d.properties.id === selectedState.properties.id ? [0, 255, 255, 255] : benefitsMapService.getStateColor(),
-      getLineColor: [0, 255, 255, 200],
-      getLineWidth: 1,
-      lineWidthMinPixels: 2,
-      onClick: handleStateClick,
-      updateTriggers: {
-        getFillColor: [selectedState],
-        getElevation: [selectedState]
-      },
-      transitions: {
-        getFillColor: 500,
-        getElevation: 500
-      }
+      getLineColor: [0, 255, 255, 200], getLineWidth: 1, lineWidthMinPixels: 2, onClick: handleStateClick,
+      updateTriggers: { getFillColor: [selectedState], getElevation: [selectedState] },
+      transitions: { getFillColor: 500, getElevation: 500 }
     })
   ];
 
   return (
-    <div className="relative w-full h-full">
+    <div ref={containerRef} className="relative w-full h-full">
       <DeckGL layers={layers} viewState={viewState} controller={false} style={{background: 'transparent'}} />
       <StateInfoCard ref={cardRef} state={selectedState} stats={selectedStateStats} onClose={() => { setSelectedState(null); setViewState(INITIAL_VIEW_STATE); }} onConfirm={(stateName) => onSelectState && onSelectState(stateName)} />
     </div>
