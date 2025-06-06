@@ -29,9 +29,25 @@ class BenefitsMapService {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      this.benefitsData = await response.json();
+      const rawData = await response.json();
+
+      // Intelligently find the array within the loaded data
+      if (Array.isArray(rawData)) {
+        this.benefitsData = rawData;
+      } else if (typeof rawData === 'object' && rawData !== null) {
+        // Find the first property that is an array and use it
+        const arrayKey = Object.keys(rawData).find(key => Array.isArray(rawData[key]));
+        this.benefitsData = arrayKey ? rawData[arrayKey] : [];
+      } else {
+        this.benefitsData = [];
+      }
+
+      if (this.benefitsData.length === 0) {
+        console.warn("Warning: Benefits data array is empty or could not be found in the JSON structure.");
+      }
+
       this.calculateStateStats();
-      console.log('Benefits data loaded and processed successfully.');
+      console.log(`Benefits data loaded with ${this.benefitsData.length} items.`);
     } catch (error) {
       console.error("Failed to load or process benefits data:", error);
     }
@@ -55,21 +71,29 @@ class BenefitsMapService {
   }
 
   public getStateElevation = (feature: any): number => {
-    const stateCode = feature.properties.iso_3166_2;
+    // Defensive coding: ensure feature and properties exist
+    const stateCode = feature?.properties?.iso_3166_2;
+    if (!stateCode) return 0;
+    
     const stats = this.stateStats[stateCode];
-    return stats ? stats.count * 1000 : 0; // Elevation based on total benefits
+    return stats ? stats.count * 1000 : 0;
   }
 
   public getStateColor = (feature: any): [number, number, number, number] => {
-    const stateCode = feature.properties.iso_3166_2;
-    const stats = this.stateStats[stateCode];
-    if (!stats) {
-      return [80, 80, 80, 200]; // Default grey for states with no data
+    const stateCode = feature?.properties?.iso_3166_2;
+    if (!stateCode) {
+        return [80, 80, 80, 200]; // Default grey
     }
-    const ratio = stats.stateCount / (stats.count || 1);
+
+    const stats = this.stateStats[stateCode];
+    if (!stats || stats.count === 0) {
+      return [80, 80, 80, 200];
+    }
+    
+    const ratio = stats.stateCount / stats.count;
     const red = 255 * (1 - ratio);
     const green = 255 * ratio;
-    return [red, green, 50, 210]; // Color gradient from red (mostly federal) to green (mostly state)
+    return [red, green, 50, 210];
   }
 }
 
