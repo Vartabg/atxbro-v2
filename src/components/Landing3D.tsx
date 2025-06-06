@@ -4,6 +4,7 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Stars } from '@react-three/drei';
 import { SimpleStarField } from "./SimpleCosmicBackground";
 import { AdvancedSolarSystem } from "./AdvancedSolarSystem";
+import { QuantumParticleField, GravitationalWaves } from "./QuantumEffects";
 
 export default function Landing3D() {
   const [selectedPlanet, setSelectedPlanet] = useState<any>(null);
@@ -22,6 +23,8 @@ export default function Landing3D() {
             <SimpleStarField />
             <Stars radius={200} depth={60} count={8000} factor={4} saturation={0} fade />
             
+            <QuantumParticleField />
+            <GravitationalWaves />
             <AdvancedSolarSystem onPlanetSelect={setSelectedPlanet} />
             
             <OrbitControls 
