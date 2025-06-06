@@ -1,166 +1,140 @@
 'use client';
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Html, Line, Points, Point } from '@react-three/drei';
+import { OrbitControls, useTexture } from '@react-three/drei';
 import * as THREE from 'three';
 import { feature as topojsonFeature } from 'topojson-client';
-import { csvParse } from 'd3-dsv';
-import pointInPolygon from '@turf/boolean-point-in-polygon';
-import { point as turfPoint, polygon as turfPolygon } from '@turf/helpers';
 
-// State Component: Now renders particles instead of a solid mesh
-const State = ({ featureData, points, transform, showLabels }) => {
+const vertexShader = `
+  uniform sampler2D heightMap;
+  uniform float heightScale;
+  varying float vElevation;
+
+  void main() {
+    vec4 pos = vec4(position, 1.0);
+    // Use the plane's UV coordinates to look up the height from the texture
+    vElevation = texture2D(heightMap, uv).r;
+    // Displace the vertex's Z position based on the height
+    pos.z += vElevation * heightScale;
+    gl_Position = projectionMatrix * modelViewMatrix * pos;
+  }
+`;
+
+const fragmentShader = `
+  varying float vElevation;
+  void main() {
+    // Color the wireframe based on its elevation
+    vec3 color = mix(vec3(0.0, 0.5, 0.5), vec3(0.5, 1.0, 1.0), vElevation);
+    gl_FragColor = vec4(color, 0.7);
+  }
+`;
+
+const State = ({ featureData, transform, heightMap, heightScale, onStateClick, isSelected }) => {
     const { scale, centerX, centerY } = transform;
-    const [hovered, setHovered] = useState(false);
+    const meshRef = useRef();
 
-    // Memoize the line and point data for performance
-    const { outline, particlePositions } = useMemo(() => {
-        const linePoints = [];
-        const geomType = featureData.geometry.type;
+    // We use the feature's bounding box to create a plane
+    const [min, max] = useMemo(() => {
+        let minPt = [Infinity, Infinity];
+        let maxPt = [-Infinity, -Infinity];
         const coords = featureData.geometry.coordinates;
-
         const processPolygon = (polygonCoords) => {
-            polygonCoords.forEach((coord, i) => {
+            polygonCoords.forEach(coord => {
                 const x = (coord[0] - centerX) * scale;
                 const y = -((coord[1] - centerY) * scale);
-                linePoints.push(new THREE.Vector3(x, y, 0));
+                minPt[0] = Math.min(minPt[0], x);
+                minPt[1] = Math.min(minPt[1], y);
+                maxPt[0] = Math.max(maxPt[0], x);
+                maxPt[1] = Math.max(maxPt[1], y);
             });
         };
+        if (featureData.geometry.type === 'Polygon') processPolygon(coords[0]);
+        else if (featureData.geometry.type === 'MultiPolygon') coords.forEach(p => processPolygon(p[0]));
+        return [minPt, maxPt];
+    }, [featureData, scale, centerX, centerY]);
 
-        if (geomType === 'Polygon') {
-            if (coords[0]?.length >= 4) processPolygon(coords[0]);
-        } else if (geomType === 'MultiPolygon') {
-            coords.forEach(polygon => {
-                if (polygon[0]?.length >= 4) processPolygon(polygon[0]);
-            });
-        }
+    const shaderMaterial = useMemo(() => new THREE.ShaderMaterial({
+        uniforms: {
+            heightMap: { value: heightMap },
+            heightScale: { value: heightScale },
+        },
+        vertexShader,
+        fragmentShader,
+        wireframe: true,
+        transparent: true,
+    }), [heightMap, heightScale]);
 
-        const transformedPoints = points.map(p => {
-            const x = (p.x - centerX) * scale;
-            const y = -((p.y - centerY) * scale);
-            return new THREE.Vector3(x, y, 0);
-        });
-
-        return { outline: linePoints, particlePositions: transformedPoints };
-    }, [featureData, points, scale, centerX, centerY]);
+    const planeWidth = max[0] - min[0];
+    const planeHeight = max[1] - min[1];
+    const planeCenterX = min[0] + planeWidth / 2;
+    const planeCenterY = min[1] + planeHeight / 2;
 
     return (
-        <group onPointerOver={(e) => { e.stopPropagation(); setHovered(true); }} onPointerOut={() => setHovered(false)}>
-            {/* The particle cloud representing the state */}
-            <Points positions={particlePositions}>
-                <pointsMaterial
-                    size={0.03}
-                    color={hovered ? '#00ffff' : 'white'}
-                    sizeAttenuation
-                    transparent
-                    opacity={0.75}
-                />
-            </Points>
-
-            {/* The constellation border */}
-            <Line
-                points={outline}
-                color={'#00ffff'}
-                lineWidth={hovered ? 2.0 : 1.0}
-                dashed={true}
-                dashScale={10}
-                gapSize={5}
-                transparent
-                opacity={hovered ? 0.7 : 0.25}
-            />
-        </group>
+        <mesh
+            ref={meshRef}
+            position={[planeCenterX, planeCenterY, 0]}
+            onClick={() => onStateClick(featureData.properties.name)}
+        >
+            <planeGeometry args={[planeWidth, planeHeight, 128, 128]} />
+            <primitive object={shaderMaterial} attach="material" />
+        </mesh>
     );
 };
 
-// Main Map Component: Now loads and processes both datasets
-const VetNavMap = ({ topoJsonPath = '/data/states-albers-10m.json', citiesDataPath = '/data/uscities.csv', targetDisplayWidth = 10 }) => {
+const VetNavMap = () => {
     const [states, setStates] = useState([]);
     const [transformParams, setTransformParams] = useState(null);
-    const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [selectedState, setSelectedState] = useState(null);
+    const heightMap = useTexture('/textures/usa_heightmap.png');
 
     useEffect(() => {
-        setLoading(true);
-        Promise.all([
-            fetch(topoJsonPath).then(res => res.json()),
-            fetch(citiesDataPath).then(res => res.text())
-        ]).then(([topology, citiesCsv]) => {
-            if (!topology.objects?.states) throw new Error('TopoJSON is missing "objects.states"');
-            const geoJson = topojsonFeature(topology, topology.objects.states);
-            
-            const cities = csvParse(citiesCsv, (d) => ({
-                x: +d.lng, y: +d.lat, population: +d.population
-            }));
-
-            let allCoords = [];
-            geoJson.features.forEach(f => {
-                if(f.geometry?.type === 'Polygon') allCoords.push(...f.geometry.coordinates[0]);
-                if(f.geometry?.type === 'MultiPolygon') f.geometry.coordinates.forEach(p => allCoords.push(...p[0]));
+        fetch('/data/states-albers-10m.json')
+            .then(res => res.json())
+            .then(topology => {
+                const geoJson = topojsonFeature(topology, topology.objects.states);
+                let allCoords = [];
+                geoJson.features.forEach(f => {
+                    if(f.geometry?.type === 'Polygon') allCoords.push(...f.geometry.coordinates[0]);
+                    if(f.geometry?.type === 'MultiPolygon') f.geometry.coordinates.forEach(p => allCoords.push(...p[0]));
+                });
+                let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+                allCoords.forEach(c => {
+                    minX = Math.min(minX, c[0]); maxX = Math.max(maxX, c[0]);
+                    minY = Math.min(minY, c[1]); maxY = Math.max(maxY, c[1]);
+                });
+                const dataWidth = maxX - minX;
+                const params = {
+                    scale: dataWidth === 0 ? 1 : 10 / dataWidth,
+                    centerX: minX + dataWidth / 2,
+                    centerY: minY + (maxY - minY) / 2
+                };
+                setTransformParams(params);
+                setStates(geoJson.features);
             });
+    }, []);
 
-            let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
-            allCoords.forEach(c => {
-                minX = Math.min(minX, c[0]); maxX = Math.max(maxX, c[0]);
-                minY = Math.min(minY, c[1]); maxY = Math.max(maxY, c[1]);
-            });
+    const handleStateClick = (stateName) => {
+        setSelectedState(stateName);
+        console.log("Selected State:", stateName);
+    };
 
-            const dataWidth = maxX - minX;
-            const params = {
-                scale: dataWidth === 0 ? 1 : targetDisplayWidth / dataWidth,
-                centerX: minX + dataWidth / 2,
-                centerY: minY + (maxY - minY) / 2
-            };
-            setTransformParams(params);
-
-            // Assign cities to states with defensive checks
-            const statesWithPoints = geoJson.features.map(feature => {
-                let pointsInState = [];
-                if (feature.geometry) {
-                    const turfGeometries = [];
-                    if (feature.geometry.type === 'Polygon' && feature.geometry.coordinates[0]?.length >= 4) {
-                        turfGeometries.push(turfPolygon(feature.geometry.coordinates));
-                    } else if (feature.geometry.type === 'MultiPolygon') {
-                        feature.geometry.coordinates.forEach(poly => {
-                            if (poly[0]?.length >= 4) {
-                                turfGeometries.push(turfPolygon(poly));
-                            }
-                        });
-                    }
-
-                    if (turfGeometries.length > 0) {
-                        pointsInState = cities.filter(city => {
-                            const cityPoint = turfPoint([city.x, city.y]);
-                            return turfGeometries.some(statePolygon => pointInPolygon(cityPoint, statePolygon));
-                        });
-                    }
-                }
-                return { ...feature, properties: {...feature.properties, points: pointsInState } };
-            });
-
-            setStates(statesWithPoints);
-            setLoading(false);
-        }).catch(err => {
-            setError(err.message);
-            setLoading(false);
-        });
-    }, [topoJsonPath, citiesDataPath, targetDisplayWidth]);
-
-    if (loading) return <div style={{height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center'}}><p>Loading Constellation Data...</p></div>;
-    if (error) return <div style={{height: '100%', color: 'red', padding: '20px' }}><p>Error: {error}</p></div>;
+    if (!transformParams || !heightMap) return <div>Loading...</div>;
 
     return (
-        <Canvas camera={{ position: [0, 0, 15], fov: 50 }}>
-            <color attach="background" args={['#0f172a']} />
-            <ambientLight intensity={0.5} />
-            <pointLight position={[10, 10, 10]} intensity={0.5} />
+        <Canvas camera={{ position: [0, -10, 8], fov: 50 }}>
+            <color attach="background" args={['#0a0a1a']} />
+            <ambientLight intensity={0.2} />
+            <pointLight position={[0, 20, 20]} intensity={1.5} color="#87CEEB" />
             <group>
                 {states.map((feature) => (
                     <State
-                        key={feature.properties.id || feature.id}
+                        key={feature.id}
                         featureData={feature}
-                        points={feature.properties.points}
                         transform={transformParams}
-                        showLabels={false}
+                        heightMap={heightMap}
+                        heightScale={2.0}
+                        onStateClick={handleStateClick}
+                        isSelected={selectedState === feature.properties.name}
                     />
                 ))}
             </group>
