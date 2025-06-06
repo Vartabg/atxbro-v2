@@ -1,11 +1,9 @@
 'use client';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import DeckGL from '@deck.gl/react';
 import { GeoJsonLayer } from '@deck.gl/layers';
-import { LightingEffect, AmbientLight, DirectionalLight, FlyToInterpolator, WebMercatorViewport } from '@deck.gl/core';
+import { LightingEffect, AmbientLight, DirectionalLight, OrthographicView } from '@deck.gl/core';
 import { feature as topojsonFeature } from 'topojson-client';
-import { geoAlbersUsa } from 'd3-geo';
-import bbox from '@turf/bbox';
 import { benefitsMapService } from './BenefitsMapService';
 import { StateInfoCard } from './StateInfoCard';
 
@@ -13,122 +11,86 @@ const ambientLight = new AmbientLight({ color: [255, 255, 255], intensity: 0.5 }
 const directionalLight = new DirectionalLight({ color: [255, 255, 255], intensity: 1.0, direction: [-5, -5, -5] });
 const lightingEffect = new LightingEffect({ ambientLight, directionalLight });
 
-const albersProjection = geoAlbersUsa().scale(1300).translate([487.5, 305]);
-const unproject = albersProjection.invert;
-
-const INITIAL_VIEW_STATE = { longitude: -105, latitude: 40, zoom: 3, pitch: 50, bearing: 0, transitionDuration: 1000, transitionInterpolator: new FlyToInterpolator() };
-
-const transformCoordinates = (geometry) => {
-  if (!geometry) return;
-  if (geometry.type === 'Polygon') geometry.coordinates = geometry.coordinates.map(ring => ring.map(coord => unproject(coord) || [0,0]));
-  if (geometry.type === 'MultiPolygon') geometry.coordinates = geometry.coordinates.map(polygon => polygon.map(ring => ring.map(coord => unproject(coord) || [0,0])));
+const INITIAL_VIEW_STATE = {
+  target: [0, 0, 0],
+  zoom: -3.3,
 };
 
 const VetNavMap = ({ onSelectState }) => {
   const [viewState, setViewState] = useState(INITIAL_VIEW_STATE);
   const [statesData, setStatesData] = useState(null);
   const [selectedState, setSelectedState] = useState(null);
-  const [selectedStateStats, setSelectedStateStats] = useState(null);
-  const cardRef = useRef(null);
-  const containerRef = useRef(null);
-  const [dimensions, setDimensions] = useState({ width: 1, height: 1 });
-
-  useEffect(() => {
-    if (containerRef.current) {
-      const observer = new ResizeObserver(entries => {
-        for (let entry of entries) {
-          const { width, height } = entry.contentRect;
-          setDimensions({ width, height });
-        }
-      });
-      observer.observe(containerRef.current);
-      return () => observer.disconnect();
-    }
-  }, []);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (cardRef.current && !cardRef.current.contains(event.target)) {
-        if (selectedState) {
-          setSelectedState(null);
-          setViewState(INITIAL_VIEW_STATE);
-        }
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [cardRef, selectedState]);
-
+  const [hoveredState, setHoveredState] = useState(null);
+  
   useEffect(() => {
     fetch('/data/states-albers-10m.json')
       .then(res => res.json())
       .then(topology => {
         const geojson = topojsonFeature(topology, topology.objects.states);
-        geojson.features.forEach(feature => transformCoordinates(feature.geometry));
         setStatesData(geojson);
       })
       .catch(error => console.error('Error loading map data:', error));
   }, []);
 
-  const handleStateClick = (info, event) => {
-    event.srcEvent.stopPropagation();
-    
-    if (info.object) {
-      const fipsCode = info.object.properties.id;
-      const stats = benefitsMapService.getStateStats(fipsCode);
-      setSelectedState(info.object);
-      setSelectedStateStats(stats);
-      
-      const [minLng, minLat, maxLng, maxLat] = bbox(info.object);
-      
-      if (![minLng, minLat, maxLng, maxLat].every(isFinite)) return;
-      
-      const viewport = new WebMercatorViewport({ ...viewState, ...dimensions });
-      const { longitude, latitude, zoom } = viewport.fitBounds([[minLng, minLat], [maxLng, maxLat]], { padding: 40 });
-      
-      setViewState({ ...viewState, longitude, latitude, zoom: zoom * 0.9, transitionDuration: 1200, transitionInterpolator: new FlyToInterpolator({speed: 1.5}) });
-    }
-  };
-  
+  const selectedStateData = useMemo(() => {
+    return selectedState ? statesData?.features.find(f => f.properties.id === selectedState) : null;
+  }, [selectedState, statesData]);
+
+  const stats = useMemo(() => {
+    return selectedState ? benefitsMapService.getStateStats(selectedState) : null;
+  }, [selectedState]);
+
   const layers = [
     new GeoJsonLayer({
       id: 'states-layer',
       data: statesData,
-      opacity: 0.6, // Overall layer opacity for translucency
+      pickable: true,
       stroked: true,
       filled: true,
       extruded: true,
-      pickable: true,
-      material: { // More "glass-like" material
-        ambient: 0.7,
-        diffuse: 0.5,
-        shininess: 128,
-        specularColor: [180, 220, 255]
-      },
+      material: { ambient: 0.5, diffuse: 0.5, shininess: 32 },
       getElevation: d => {
-        // Subtle height variation for a better 3D feel
-        const idHash = Array.from(d.properties.id || '').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-        const baseHeight = 10000 + (idHash % 5) * 4000;
-        return selectedState && d.properties.id === selectedState.properties.id ? baseHeight + 50000 : baseHeight;
+        const height = benefitsMapService.getStateElevation(d.properties.id);
+        if (d.properties.id === selectedState) return height + 50000;
+        if (d.properties.id === hoveredState) return height + 25000;
+        return height;
       },
-      getFillColor: [80, 150, 255, 140], // Ethereal blue with alpha for translucency
-      getLineColor: [150, 220, 255, 255], // Brighter border color
-      getLineWidth: 1,
+      getFillColor: d => {
+        if (d.properties.id === selectedState) return [0, 200, 255, 255]; // Selected color is bright cyan
+        if (d.properties.id === hoveredState) return [100, 200, 255, 230];
+        return benefitsMapService.getStateColor(d.properties.id);
+      },
+      getLineColor: [255, 255, 255, 150],
       lineWidthMinPixels: 1,
-      onClick: handleStateClick,
+      onClick: (info) => info.object ? setSelectedState(info.object.properties.id) : setSelectedState(null),
+      onHover: (info) => info.object ? setHoveredState(info.object.properties.id) : setHoveredState(null),
       updateTriggers: {
-        getElevation: [selectedState]
+        getFillColor: [selectedState, hoveredState],
+        getElevation: [selectedState, hoveredState]
       },
       transitions: {
-        getElevation: { duration: 500 }
+        getFillColor: { duration: 300 },
+        getElevation: { duration: 300 }
       }
     })
   ];
 
   return (
-    <div ref={containerRef} className="relative w-full h-full">
-      <DeckGL layers={layers} viewState={viewState} controller={false} style={{background: 'transparent'}} />
-      <StateInfoCard ref={cardRef} state={selectedState} stats={selectedStateStats} onClose={() => { setSelectedState(null); setViewState(INITIAL_VIEW_STATE); }} onConfirm={(stateName) => onSelectState && onSelectState(stateName)} />
+    <div className="relative w-full h-full">
+      <DeckGL
+        views={new OrthographicView({ id: 'ortho-view' })}
+        layers={layers}
+        effects={[lightingEffect]}
+        initialViewState={INITIAL_VIEW_STATE}
+        controller={true}
+        style={{ background: 'transparent' }}
+      />
+      <StateInfoCard 
+        state={selectedStateData} 
+        stats={stats}
+        onClose={() => setSelectedState(null)} 
+        onConfirm={(stateName) => onSelectState && onSelectState(stateName)}
+      />
     </div>
   );
 };
