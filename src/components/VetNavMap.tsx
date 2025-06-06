@@ -60,7 +60,6 @@ const VetNavMap = ({ onSelectState }) => {
       setSelectedState(info.object);
       setSelectedStateStats(stats);
       
-      // Calculate new viewState to fly to the state
       const [minLng, minLat, maxLng, maxLat] = bbox(info.object);
       const { longitude, latitude, zoom } = new WebMercatorViewport(viewState).fitBounds(
         [[minLng, minLat], [maxLng, maxLat]],
@@ -71,7 +70,7 @@ const VetNavMap = ({ onSelectState }) => {
         ...viewState,
         longitude,
         latitude,
-        zoom: zoom * 0.9, // Zoom out slightly for better framing
+        zoom: zoom * 0.9,
         transitionDuration: 1200,
         transitionInterpolator: new FlyToInterpolator({speed: 1.5})
       });
@@ -79,7 +78,7 @@ const VetNavMap = ({ onSelectState }) => {
     } else {
       setSelectedState(null);
       setSelectedStateStats(null);
-      setViewState(INITIAL_VIEW_STATE); // Fly back to initial view
+      setViewState(INITIAL_VIEW_STATE);
     }
   };
   
@@ -96,12 +95,28 @@ const VetNavMap = ({ onSelectState }) => {
       filled: true,
       extruded: true,
       pickable: true,
-      getElevation: benefitsMapService.getStateElevation,
+      
+      getElevation: d => {
+        const baseHeight = benefitsMapService.getStateElevation(d);
+        // Make selected state grow taller
+        return selectedState && d.properties.iso_3166_2 === selectedState.properties.iso_3166_2 ? baseHeight + 50000 : baseHeight;
+      },
       getFillColor: (d) => (selectedState && d.properties.iso_3166_2 === selectedState.properties.iso_3166_2) ? [0, 255, 255, 255] : benefitsMapService.getStateColor(d),
+      
       getLineColor: [255, 255, 255, 150],
       getLineWidth: 1,
       lineWidthMinPixels: 1,
-      onClick: handleStateClick
+      onClick: handleStateClick,
+
+      // Add animation triggers and transitions
+      updateTriggers: {
+        getFillColor: [selectedState],
+        getElevation: [selectedState]
+      },
+      transitions: {
+        getFillColor: 500, // Animate color change over 500ms
+        getElevation: 500  // Animate height change over 500ms
+      }
     })
   ];
 
