@@ -1,6 +1,6 @@
 import { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { OrbitControls, Stars } from '@react-three/drei';
+import { OrbitControls, Stars } from '@react-three/drei'; // Ensure Stars is imported
 import * as THREE from 'three';
 
 interface PlanetData {
@@ -13,7 +13,7 @@ interface PlanetData {
   description: string;
   features: string[];
   atmosphereColor: string;
-  surfaceColor: string;
+  surfaceColor: string; // Added surfaceColor for enhanced shaders
   moons?: Array<{
     size: number;
     distance: number;
@@ -27,21 +27,20 @@ interface PlanetData {
   };
 }
 
-function SimpleMoon({ 
-  size, 
-  distance, 
-  speed, 
-  color, 
-  planetPosition 
-}: { 
-  size: number; 
-  distance: number; 
-  speed: number; 
-  color: string; 
+function SimpleMoon({
+  size,
+  distance,
+  speed,
+  color,
+  planetPosition
+}: {
+  size: number;
+  distance: number;
+  speed: number;
+  color: string;
   planetPosition: [number, number, number];
 }) {
   const orbitRef = useRef<THREE.Group>(null);
-
   useFrame(() => {
     if (orbitRef.current) {
       orbitRef.current.rotation.y += speed;
@@ -52,7 +51,7 @@ function SimpleMoon({
     <group ref={orbitRef} position={planetPosition}>
       <mesh position={[distance, 0, 0]}>
         <sphereGeometry args={[size, 16, 16]} />
-        <meshStandardMaterial 
+        <meshStandardMaterial
           color={color}
           emissive={color}
           emissiveIntensity={0.1}
@@ -63,19 +62,18 @@ function SimpleMoon({
   );
 }
 
-function SimpleRings({ 
-  innerRadius, 
-  outerRadius, 
-  planetPosition, 
-  color 
-}: { 
-  innerRadius: number; 
-  outerRadius: number; 
+function SimpleRings({
+  innerRadius,
+  outerRadius,
+  planetPosition,
+  color
+}: {
+  innerRadius: number;
+  outerRadius: number;
   planetPosition: [number, number, number];
   color: string;
 }) {
   const ringsRef = useRef<THREE.Mesh>(null);
-
   useFrame(() => {
     if (ringsRef.current) {
       ringsRef.current.rotation.z += 0.001;
@@ -89,7 +87,7 @@ function SimpleRings({
       rotation={[Math.PI / 2, 0, 0]}
     >
       <ringGeometry args={[innerRadius, outerRadius, 64]} />
-      <meshStandardMaterial 
+      <meshStandardMaterial
         color={color}
         transparent
         opacity={0.6}
@@ -110,7 +108,7 @@ const PLANETS_WITH_MOONS: PlanetData[] = [
     description: 'A proud Earth-like world dedicated to those who served. Advanced civilization with military precision and honor.',
     features: ['Veterans Command Centers', 'Benefits Navigation Networks', 'Honor Monuments', 'Support Communities'],
     atmosphereColor: '#1e40af',
-    surfaceColor: '#3b82f6',
+    surfaceColor: '#3b82f6', // Example surface color
     moons: [
       { size: 0.8, distance: 10, speed: 0.02, color: '#8892b0' },
       { size: 0.5, distance: 14, speed: -0.015, color: '#a8b2d1' }
@@ -126,7 +124,7 @@ const PLANETS_WITH_MOONS: PlanetData[] = [
     description: 'A bustling trade hub with crystalline data structures and flowing economic energy streams.',
     features: ['Trade Analysis Spires', 'Economic Data Cores', 'Market Intelligence Networks', 'Global Commerce Centers'],
     atmosphereColor: '#059669',
-    surfaceColor: '#10b981',
+    surfaceColor: '#10b981', // Example surface color
     rings: {
       innerRadius: 7,
       outerRadius: 9,
@@ -143,7 +141,7 @@ const PLANETS_WITH_MOONS: PlanetData[] = [
     description: 'A lush paradise world where all creatures are protected and cherished. Floating islands and crystal healing centers.',
     features: ['Creature Sanctuaries', 'Healing Gardens', 'Telepathic Networks', 'Rainbow Bridges'],
     atmosphereColor: '#7c3aed',
-    surfaceColor: '#a855f7',
+    surfaceColor: '#a855f7', // Example surface color
     moons: [
       { size: 0.6, distance: 7, speed: 0.03, color: '#c4b5fd' }
     ]
@@ -158,7 +156,7 @@ const PLANETS_WITH_MOONS: PlanetData[] = [
     description: 'A crystalline sports world with massive stadium structures and data crystal formations tracking every game.',
     features: ['Mega Stadiums', 'Performance Analytics Crystals', 'Championship Halls', 'Training Dimensions'],
     atmosphereColor: '#dc2626',
-    surfaceColor: '#ef4444',
+    surfaceColor: '#ef4444', // Example surface color
     rings: {
       innerRadius: 6,
       outerRadius: 8,
@@ -170,7 +168,6 @@ const PLANETS_WITH_MOONS: PlanetData[] = [
 function EnhancedPlanet({ data, onClick, isSelected }: any) {
   const planetRef = useRef<THREE.Mesh>(null);
   const atmosphereRef = useRef<THREE.Mesh>(null);
-
   const planetMaterial = useMemo(() => new THREE.ShaderMaterial({
     uniforms: {
       uTime: { value: 0 },
@@ -183,15 +180,12 @@ function EnhancedPlanet({ data, onClick, isSelected }: any) {
       varying vec2 vUv;
       varying vec3 vPosition;
       uniform float uTime;
-
       void main() {
         vNormal = normalize(normalMatrix * normal);
         vPosition = position;
         vUv = uv;
-
         // Add slight surface displacement
         vec3 pos = position + normal * sin(uTime * 2.0 + position.x * 5.0) * 0.01;
-
         gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
       }
     `,
@@ -203,10 +197,9 @@ function EnhancedPlanet({ data, onClick, isSelected }: any) {
       varying vec3 vNormal;
       varying vec2 vUv;
       varying vec3 vPosition;
-
       void main() {
         // Basic lighting
-        vec3 light = normalize(vec3(1.0, 1.0, 1.0));
+        vec3 light = normalize(vec3(1.0, 1.0, 1.0)); // Simplified light direction for shader
         float diffuse = max(dot(vNormal, light), 0.2);
         
         // Surface patterns
@@ -236,7 +229,6 @@ function EnhancedPlanet({ data, onClick, isSelected }: any) {
     vertexShader: `
       varying vec3 vNormal;
       varying vec3 vPosition;
-
       void main() {
         vNormal = normalize(normalMatrix * normal);
         vPosition = position;
@@ -248,7 +240,6 @@ function EnhancedPlanet({ data, onClick, isSelected }: any) {
       uniform vec3 uAtmosphereColor;
       varying vec3 vNormal;
       varying vec3 vPosition;
-
       void main() {
         float intensity = pow(0.6 - dot(vNormal, vec3(0, 0, 1.0)), 2.0);
         float pulse = sin(uTime * 2.0) * 0.1 + 0.9;
@@ -298,7 +289,6 @@ function EnhancedPlanet({ data, onClick, isSelected }: any) {
           <icosahedronGeometry args={geometryArgs} />
         )}
       </mesh>
-
       {/* Atmosphere */}
       <mesh ref={atmosphereRef} material={atmosphereMaterial}>
         <sphereGeometry args={[data.size * 1.1, 32, 32]} />
@@ -325,27 +315,24 @@ export function AdvancedPlanetarySystemWithMoons({ onPlanetClick, selectedPlanet
         dampingFactor={0.05}
         enableDamping={true}
       />
-
       {/* Beautiful Star Field */}
-      <Stars 
-        radius={300} 
-        depth={60} 
-        count={5000} 
-        factor={4} 
-        saturation={0} 
-        fade 
+      <Stars
+        radius={300}
+        depth={60}
+        count={5000}
+        factor={4}
+        saturation={0}
+        fade
         speed={0.5}
       />
-
-      {/* Ambient and Directional Lighting */}
+      {/* Ambient and Directional Lighting - No direct sun mesh here */}
       <ambientLight intensity={0.4} color="#ffffff" />
-      <directionalLight 
-        position={[10, 10, 5]} 
-        intensity={1} 
+      <directionalLight
+        position={[10, 10, 5]}
+        intensity={1}
         color="#ffffff"
         castShadow
       />
-
       {/* Planets with Moons and Rings */}
       {PLANETS_WITH_MOONS.map((planet) => (
         <group key={planet.id}>
@@ -355,7 +342,6 @@ export function AdvancedPlanetarySystemWithMoons({ onPlanetClick, selectedPlanet
             onClick={onPlanetClick}
             isSelected={selectedPlanet?.id === planet.id}
           />
-
           {/* Moons */}
           {planet.moons?.map((moon, index) => (
             <SimpleMoon
@@ -367,7 +353,6 @@ export function AdvancedPlanetarySystemWithMoons({ onPlanetClick, selectedPlanet
               planetPosition={planet.position}
             />
           ))}
-
           {/* Rings */}
           {planet.rings && (
             <SimpleRings
