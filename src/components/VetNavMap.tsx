@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import DeckGL from '@deck.gl/react';
 import { GeoJsonLayer } from '@deck.gl/layers';
 import { LightingEffect, AmbientLight, DirectionalLight } from '@deck.gl/core';
+import { feature as topojsonFeature } from 'topojson-client';
 import { benefitsMapService } from './BenefitsMapService';
 import { StateInfoCard } from './StateInfoCard';
 
@@ -23,12 +24,16 @@ const VetNavMap = ({ onSelectState }) => {
   const [selectedStateStats, setSelectedStateStats] = useState(null);
 
   useEffect(() => {
-    fetch('https://d2ad6b4ur77vpj.cloudfront.net/naturalearth-3.3.0/ne_110m_admin_1_states_provinces_shp.geojson')
+    // Fetch local TopoJSON file instead of external GeoJSON
+    fetch('/data/states-albers-10m.json')
       .then(response => response.json())
-      .then(data => {
-        setStatesData(data);
-        console.log(`Loaded ${data.features.length} states.`);
-      });
+      .then(topology => {
+        // Convert TopoJSON to GeoJSON
+        const geojson = topojsonFeature(topology, topology.objects.states);
+        setStatesData(geojson);
+        console.log(`Loaded and processed ${geojson.features.length} states from local file.`);
+      })
+      .catch(error => console.error('Error loading local map data:', error));
   }, []);
 
   const handleStateClick = (info) => {
@@ -76,8 +81,9 @@ const VetNavMap = ({ onSelectState }) => {
         initialViewState={viewState}
         controller={true}
         onViewStateChange={({ viewState }) => setViewState(viewState)}
+        style={{background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)'}}
       >
-        {/* The <Map> component has been removed to isolate the dependency issue */}
+        {/* Base map removed previously, using a CSS gradient background */}
       </DeckGL>
       <StateInfoCard 
         state={selectedState} 
