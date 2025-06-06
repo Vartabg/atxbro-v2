@@ -35,22 +35,12 @@ const transformCoordinates = (geometry) => {
   }
 };
 
-const getDeterministicRandom = (id) => {
-  if (!id) return 0;
-  let hash = 0;
-  for (let i = 0; i < id.length; i++) {
-    const char = id.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash |= 0;
-  }
-  return Math.abs(hash);
-};
-
 const VetNavMap = ({ onSelectState }) => {
   const [viewState, setViewState] = useState(INITIAL_VIEW_STATE);
   const [statesData, setStatesData] = useState(null);
   const [selectedState, setSelectedState] = useState(null);
   const [selectedStateStats, setSelectedStateStats] = useState(null);
+  const [initialDataLoaded, setInitialDataLoaded] = useState(false);
 
   useEffect(() => {
     fetch('/data/states-albers-10m.json')
@@ -62,6 +52,8 @@ const VetNavMap = ({ onSelectState }) => {
         const geojson = topojsonFeature(topology, topology.objects.states);
         geojson.features.forEach(feature => transformCoordinates(feature.geometry));
         setStatesData(geojson);
+        // Force a re-render after a short delay to apply initial colors
+        setTimeout(() => setInitialDataLoaded(true), 100);
       })
       .catch(error => console.error('Error loading or processing map data:', error));
   }, []);
@@ -79,7 +71,14 @@ const VetNavMap = ({ onSelectState }) => {
         { padding: 40 }
       );
       
-      setViewState({ ...viewState, longitude, latitude, zoom: zoom * 0.9, transitionDuration: 1200, transitionInterpolator: new FlyToInterpolator({speed: 1.5}) });
+      setViewState({
+        ...viewState,
+        longitude,
+        latitude,
+        zoom: zoom * 0.75, // Backed up the camera zoom by 25%
+        transitionDuration: 1200,
+        transitionInterpolator: new FlyToInterpolator({speed: 1.5})
+      });
 
     } else {
       setSelectedState(null);
@@ -101,17 +100,11 @@ const VetNavMap = ({ onSelectState }) => {
       filled: true,
       extruded: true,
       pickable: true,
-      material: { // Updated material for a polished, cosmic look
-        ambient: 0.6,
-        diffuse: 0.6,
-        shininess: 64,
-        specularColor: [180, 220, 255]
-      },
+      material: { ambient: 0.6, diffuse: 0.6, shininess: 64, specularColor: [180, 220, 255] },
       getElevation: d => {
         const baseHeight = benefitsMapService.getStateElevation(d);
-        const staggeredOffset = (getDeterministicRandom(d.properties.iso_3166_2) % 10) * 2000;
-        const totalHeight = baseHeight + staggeredOffset;
-        return selectedState && d.properties.iso_3166_2 === selectedState.properties.iso_3166_2 ? totalHeight + 50000 : totalHeight;
+        // Removed staggered height for clearer borders
+        return selectedState && d.properties.iso_3166_2 === selectedState.properties.iso_3166_2 ? baseHeight + 50000 : baseHeight;
       },
       getFillColor: (d) => (selectedState && d.properties.iso_3166_2 === selectedState.properties.iso_3166_2) ? [80, 255, 255, 255] : benefitsMapService.getStateColor(d),
       getLineColor: [200, 220, 255, 200],
@@ -119,7 +112,7 @@ const VetNavMap = ({ onSelectState }) => {
       lineWidthMinPixels: 2,
       onClick: handleStateClick,
       updateTriggers: {
-        getFillColor: [selectedState],
+        getFillColor: [selectedState, initialDataLoaded], // Re-trigger colors when data loads
         getElevation: [selectedState]
       },
       transitions: {
@@ -135,7 +128,7 @@ const VetNavMap = ({ onSelectState }) => {
         layers={layers}
         effects={[lightingEffect]}
         viewState={viewState}
-        controller={true}
+        controller={!selectedState} // Disable controller when a state is selected
         onViewStateChange={({ viewState }) => setViewState(viewState)}
         style={{background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)'}}
       />
