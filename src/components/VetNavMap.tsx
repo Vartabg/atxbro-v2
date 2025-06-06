@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import DeckGL from '@deck.gl/react';
 import { GeoJsonLayer } from '@deck.gl/layers';
-import { LightingEffect, AmbientLight, DirectionalLight, OrthographicView } from '@deck.gl/core';
+import { LightingEffect, AmbientLight, DirectionalLight, OrthographicView, COORDINATE_SYSTEM } from '@deck.gl/core';
 import { feature as topojsonFeature } from 'topojson-client';
 import { benefitsMapService } from './BenefitsMapService';
 import { StateInfoCard } from './StateInfoCard';
@@ -44,6 +44,8 @@ const VetNavMap = ({ onSelectState }) => {
     new GeoJsonLayer({
       id: 'states-layer',
       data: statesData,
+      // This tells the layer to treat coordinates as plain x/y values
+      coordinateSystem: COORDINATE_SYSTEM.CARTESIAN,
       pickable: true,
       stroked: true,
       filled: true,
@@ -56,7 +58,7 @@ const VetNavMap = ({ onSelectState }) => {
         return height;
       },
       getFillColor: d => {
-        if (d.properties.id === selectedState) return [0, 200, 255, 255]; // Selected color is bright cyan
+        if (d.properties.id === selectedState) return [0, 200, 255, 255];
         if (d.properties.id === hoveredState) return [100, 200, 255, 230];
         return benefitsMapService.getStateColor(d.properties.id);
       },
@@ -83,6 +85,7 @@ const VetNavMap = ({ onSelectState }) => {
         effects={[lightingEffect]}
         initialViewState={INITIAL_VIEW_STATE}
         controller={true}
+        onViewStateChange={({viewState}) => setViewState(viewState)}
         style={{ background: 'transparent' }}
       />
       <StateInfoCard 
