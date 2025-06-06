@@ -4,7 +4,6 @@ interface Benefit {
   id: string;
   name: string;
   state: string;
-  // ... other benefit properties
 }
 
 interface StateBenefitStats {
@@ -41,7 +40,7 @@ class BenefitsMapService {
       }
 
       if (this.benefitsData.length === 0) {
-        console.warn("Warning: Benefits data array is empty or could not be found in the JSON structure.");
+        console.warn("Warning: Benefits data array is empty or could not be found.");
       }
 
       this.calculateStateStats();
@@ -68,39 +67,34 @@ class BenefitsMapService {
     this.stateStats = stats;
   }
 
-  public getStateElevation = (feature: any): number => {
+  public getStateElevation = (feature) => {
     const stateCode = feature?.properties?.iso_3166_2;
     if (!stateCode) return 0;
-    
     const stats = this.stateStats[stateCode];
     return stats ? stats.count * 1000 : 0;
   }
 
-  public getStateColor = (feature: any): [number, number, number, number] => {
+  public getStateColor = (feature) => {
     const stateCode = feature?.properties?.iso_3166_2;
-    if (!stateCode) {
-        return [80, 80, 80, 200];
-    }
-
+    if (!stateCode) return [80, 80, 80, 200];
     const stats = this.stateStats[stateCode];
-    if (!stats || stats.count === 0) {
-      return [80, 80, 80, 200];
-    }
-    
+    if (!stats || stats.count === 0) return [80, 80, 80, 200];
     const ratio = stats.stateCount / stats.count;
-    const red = 255 * (1 - ratio);
-    const green = 255 * ratio;
-    return [red, green, 50, 210];
+    return [255 * (1 - ratio), 255 * ratio, 50, 210];
   }
   
-  public getStateBenefits = (stateCode: string | null): Benefit[] => {
+  public getStateBenefits = (stateCode) => {
     if (!stateCode) return [];
     return this.benefitsData.filter(benefit => benefit.state === stateCode);
   }
 
-  public getStateBenefitsData = (stateCode: string | null): Benefit[] => {
-    // This function now also exists and points to the same logic.
+  public getStateBenefitsData = (stateCode) => {
     return this.getStateBenefits(stateCode);
+  }
+
+  public getStateStats = (stateCode) => {
+    if (!stateCode) return null;
+    return this.stateStats[stateCode] || { count: 0, federalCount: 0, stateCount: 0 };
   }
 }
 
