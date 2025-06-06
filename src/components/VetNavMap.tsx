@@ -9,9 +9,9 @@ import bbox from '@turf/bbox';
 import { benefitsMapService } from './BenefitsMapService';
 import { StateInfoCard } from './StateInfoCard';
 
-// Enhanced Lighting
-const ambientLight = new AmbientLight({ color: [255, 255, 255], intensity: 0.2 });
-const directionalLight = new DirectionalLight({ color: [255, 255, 255], intensity: 0.8, direction: [-5, -10, -5] });
+// Final Lighting Pass: More "top-down"
+const ambientLight = new AmbientLight({ color: [255, 255, 255], intensity: 0.3 });
+const directionalLight = new DirectionalLight({ color: [255, 255, 255], intensity: 0.8, direction: [-2, -4, -2] });
 const lightingEffect = new LightingEffect({ ambientLight, directionalLight });
 
 const albersProjection = geoAlbersUsa().scale(1300).translate([487.5, 305]);
@@ -21,7 +21,7 @@ const INITIAL_VIEW_STATE = {
   longitude: -98.5795,
   latitude: 39.8283,
   zoom: 3.5,
-  pitch: 55, // Increased pitch for more dramatic 3D effect
+  pitch: 55,
   bearing: 0,
   transitionDuration: 1000,
   transitionInterpolator: new FlyToInterpolator()
@@ -94,7 +94,7 @@ const VetNavMap = ({ onSelectState }) => {
       filled: true,
       extruded: true,
       pickable: true,
-      material: { // Enhanced material properties
+      material: {
         ambient: 0.5,
         diffuse: 0.6,
         shininess: 32,
