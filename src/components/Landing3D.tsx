@@ -4,7 +4,7 @@ import { Canvas } from '@react-three/fiber';
 import { AdvancedPlanetarySystemWithMoons } from './AdvancedPlanetarySystemWithMoons';
 import { CameraController } from './CameraController';
 import { PlanetPortalCard } from './PlanetPortalCard';
-import { VetNavPortal } from './VetNavPortal';
+import VetNavPortal from './VetNavPortal';
 import VetNav from './VetNav';
 import TariffExplorer from './TariffExplorer';
 import PetRadar from './PetRadar';
