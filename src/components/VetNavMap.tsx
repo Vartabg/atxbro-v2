@@ -9,8 +9,9 @@ import bbox from '@turf/bbox';
 import { benefitsMapService } from './BenefitsMapService';
 import { StateInfoCard } from './StateInfoCard';
 
-const ambientLight = new AmbientLight({ color: [255, 255, 255], intensity: 1.0 });
-const directionalLight = new DirectionalLight({ color: [255, 255, 255], intensity: 1.0, direction: [-1, -2, -3] });
+// Enhanced Lighting
+const ambientLight = new AmbientLight({ color: [255, 255, 255], intensity: 0.2 });
+const directionalLight = new DirectionalLight({ color: [255, 255, 255], intensity: 0.8, direction: [-5, -10, -5] });
 const lightingEffect = new LightingEffect({ ambientLight, directionalLight });
 
 const albersProjection = geoAlbersUsa().scale(1300).translate([487.5, 305]);
@@ -20,7 +21,7 @@ const INITIAL_VIEW_STATE = {
   longitude: -98.5795,
   latitude: 39.8283,
   zoom: 3.5,
-  pitch: 45,
+  pitch: 55, // Increased pitch for more dramatic 3D effect
   bearing: 0,
   transitionDuration: 1000,
   transitionInterpolator: new FlyToInterpolator()
@@ -48,9 +49,7 @@ const VetNavMap = ({ onSelectState }) => {
         const geojson = topojsonFeature(topology, topology.objects.states);
         geojson.features.forEach(feature => transformCoordinates(feature.geometry));
         setStatesData(geojson);
-        console.log(`Loaded and transformed ${geojson.features.length} states.`);
-      })
-      .catch(error => console.error('Error loading map data:', error));
+      });
   }, []);
 
   const handleStateClick = (info) => {
@@ -95,27 +94,28 @@ const VetNavMap = ({ onSelectState }) => {
       filled: true,
       extruded: true,
       pickable: true,
-      
+      material: { // Enhanced material properties
+        ambient: 0.5,
+        diffuse: 0.6,
+        shininess: 32,
+        specularColor: [100, 120, 130]
+      },
       getElevation: d => {
         const baseHeight = benefitsMapService.getStateElevation(d);
-        // Make selected state grow taller
         return selectedState && d.properties.iso_3166_2 === selectedState.properties.iso_3166_2 ? baseHeight + 50000 : baseHeight;
       },
       getFillColor: (d) => (selectedState && d.properties.iso_3166_2 === selectedState.properties.iso_3166_2) ? [0, 255, 255, 255] : benefitsMapService.getStateColor(d),
-      
       getLineColor: [255, 255, 255, 150],
       getLineWidth: 1,
       lineWidthMinPixels: 1,
       onClick: handleStateClick,
-
-      // Add animation triggers and transitions
       updateTriggers: {
         getFillColor: [selectedState],
         getElevation: [selectedState]
       },
       transitions: {
-        getFillColor: 500, // Animate color change over 500ms
-        getElevation: 500  // Animate height change over 500ms
+        getFillColor: 500,
+        getElevation: 500
       }
     })
   ];

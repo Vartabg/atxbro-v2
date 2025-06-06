@@ -1,14 +1,16 @@
 'use client';
-import { Suspense, useState, useEffect } from 'react';
+import { Suspense, useState, useEffect, useMemo } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { AdvancedPlanetarySystemWithMoons } from './AdvancedPlanetarySystemWithMoons';
 import { CameraController } from './CameraController';
 import { PlanetPortalCard } from './PlanetPortalCard';
-import VetNavPortal from './VetNavPortal';
+import { VetNavPortal } from './VetNavPortal';
 import VetNav from './VetNav';
 import TariffExplorer from './TariffExplorer';
 import PetRadar from './PetRadar';
 import { QuantumParticleField, GravitationalWaves } from './QuantumEffects';
+
+// ... (interface PlanetData and const JetsHomePlaceholder remain the same)
 
 interface PlanetData {
   id: string;
@@ -39,6 +41,14 @@ export default function Landing3D() {
   const [isTracking, setIsTracking] = useState(false);
   const [activeApp, setActiveApp] = useState<string | null>(null);
   const [showMap, setShowMap] = useState(false);
+
+  // Mobile-first camera logic
+  const cameraPosition = useMemo(() => {
+    const aspect = typeof window !== 'undefined' ? window.innerWidth / window.innerHeight : 16 / 9;
+    // If the screen is portrait (taller than it is wide), pull camera back
+    const z = aspect < 1 ? 75 : 50;
+    return [0, 0, z];
+  }, []);
 
   const handlePlanetClick = (planetData: PlanetData) => {
     setSelectedPlanet(planetData);
@@ -72,7 +82,7 @@ export default function Landing3D() {
   return (
     <div className="relative w-full h-full">
       <div className="w-full h-screen">
-        <Canvas camera={{ position: [0, 0, 50], fov: 60 }} className="w-full h-full">
+        <Canvas camera={{ position: cameraPosition, fov: 60 }} className="w-full h-full">
           <Suspense fallback={null}>
             <ambientLight intensity={0.2} />
             <directionalLight position={[10, 10, 5]} intensity={1} />
@@ -97,25 +107,14 @@ export default function Landing3D() {
         </div>
       )}
 
-      {selectedPlanet && !activeApp && !showMap && (
-        <PlanetPortalCard
-          planet={selectedPlanet}
-          onClose={handleClosePortal}
-          onLaunchApp={handleLaunchApp}
-          onShowMap={handleShowMap}
-        />
-      )}
+      {selectedPlanet && !activeApp && !showMap && ( <PlanetPortalCard planet={selectedPlanet} onClose={handleClosePortal} onLaunchApp={handleLaunchApp} onShowMap={handleShowMap} /> )}
       
       {selectedPlanet && showMap && (
         <div className="fixed inset-0 bg-black/95 z-50">
           <div className="h-full flex flex-col">
             <div className="flex justify-between items-center p-4 border-b border-gray-700">
-              <h2 className="text-xl font-bold text-white">
-                {selectedPlanet.name} - Interactive Map
-              </h2>
-              <button onClick={() => setShowMap(false)} className="text-white hover:text-gray-300 text-2xl">
-                ×
-              </button>
+              <h2 className="text-xl font-bold text-white">{selectedPlanet.name} - Interactive Map</h2>
+              <button onClick={() => setShowMap(false)} className="text-white hover:text-gray-300 text-2xl"> × </button>
             </div>
             <div className="flex-1">
               <VetNavPortal onNavigateToApp={() => setActiveApp('vetnav')} />
