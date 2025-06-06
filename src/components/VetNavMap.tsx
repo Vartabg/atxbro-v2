@@ -40,6 +40,7 @@ const VetNavMap = ({ onSelectState }) => {
   const [statesData, setStatesData] = useState(null);
   const [selectedState, setSelectedState] = useState(null);
   const [selectedStateStats, setSelectedStateStats] = useState(null);
+  const [hoveredState, setHoveredState] = useState(null); // For debug UI
 
   useEffect(() => {
     fetch('/data/states-albers-10m.json')
@@ -89,7 +90,7 @@ const VetNavMap = ({ onSelectState }) => {
       stroked: true,
       filled: true,
       extruded: true,
-      pickable: true, // Ensures the layer is clickable
+      pickable: true,
       material: { ambient: 0.5, diffuse: 0.6, shininess: 32, specularColor: [100, 120, 130] },
       getElevation: d => {
         const baseHeight = benefitsMapService.getStateElevation(d);
@@ -99,7 +100,8 @@ const VetNavMap = ({ onSelectState }) => {
       getLineColor: [255, 255, 255, 150],
       getLineWidth: 1,
       lineWidthMinPixels: 1,
-      onClick: handleStateClick, // Restoring the onClick handler
+      onClick: handleStateClick,
+      onHover: info => setHoveredState(info.object || null), // Set hovered state
       updateTriggers: {
         getFillColor: [selectedState],
         getElevation: [selectedState]
@@ -121,6 +123,13 @@ const VetNavMap = ({ onSelectState }) => {
         onViewStateChange={({ viewState }) => setViewState(viewState)}
         style={{background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)'}}
       />
+      
+      {/* --- DEBUG UI PANEL --- */}
+      <div style={{position: 'absolute', top: '10px', left: '10px', background: 'rgba(0,0,0,0.7)', color: 'white', padding: '10px', borderRadius: '5px', zIndex: 9999, pointerEvents: 'none', fontFamily: 'monospace'}}>
+        <div>Hovered State: {hoveredState?.properties?.name || 'None'}</div>
+        <div>Selected State: {selectedState?.properties?.name || 'None'}</div>
+      </div>
+
       <StateInfoCard 
         state={selectedState} 
         stats={selectedStateStats}
