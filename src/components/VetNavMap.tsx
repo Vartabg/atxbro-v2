@@ -35,18 +35,16 @@ const transformCoordinates = (geometry) => {
   }
 };
 
-// Function to create a consistent "random" value from a string (like a state ID)
 const getDeterministicRandom = (id) => {
   if (!id) return 0;
   let hash = 0;
   for (let i = 0; i < id.length; i++) {
     const char = id.charCodeAt(i);
     hash = ((hash << 5) - hash) + char;
-    hash |= 0; // Convert to 32bit integer
+    hash |= 0;
   }
   return Math.abs(hash);
 };
-
 
 const VetNavMap = ({ onSelectState }) => {
   const [viewState, setViewState] = useState(INITIAL_VIEW_STATE);
@@ -98,23 +96,26 @@ const VetNavMap = ({ onSelectState }) => {
     new GeoJsonLayer({
       id: 'states-layer',
       data: statesData,
-      opacity: 1,
+      opacity: 0.9,
       stroked: true,
       filled: true,
       extruded: true,
       pickable: true,
-      material: { ambient: 0.5, diffuse: 0.6, shininess: 32, specularColor: [100, 120, 130] },
+      material: { // Updated material for a polished, cosmic look
+        ambient: 0.6,
+        diffuse: 0.6,
+        shininess: 64,
+        specularColor: [180, 220, 255]
+      },
       getElevation: d => {
         const baseHeight = benefitsMapService.getStateElevation(d);
-        // Add a "staggered" base height to each state
         const staggeredOffset = (getDeterministicRandom(d.properties.iso_3166_2) % 10) * 2000;
         const totalHeight = baseHeight + staggeredOffset;
-        // Make selected state grow even taller
         return selectedState && d.properties.iso_3166_2 === selectedState.properties.iso_3166_2 ? totalHeight + 50000 : totalHeight;
       },
-      getFillColor: (d) => (selectedState && d.properties.iso_3166_2 === selectedState.properties.iso_3166_2) ? [0, 255, 255, 255] : benefitsMapService.getStateColor(d),
-      getLineColor: [255, 255, 255, 200], // Brighter borders
-      getLineWidth: 2, // Thicker borders
+      getFillColor: (d) => (selectedState && d.properties.iso_3166_2 === selectedState.properties.iso_3166_2) ? [80, 255, 255, 255] : benefitsMapService.getStateColor(d),
+      getLineColor: [200, 220, 255, 200],
+      getLineWidth: 2,
       lineWidthMinPixels: 2,
       onClick: handleStateClick,
       updateTriggers: {

@@ -23,6 +23,17 @@ class BenefitsMapService {
     this.loadBenefitsData();
   }
 
+  private getDeterministicRandom = (id: string | null) => {
+    if (!id) return 0;
+    let hash = 0;
+    for (let i = 0; i < id.length; i++) {
+      const char = id.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash |= 0; // Convert to 32bit integer
+    }
+    return Math.abs(hash);
+  };
+
   private async loadBenefitsData() {
     try {
       const baseUrl = typeof window === 'undefined' ? `http://localhost:${process.env.PORT || 3000}` : '';
@@ -63,7 +74,6 @@ class BenefitsMapService {
   }
   
   public getStateStats = (stateCode: string | null) => {
-    // This is now more resilient and will never return a null/falsy value.
     const defaultStats = { count: 0, federalCount: 0, stateCount: 0 };
     if (!this.dataLoaded || !stateCode) {
       return defaultStats;
@@ -71,19 +81,35 @@ class BenefitsMapService {
     return this.stateStats[stateCode] || defaultStats;
   }
 
-  // Other functions remain the same
   public getStateElevation = (feature: any) => {
     const stateCode = feature?.properties?.iso_3166_2;
     const stats = this.getStateStats(stateCode);
     return stats.count * 1000;
   }
+
   public getStateColor = (feature: any) => {
-    const stateCode = feature?.properties?.iso_3166_2;
-    const stats = this.getStateStats(stateCode);
-    if (!stats || stats.count === 0) return [80, 80, 80, 200];
-    const ratio = stats.stateCount / stats.count;
-    return [255 * (1 - ratio), 255 * ratio, 50, 210];
+    const stateId = feature?.properties?.iso_3166_2;
+    const defaultColor = [25, 25, 50, 200];
+    if (!stateId) return defaultColor;
+
+    // Cosmic color palette
+    const colors = [
+      [30, 80, 180],   // Deep Blue
+      [50, 40, 160],   // Purple
+      [20, 100, 150],  // Teal
+      [40, 60, 170]    // Indigo
+    ];
+    
+    const randomIndex = this.getDeterministicRandom(stateId) % colors.length;
+    const baseColor = colors[randomIndex];
+    
+    // Add a subtle glow for states with data
+    const stats = this.getStateStats(stateId);
+    const brightness = stats.count > 0 ? 1.3 : 1.0;
+    
+    return [baseColor[0] * brightness, baseColor[1] * brightness, baseColor[2] * brightness, 220];
   }
+  
   public getStateBenefitsData = (stateCode: string | null) => {
     if (!stateCode) return [];
     return this.benefitsData.filter(benefit => benefit.state === stateCode);
