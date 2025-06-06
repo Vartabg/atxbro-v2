@@ -44,15 +44,11 @@ const VetNavMap = ({ onSelectState }) => {
 
   useEffect(() => {
     fetch('/data/states-albers-10m.json')
-      .then(response => {
-        if (!response.ok) throw new Error('Network response was not ok');
-        return response.json();
-      })
+      .then(response => { if (!response.ok) throw new Error('Network response was not ok'); return response.json(); })
       .then(topology => {
         const geojson = topojsonFeature(topology, topology.objects.states);
         geojson.features.forEach(feature => transformCoordinates(feature.geometry));
         setStatesData(geojson);
-        // Force a re-render after a short delay to apply initial colors
         setTimeout(() => setInitialDataLoaded(true), 100);
       })
       .catch(error => console.error('Error loading or processing map data:', error));
@@ -60,8 +56,8 @@ const VetNavMap = ({ onSelectState }) => {
 
   const handleStateClick = (info) => {
     if (info.object) {
-      const stateCode = info.object.properties.iso_3166_2;
-      const stats = benefitsMapService.getStateStats(stateCode);
+      const fipsCode = info.object.properties.id;
+      const stats = benefitsMapService.getStateStats(fipsCode);
       setSelectedState(info.object);
       setSelectedStateStats(stats);
       
@@ -71,15 +67,7 @@ const VetNavMap = ({ onSelectState }) => {
         { padding: 40 }
       );
       
-      setViewState({
-        ...viewState,
-        longitude,
-        latitude,
-        zoom: zoom * 0.75, // Backed up the camera zoom by 25%
-        transitionDuration: 1200,
-        transitionInterpolator: new FlyToInterpolator({speed: 1.5})
-      });
-
+      setViewState({ ...viewState, longitude, latitude, zoom: zoom * 0.75, transitionDuration: 1200, transitionInterpolator: new FlyToInterpolator({speed: 1.5}) });
     } else {
       setSelectedState(null);
       setSelectedStateStats(null);
@@ -101,19 +89,15 @@ const VetNavMap = ({ onSelectState }) => {
       extruded: true,
       pickable: true,
       material: { ambient: 0.6, diffuse: 0.6, shininess: 64, specularColor: [180, 220, 255] },
-      getElevation: d => {
-        const baseHeight = benefitsMapService.getStateElevation(d);
-        // Removed staggered height for clearer borders
-        return selectedState && d.properties.iso_3166_2 === selectedState.properties.iso_3166_2 ? baseHeight + 50000 : baseHeight;
-      },
-      getFillColor: (d) => (selectedState && d.properties.iso_3166_2 === selectedState.properties.iso_3166_2) ? [80, 255, 255, 255] : benefitsMapService.getStateColor(d),
+      getElevation: benefitsMapService.getStateElevation,
+      getFillColor: (d) => (selectedState && d.properties.id === selectedState.properties.id) ? [80, 255, 255, 255] : benefitsMapService.getStateColor(d),
       getLineColor: [200, 220, 255, 200],
       getLineWidth: 2,
       lineWidthMinPixels: 2,
       onClick: handleStateClick,
       updateTriggers: {
-        getFillColor: [selectedState, initialDataLoaded], // Re-trigger colors when data loads
-        getElevation: [selectedState]
+        getFillColor: [selectedState, initialDataLoaded],
+        getElevation: [selectedState, initialDataLoaded]
       },
       transitions: {
         getFillColor: 500,
@@ -128,17 +112,14 @@ const VetNavMap = ({ onSelectState }) => {
         layers={layers}
         effects={[lightingEffect]}
         viewState={viewState}
-        controller={!selectedState} // Disable controller when a state is selected
+        controller={!selectedState}
         onViewStateChange={({ viewState }) => setViewState(viewState)}
         style={{background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)'}}
       />
       <StateInfoCard 
         state={selectedState} 
         stats={selectedStateStats}
-        onClose={() => {
-          setSelectedState(null);
-          setViewState(INITIAL_VIEW_STATE);
-        }}
+        onClose={() => { setSelectedState(null); setViewState(INITIAL_VIEW_STATE); }}
         onConfirm={handleConfirmSelection}
       />
     </div>

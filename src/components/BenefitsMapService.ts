@@ -14,25 +14,16 @@ interface StateBenefitStats {
   };
 }
 
+// FIPS code to State Abbreviation mapping
+const fipsToAbbr = { '01': 'AL', '02': 'AK', '04': 'AZ', '05': 'AR', '06': 'CA', '08': 'CO', '09': 'CT', '10': 'DE', '11': 'DC', '12': 'FL', '13': 'GA', '15': 'HI', '16': 'ID', '17': 'IL', '18': 'IN', '19': 'IA', '20': 'KS', '21': 'KY', '22': 'LA', '23': 'ME', '24': 'MD', '25': 'MA', '26': 'MI', '27': 'MN', '28': 'MS', '29': 'MO', '30': 'MT', '31': 'NE', '32': 'NV', '33': 'NH', '34': 'NJ', '35': 'NM', '36': 'NY', '37': 'NC', '38': 'ND', '39': 'OH', '40': 'OK', '41': 'OR', '42': 'PA', '44': 'RI', '45': 'SC', '46': 'SD', '47': 'TN', '48': 'TX', '49': 'UT', '50': 'VT', '51': 'VA', '53': 'WA', '54': 'WV', '55': 'WI', '56': 'WY', '60': 'AS', '66': 'GU', '69': 'MP', '72': 'PR', '78': 'VI' };
+
 class BenefitsMapService {
   private benefitsData: Benefit[] = [];
   private stateStats: StateBenefitStats = {};
-  private dataLoaded: boolean = false;
 
   constructor() {
     this.loadBenefitsData();
   }
-
-  private getDeterministicRandom = (id: string | null) => {
-    if (!id) return 0;
-    let hash = 0;
-    for (let i = 0; i < id.length; i++) {
-      const char = id.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
-      hash |= 0; // Convert to 32bit integer
-    }
-    return Math.abs(hash);
-  };
 
   private async loadBenefitsData() {
     try {
@@ -49,7 +40,6 @@ class BenefitsMapService {
         this.benefitsData = arrayKey ? rawData[arrayKey] : [];
       }
       this.calculateStateStats();
-      this.dataLoaded = true;
       console.log(`Benefits data loaded with ${this.benefitsData.length} items.`);
     } catch (error) {
       console.error("Failed to load or process benefits data:", error);
@@ -72,47 +62,34 @@ class BenefitsMapService {
     });
     this.stateStats = stats;
   }
-  
-  public getStateStats = (stateCode: string | null) => {
+
+  public getStateStats = (fipsCode: string | null) => {
     const defaultStats = { count: 0, federalCount: 0, stateCount: 0 };
-    if (!this.dataLoaded || !stateCode) {
-      return defaultStats;
-    }
-    return this.stateStats[stateCode] || defaultStats;
+    if (!fipsCode) return defaultStats;
+    const stateAbbr = fipsToAbbr[fipsCode];
+    return this.stateStats[stateAbbr] || defaultStats;
   }
 
   public getStateElevation = (feature: any) => {
-    const stateCode = feature?.properties?.iso_3166_2;
-    const stats = this.getStateStats(stateCode);
+    const fipsCode = feature?.properties?.id;
+    const stats = this.getStateStats(fipsCode);
     return stats.count * 1000;
   }
 
   public getStateColor = (feature: any) => {
-    const stateId = feature?.properties?.iso_3166_2;
+    const fipsCode = feature?.properties?.id;
+    const stateAbbr = fipsToAbbr[fipsCode];
     const defaultColor = [25, 25, 50, 200];
-    if (!stateId) return defaultColor;
+    if (!stateAbbr) return defaultColor;
 
-    // Cosmic color palette
-    const colors = [
-      [30, 80, 180],   // Deep Blue
-      [50, 40, 160],   // Purple
-      [20, 100, 150],  // Teal
-      [40, 60, 170]    // Indigo
-    ];
+    const colors = [[30, 80, 180], [50, 40, 160], [20, 100, 150], [40, 60, 170]];
+    const hash = Array.from(stateAbbr).reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const baseColor = colors[hash % colors.length];
     
-    const randomIndex = this.getDeterministicRandom(stateId) % colors.length;
-    const baseColor = colors[randomIndex];
-    
-    // Add a subtle glow for states with data
-    const stats = this.getStateStats(stateId);
+    const stats = this.getStateStats(fipsCode);
     const brightness = stats.count > 0 ? 1.3 : 1.0;
     
     return [baseColor[0] * brightness, baseColor[1] * brightness, baseColor[2] * brightness, 220];
-  }
-  
-  public getStateBenefitsData = (stateCode: string | null) => {
-    if (!stateCode) return [];
-    return this.benefitsData.filter(benefit => benefit.state === stateCode);
   }
 }
 
