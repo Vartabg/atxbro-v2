@@ -43,12 +43,16 @@ const VetNavMap = ({ onSelectState }) => {
 
   useEffect(() => {
     fetch('/data/states-albers-10m.json')
-      .then(response => response.json())
+      .then(response => {
+        if (!response.ok) throw new Error('Network response was not ok');
+        return response.json();
+      })
       .then(topology => {
         const geojson = topojsonFeature(topology, topology.objects.states);
         geojson.features.forEach(feature => transformCoordinates(feature.geometry));
         setStatesData(geojson);
-      });
+      })
+      .catch(error => console.error('Error loading or processing map data:', error));
   }, []);
 
   const handleStateClick = (info) => {
@@ -85,7 +89,7 @@ const VetNavMap = ({ onSelectState }) => {
       stroked: true,
       filled: true,
       extruded: true,
-      pickable: true,
+      pickable: true, // Ensures the layer is clickable
       material: { ambient: 0.5, diffuse: 0.6, shininess: 32, specularColor: [100, 120, 130] },
       getElevation: d => {
         const baseHeight = benefitsMapService.getStateElevation(d);
@@ -95,7 +99,7 @@ const VetNavMap = ({ onSelectState }) => {
       getLineColor: [255, 255, 255, 150],
       getLineWidth: 1,
       lineWidthMinPixels: 1,
-      onClick: handleStateClick, // This line is now restored.
+      onClick: handleStateClick, // Restoring the onClick handler
       updateTriggers: {
         getFillColor: [selectedState],
         getElevation: [selectedState]
