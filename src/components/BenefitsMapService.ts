@@ -1,27 +1,76 @@
-// src/components/BenefitsMapService.ts
-// This is a placeholder file to resolve module not found errors and missing functions.
-// You will need to implement the actual benefits map service logic here.
+import { v4 as uuidv4 } from 'uuid';
 
-export const benefitsMapService = {
-  // Example placeholder function
-  getMapData: () => {
-    console.warn("BenefitsMapService.getMapData: Not yet implemented. Returning empty data.");
-    return [];
-  },
-  processBenefitsForMap: (benefits: any[]) => {
-    console.warn("BenefitsMapService.processBenefitsForMap: Not yet implemented. Returning original benefits.");
-    return benefits;
-  },
-  // Added placeholder for getStateElevation to resolve TypeError
-  getStateElevation: (feature: any) => {
-    console.warn("BenefitsMapService.getStateElevation: Not yet implemented. Returning default elevation.");
-    return 1000; // Placeholder elevation value
-  },
-  // Added placeholder for getStateColor to resolve TypeError
-  getStateColor: (feature: any) => {
-    // This function should return an RGBA color array for a given geographic feature.
-    // For now, returning a default color (e.g., light gray).
-    console.warn("BenefitsMapService.getStateColor: Not yet implemented. Returning default color.");
-    return [180, 180, 180, 255]; // Placeholder RGBA color for states
+interface Benefit {
+  id: string;
+  name: string;
+  state: string;
+  // ... other benefit properties
+}
+
+interface StateBenefitStats {
+  [stateCode: string]: {
+    count: number;
+    federalCount: number;
+    stateCount: number;
+  };
+}
+
+class BenefitsMapService {
+  private benefitsData: Benefit[] = [];
+  private stateStats: StateBenefitStats = {};
+
+  constructor() {
+    this.loadBenefitsData();
   }
-};
+
+  private async loadBenefitsData() {
+    try {
+      const response = await fetch('/data/vetnavBenefitsDatabase.json');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      this.benefitsData = await response.json();
+      this.calculateStateStats();
+      console.log('Benefits data loaded and processed successfully.');
+    } catch (error) {
+      console.error("Failed to load or process benefits data:", error);
+    }
+  }
+
+  private calculateStateStats() {
+    const stats: StateBenefitStats = {};
+    this.benefitsData.forEach(benefit => {
+      const state = benefit.state || 'Federal';
+      if (!stats[state]) {
+        stats[state] = { count: 0, federalCount: 0, stateCount: 0 };
+      }
+      stats[state].count++;
+      if (state === 'Federal') {
+        stats[state].federalCount++;
+      } else {
+        stats[state].stateCount++;
+      }
+    });
+    this.stateStats = stats;
+  }
+
+  public getStateElevation = (feature: any): number => {
+    const stateCode = feature.properties.iso_3166_2;
+    const stats = this.stateStats[stateCode];
+    return stats ? stats.count * 1000 : 0; // Elevation based on total benefits
+  }
+
+  public getStateColor = (feature: any): [number, number, number, number] => {
+    const stateCode = feature.properties.iso_3166_2;
+    const stats = this.stateStats[stateCode];
+    if (!stats) {
+      return [80, 80, 80, 200]; // Default grey for states with no data
+    }
+    const ratio = stats.stateCount / (stats.count || 1);
+    const red = 255 * (1 - ratio);
+    const green = 255 * ratio;
+    return [red, green, 50, 210]; // Color gradient from red (mostly federal) to green (mostly state)
+  }
+}
+
+export const benefitsMapService = new BenefitsMapService();
