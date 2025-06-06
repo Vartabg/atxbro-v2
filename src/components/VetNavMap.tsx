@@ -2,9 +2,10 @@
 import React, { useState, useEffect } from 'react';
 import DeckGL from '@deck.gl/react';
 import { GeoJsonLayer } from '@deck.gl/layers';
-import { LightingEffect, AmbientLight, DirectionalLight } from '@deck.gl/core';
+import { LightingEffect, AmbientLight, DirectionalLight, FlyToInterpolator, WebMercatorViewport } from '@deck.gl/core';
 import { feature as topojsonFeature } from 'topojson-client';
 import { geoAlbersUsa } from 'd3-geo';
+import bbox from '@turf/bbox';
 import { benefitsMapService } from './BenefitsMapService';
 import { StateInfoCard } from './StateInfoCard';
 
@@ -12,34 +13,30 @@ const ambientLight = new AmbientLight({ color: [255, 255, 255], intensity: 1.0 }
 const directionalLight = new DirectionalLight({ color: [255, 255, 255], intensity: 1.0, direction: [-1, -2, -3] });
 const lightingEffect = new LightingEffect({ ambientLight, directionalLight });
 
-// This function will invert AlbersUSA projection back to WGS84 (lng, lat)
 const albersProjection = geoAlbersUsa().scale(1300).translate([487.5, 305]);
 const unproject = albersProjection.invert;
 
+const INITIAL_VIEW_STATE = {
+  longitude: -98.5795,
+  latitude: 39.8283,
+  zoom: 3.5,
+  pitch: 45,
+  bearing: 0,
+  transitionDuration: 1000,
+  transitionInterpolator: new FlyToInterpolator()
+};
+
 const transformCoordinates = (geometry) => {
   if (!geometry) return;
-
   if (geometry.type === 'Polygon') {
-    geometry.coordinates = geometry.coordinates.map(ring =>
-      ring.map(coord => unproject(coord) || [0,0])
-    );
+    geometry.coordinates = geometry.coordinates.map(ring => ring.map(coord => unproject(coord) || [0,0]));
   } else if (geometry.type === 'MultiPolygon') {
-    geometry.coordinates = geometry.coordinates.map(polygon =>
-      polygon.map(ring =>
-        ring.map(coord => unproject(coord) || [0,0])
-      )
-    );
+    geometry.coordinates = geometry.coordinates.map(polygon => polygon.map(ring => ring.map(coord => unproject(coord) || [0,0])));
   }
 };
 
 const VetNavMap = ({ onSelectState }) => {
-  const [viewState, setViewState] = useState({
-    longitude: -98.5795,
-    latitude: 39.8283,
-    zoom: 3.5,
-    pitch: 45,
-    bearing: 0
-  });
+  const [viewState, setViewState] = useState(INITIAL_VIEW_STATE);
   const [statesData, setStatesData] = useState(null);
   const [selectedState, setSelectedState] = useState(null);
   const [selectedStateStats, setSelectedStateStats] = useState(null);
@@ -49,10 +46,7 @@ const VetNavMap = ({ onSelectState }) => {
       .then(response => response.json())
       .then(topology => {
         const geojson = topojsonFeature(topology, topology.objects.states);
-        
-        // Transform coordinates for each feature
         geojson.features.forEach(feature => transformCoordinates(feature.geometry));
-        
         setStatesData(geojson);
         console.log(`Loaded and transformed ${geojson.features.length} states.`);
       })
@@ -65,9 +59,27 @@ const VetNavMap = ({ onSelectState }) => {
       const stats = benefitsMapService.getStateStats(stateCode);
       setSelectedState(info.object);
       setSelectedStateStats(stats);
+      
+      // Calculate new viewState to fly to the state
+      const [minLng, minLat, maxLng, maxLat] = bbox(info.object);
+      const { longitude, latitude, zoom } = new WebMercatorViewport(viewState).fitBounds(
+        [[minLng, minLat], [maxLng, maxLat]],
+        { padding: 40 }
+      );
+      
+      setViewState({
+        ...viewState,
+        longitude,
+        latitude,
+        zoom: zoom * 0.9, // Zoom out slightly for better framing
+        transitionDuration: 1200,
+        transitionInterpolator: new FlyToInterpolator({speed: 1.5})
+      });
+
     } else {
       setSelectedState(null);
       setSelectedStateStats(null);
+      setViewState(INITIAL_VIEW_STATE); // Fly back to initial view
     }
   };
   
@@ -98,7 +110,7 @@ const VetNavMap = ({ onSelectState }) => {
       <DeckGL
         layers={layers}
         effects={[lightingEffect]}
-        initialViewState={viewState}
+        viewState={viewState}
         controller={true}
         onViewStateChange={({ viewState }) => setViewState(viewState)}
         style={{background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)'}}
@@ -106,7 +118,10 @@ const VetNavMap = ({ onSelectState }) => {
       <StateInfoCard 
         state={selectedState} 
         stats={selectedStateStats}
-        onClose={() => setSelectedState(null)}
+        onClose={() => {
+          setSelectedState(null);
+          setViewState(INITIAL_VIEW_STATE);
+        }}
         onConfirm={handleConfirmSelection}
       />
     </div>
