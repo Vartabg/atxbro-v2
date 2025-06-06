@@ -1,196 +1,156 @@
 'use client';
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Html, useTexture, Line } from '@react-three/drei';
+import { OrbitControls, Html, Line, Points, Point } from '@react-three/drei';
 import * as THREE from 'three';
 import { feature as topojsonFeature } from 'topojson-client';
+import { csvParse } from 'd3-dsv';
+import pointInPolygon from '@turf/boolean-point-in-polygon';
+import { point as turfPoint, polygon as turfPolygon } from '@turf/helpers';
 
-const State = ({ featureData, transform, extrudeSettings, showLabels }) => {
+// State Component: Now renders particles instead of a solid mesh
+const State = ({ featureData, points, transform, showLabels }) => {
     const { scale, centerX, centerY } = transform;
-    const meshRef = useRef();
     const [hovered, setHovered] = useState(false);
-    const [centroid, setCentroid] = useState(null);
 
-    // Load the satellite texture
-    const groundTexture = useTexture('/textures/ground.jpg');
-    groundTexture.wrapS = groundTexture.wrapT = THREE.RepeatWrapping;
-    groundTexture.repeat.set(0.1, 0.1); // Adjust tiling of the texture
-
-    const { shapes, lines } = useMemo(() => {
-        const createdShapes = [];
-        const createdLines = [];
+    // Memoize the line and point data for performance
+    const { outline, particlePositions } = useMemo(() => {
+        const linePoints = [];
         const geomType = featureData.geometry.type;
         const coords = featureData.geometry.coordinates;
 
         const processPolygon = (polygonCoords) => {
-            const shape = new THREE.Shape();
-            const linePoints = [];
             polygonCoords.forEach((coord, i) => {
                 const x = (coord[0] - centerX) * scale;
                 const y = -((coord[1] - centerY) * scale);
-                linePoints.push(x, y, extrudeSettings.depth + 0.01);
-
-                if (i === 0) shape.moveTo(x, y);
-                else shape.lineTo(x, y);
+                linePoints.push(new THREE.Vector3(x, y, 0));
             });
-            return { shape, linePoints };
         };
 
         if (geomType === 'Polygon') {
-            const { shape, linePoints } = processPolygon(coords[0]);
-            createdShapes.push(shape);
-            createdLines.push(linePoints);
+            processPolygon(coords[0]);
         } else if (geomType === 'MultiPolygon') {
-            coords.forEach(polygon => {
-                const { shape, linePoints } = processPolygon(polygon[0]);
-                createdShapes.push(shape);
-                createdLines.push(linePoints);
-            });
+            coords.forEach(polygon => processPolygon(polygon[0]));
         }
-        return { shapes: createdShapes, lines: createdLines };
-    }, [featureData, scale, centerX, centerY, extrudeSettings.depth]);
 
-    useEffect(() => {
-        if (meshRef.current) {
-            const box = new THREE.Box3().setFromObject(meshRef.current);
-            const center = new THREE.Vector3();
-            box.getCenter(center);
-            setCentroid([center.x, center.y, extrudeSettings.depth + 0.05]);
-        }
-    }, [shapes, extrudeSettings.depth]);
+        const transformedPoints = points.map(p => {
+            const x = (p.x - centerX) * scale;
+            const y = -((p.y - centerY) * scale);
+            return new THREE.Vector3(x, y, 0);
+        });
 
-    const stateName = featureData.properties?.name || featureData.id || 'Unknown State';
+        return { outline: linePoints, particlePositions: transformedPoints };
+    }, [featureData, points, scale, centerX, centerY]);
 
     return (
-        <group>
-            {/* The main 3D state mesh with the satellite texture */}
-            <mesh
-                ref={meshRef}
-                castShadow
-                receiveShadow
-                onPointerOver={(e) => { e.stopPropagation(); setHovered(true); }}
-                onPointerOut={() => setHovered(false)}
-            >
-                <extrudeGeometry args={[shapes, extrudeSettings]} />
-                <meshStandardMaterial
-                    map={groundTexture}
-                    color={hovered ? '#ffffff' : '#cccccc'} // Tint the texture on hover
-                />
-            </mesh>
-
-            {/* The glowing border lines */}
-            {lines.map((points, i) => (
-                <Line
-                    key={i}
-                    points={points}
-                    color={'#00ffff'} // Cyan color for the border
-                    lineWidth={hovered ? 2.5 : 1.5}
+        <group onPointerOver={(e) => { e.stopPropagation(); setHovered(true); }} onPointerOut={() => setHovered(false)}>
+            {/* The particle cloud representing the state */}
+            <Points positions={particlePositions}>
+                <pointsMaterial
+                    size={0.03}
+                    color={hovered ? '#00ffff' : 'white'}
+                    sizeAttenuation
                     transparent
-                    opacity={0.8}
+                    opacity={0.75}
                 />
-            ))}
-            
-            {showLabels && centroid && (
-                <Html position={centroid} center occlude={[meshRef]}>
-                    <div style={{
-                        padding: '4px 8px',
-                        background: 'rgba(0, 0, 0, 0.7)',
-                        color: 'white',
-                        borderRadius: '4px',
-                        fontSize: '10px',
-                        whiteSpace: 'nowrap',
-                        textAlign: 'center',
-                        border: '1px solid rgba(0, 255, 255, 0.5)',
-                        pointerEvents: 'none',
-                        userSelect: 'none',
-                    }}>
-                        {stateName}
-                    </div>
-                </Html>
-            )}
+            </Points>
+
+            {/* The constellation border */}
+            <Line
+                points={outline}
+                color={'#00ffff'}
+                lineWidth={hovered ? 2.0 : 1.0}
+                dashed={true}
+                dashScale={10}
+                gapSize={5}
+                transparent
+                opacity={hovered ? 0.7 : 0.25}
+            />
         </group>
     );
 };
 
-const VetNavMap = ({ topoJsonPath = '/data/states-albers-10m.json', targetDisplayWidth = 10, showLabels = false }) => {
-    // ... (The rest of the VetNavMap component remains the same)
-    const [processedFeatures, setProcessedFeatures] = useState([]);
+// Main Map Component: Now loads and processes both datasets
+const VetNavMap = ({ topoJsonPath = '/data/states-albers-10m.json', citiesDataPath = '/data/uscities.csv', targetDisplayWidth = 10 }) => {
+    const [states, setStates] = useState([]);
     const [transformParams, setTransformParams] = useState(null);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         setLoading(true);
-        setError(null);
-        fetch(topoJsonPath)
-            .then(response => { if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`); return response.json(); })
-            .then(usTopoData => {
-                if (!usTopoData.objects || !usTopoData.objects.states) throw new Error('TopoJSON is missing "objects.states"');
-                const geoJson = topojsonFeature(usTopoData, usTopoData.objects.states);
-                if (!geoJson || !geoJson.features) throw new Error('Failed to convert TopoJSON');
-                const geoJsonFeatures = geoJson.features;
+        Promise.all([
+            fetch(topoJsonPath).then(res => res.json()),
+            fetch(citiesDataPath).then(res => res.text())
+        ]).then(([topology, citiesCsv]) => {
+            // Process State Shapes
+            if (!topology.objects?.states) throw new Error('TopoJSON is missing "objects.states"');
+            const geoJson = topojsonFeature(topology, topology.objects.states);
+            
+            // Process City Points
+            const cities = csvParse(citiesCsv, (d) => ({
+                x: +d.lng, // Using lng/lat as projected coords for simplicity
+                y: +d.lat,
+                population: +d.population
+            }));
 
-                let allCoords = [];
-                geoJsonFeatures.forEach(f => {
-                    if (f.geometry?.coordinates) {
-                        const coords = f.geometry.coordinates;
-                        if (f.geometry.type === 'Polygon') {
-                            if(coords[0]) coords[0].forEach(c => allCoords.push(c));
-                        } else if (f.geometry.type === 'MultiPolygon') {
-                            coords.forEach(polygon => {
-                                if(polygon[0]) polygon[0].forEach(c => allCoords.push(c));
-                            });
-                        }
-                    }
+            // Calculate map bounds from shapes
+            let allCoords = [];
+            geoJson.features.forEach(f => {
+                if(f.geometry?.type === 'Polygon') allCoords.push(...f.geometry.coordinates[0]);
+                if(f.geometry?.type === 'MultiPolygon') f.geometry.coordinates.forEach(p => allCoords.push(...p[0]));
+            });
+
+            let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+            allCoords.forEach(c => {
+                minX = Math.min(minX, c[0]);
+                maxX = Math.max(maxX, c[0]);
+                minY = Math.min(minY, c[1]);
+                maxY = Math.max(maxY, c[1]);
+            });
+
+            const dataWidth = maxX - minX;
+            const params = {
+                scale: dataWidth === 0 ? 1 : targetDisplayWidth / dataWidth,
+                centerX: minX + dataWidth / 2,
+                centerY: minY + (maxY - minY) / 2
+            };
+            setTransformParams(params);
+
+            // Assign cities to states (this is computationally intensive)
+            const statesWithPoints = geoJson.features.map(feature => {
+                const statePolygon = turfPolygon(feature.geometry.coordinates);
+                const pointsInState = cities.filter(city => {
+                    const cityPoint = turfPoint([city.x, city.y]);
+                    return pointInPolygon(cityPoint, statePolygon);
                 });
+                return { ...feature, properties: {...feature.properties, points: pointsInState } };
+            });
 
-                if (allCoords.length === 0) {
-                    setTransformParams({ scale: 1, centerX: 0, centerY: 0 });
-                } else {
-                    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
-                    allCoords.forEach(coord => {
-                        if (coord && typeof coord[0] === 'number' && typeof coord[1] === 'number') {
-                            minX = Math.min(minX, coord[0]);
-                            maxX = Math.max(maxX, coord[0]);
-                            minY = Math.min(minY, coord[1]);
-                            maxY = Math.max(maxY, coord[1]);
-                        }
-                    });
-                    if (!isFinite(minX)) throw new Error("Failed to calculate valid data bounds.");
-                    const dataWidth = maxX - minX;
-                    setTransformParams({
-                        scale: dataWidth === 0 ? 1 : targetDisplayWidth / dataWidth,
-                        centerX: minX + dataWidth / 2,
-                        centerY: minY + (maxY - minY) / 2,
-                    });
-                }
-                setProcessedFeatures(geoJsonFeatures);
-                setLoading(false);
-            })
-            .catch(err => { setError(err.message); setLoading(false); });
-    }, [topoJsonPath, targetDisplayWidth]);
+            setStates(statesWithPoints);
+            setLoading(false);
+        }).catch(err => {
+            setError(err.message);
+            setLoading(false);
+        });
+    }, [topoJsonPath, citiesDataPath, targetDisplayWidth]);
 
-    const extrudeSettings = useMemo(() => ({
-        steps: 1, depth: 0.2, bevelEnabled: true,
-        bevelThickness: 0.02, bevelSize: 0.01, bevelSegments: 1,
-    }), []);
-
-    if (loading) return <div><p>Loading Map Data...</p></div>;
-    if (error) return <div><p>Error loading map: {error}</p></div>;
-    if (!transformParams) return <div><p>No map data to display.</p></div>;
+    if (loading) return <div style={{height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center'}}><p>Loading Constellation Data...</p></div>;
+    if (error) return <div style={{height: '100%', color: 'red', padding: '20px' }}><p>Error: {error}</p></div>;
 
     return (
-        <Canvas camera={{ position: [0, 0, 12], fov: 50 }} shadows>
+        <Canvas camera={{ position: [0, 0, 15], fov: 50 }}>
+            <color attach="background" args={['#0f172a']} />
             <ambientLight intensity={0.5} />
-            <directionalLight position={[10, 10, 10]} intensity={1.5} castShadow />
+            <pointLight position={[10, 10, 10]} intensity={0.5} />
             <group>
-                {processedFeatures.map((feature, index) => (
+                {states.map((feature) => (
                     <State
-                        key={feature.id || `state-${index}`}
+                        key={feature.properties.id || feature.id}
                         featureData={feature}
+                        points={feature.properties.points}
                         transform={transformParams}
-                        extrudeSettings={extrudeSettings}
-                        showLabels={showLabels}
+                        showLabels={false} // Labels can be re-enabled later
                     />
                 ))}
             </group>
