@@ -17,6 +17,7 @@ interface StateBenefitStats {
 class BenefitsMapService {
   private benefitsData: Benefit[] = [];
   private stateStats: StateBenefitStats = {};
+  private dataLoaded: boolean = false;
 
   constructor() {
     this.loadBenefitsData();
@@ -24,29 +25,20 @@ class BenefitsMapService {
 
   private async loadBenefitsData() {
     try {
-      // Handle server-side vs client-side fetch URL
-      const baseUrl = typeof window === 'undefined'
-        ? `http://localhost:${process.env.PORT || 3000}`
-        : '';
+      const baseUrl = typeof window === 'undefined' ? `http://localhost:${process.env.PORT || 3000}` : '';
       const dataUrl = `${baseUrl}/data/vetnavBenefitsDatabase.json`;
-
       const response = await fetch(dataUrl);
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
       const rawData = await response.json();
-
       if (Array.isArray(rawData)) {
         this.benefitsData = rawData;
       } else if (typeof rawData === 'object' && rawData !== null) {
         const arrayKey = Object.keys(rawData).find(key => Array.isArray(rawData[key]));
         this.benefitsData = arrayKey ? rawData[arrayKey] : [];
-      } else {
-        this.benefitsData = [];
       }
-
       this.calculateStateStats();
+      this.dataLoaded = true;
       console.log(`Benefits data loaded with ${this.benefitsData.length} items.`);
     } catch (error) {
       console.error("Failed to load or process benefits data:", error);
@@ -69,35 +61,32 @@ class BenefitsMapService {
     });
     this.stateStats = stats;
   }
-
-  public getStateElevation = (feature) => {
-    const stateCode = feature?.properties?.iso_3166_2;
-    if (!stateCode) return 0;
-    const stats = this.stateStats[stateCode];
-    return stats ? stats.count * 1000 : 0;
+  
+  public getStateStats = (stateCode: string | null) => {
+    // This is now more resilient and will never return a null/falsy value.
+    const defaultStats = { count: 0, federalCount: 0, stateCount: 0 };
+    if (!this.dataLoaded || !stateCode) {
+      return defaultStats;
+    }
+    return this.stateStats[stateCode] || defaultStats;
   }
 
-  public getStateColor = (feature) => {
+  // Other functions remain the same
+  public getStateElevation = (feature: any) => {
     const stateCode = feature?.properties?.iso_3166_2;
-    if (!stateCode) return [80, 80, 80, 200];
-    const stats = this.stateStats[stateCode];
+    const stats = this.getStateStats(stateCode);
+    return stats.count * 1000;
+  }
+  public getStateColor = (feature: any) => {
+    const stateCode = feature?.properties?.iso_3166_2;
+    const stats = this.getStateStats(stateCode);
     if (!stats || stats.count === 0) return [80, 80, 80, 200];
     const ratio = stats.stateCount / stats.count;
     return [255 * (1 - ratio), 255 * ratio, 50, 210];
   }
-  
-  public getStateBenefits = (stateCode) => {
+  public getStateBenefitsData = (stateCode: string | null) => {
     if (!stateCode) return [];
     return this.benefitsData.filter(benefit => benefit.state === stateCode);
-  }
-
-  public getStateBenefitsData = (stateCode) => {
-    return this.getStateBenefits(stateCode);
-  }
-
-  public getStateStats = (stateCode) => {
-    if (!stateCode) return null;
-    return this.stateStats[stateCode] || { count: 0, federalCount: 0, stateCount: 0 };
   }
 }
 

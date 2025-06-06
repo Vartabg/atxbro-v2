@@ -35,12 +35,24 @@ const transformCoordinates = (geometry) => {
   }
 };
 
+// Function to create a consistent "random" value from a string (like a state ID)
+const getDeterministicRandom = (id) => {
+  if (!id) return 0;
+  let hash = 0;
+  for (let i = 0; i < id.length; i++) {
+    const char = id.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash |= 0; // Convert to 32bit integer
+  }
+  return Math.abs(hash);
+};
+
+
 const VetNavMap = ({ onSelectState }) => {
   const [viewState, setViewState] = useState(INITIAL_VIEW_STATE);
   const [statesData, setStatesData] = useState(null);
   const [selectedState, setSelectedState] = useState(null);
   const [selectedStateStats, setSelectedStateStats] = useState(null);
-  const [hoveredState, setHoveredState] = useState(null); // For debug UI
 
   useEffect(() => {
     fetch('/data/states-albers-10m.json')
@@ -94,14 +106,17 @@ const VetNavMap = ({ onSelectState }) => {
       material: { ambient: 0.5, diffuse: 0.6, shininess: 32, specularColor: [100, 120, 130] },
       getElevation: d => {
         const baseHeight = benefitsMapService.getStateElevation(d);
-        return selectedState && d.properties.iso_3166_2 === selectedState.properties.iso_3166_2 ? baseHeight + 50000 : baseHeight;
+        // Add a "staggered" base height to each state
+        const staggeredOffset = (getDeterministicRandom(d.properties.iso_3166_2) % 10) * 2000;
+        const totalHeight = baseHeight + staggeredOffset;
+        // Make selected state grow even taller
+        return selectedState && d.properties.iso_3166_2 === selectedState.properties.iso_3166_2 ? totalHeight + 50000 : totalHeight;
       },
       getFillColor: (d) => (selectedState && d.properties.iso_3166_2 === selectedState.properties.iso_3166_2) ? [0, 255, 255, 255] : benefitsMapService.getStateColor(d),
-      getLineColor: [255, 255, 255, 150],
-      getLineWidth: 1,
-      lineWidthMinPixels: 1,
+      getLineColor: [255, 255, 255, 200], // Brighter borders
+      getLineWidth: 2, // Thicker borders
+      lineWidthMinPixels: 2,
       onClick: handleStateClick,
-      onHover: info => setHoveredState(info.object || null), // Set hovered state
       updateTriggers: {
         getFillColor: [selectedState],
         getElevation: [selectedState]
@@ -123,13 +138,6 @@ const VetNavMap = ({ onSelectState }) => {
         onViewStateChange={({ viewState }) => setViewState(viewState)}
         style={{background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)'}}
       />
-      
-      {/* --- DEBUG UI PANEL --- */}
-      <div style={{position: 'absolute', top: '10px', left: '10px', background: 'rgba(0,0,0,0.7)', color: 'white', padding: '10px', borderRadius: '5px', zIndex: 9999, pointerEvents: 'none', fontFamily: 'monospace'}}>
-        <div>Hovered State: {hoveredState?.properties?.name || 'None'}</div>
-        <div>Selected State: {selectedState?.properties?.name || 'None'}</div>
-      </div>
-
       <StateInfoCard 
         state={selectedState} 
         stats={selectedStateStats}
